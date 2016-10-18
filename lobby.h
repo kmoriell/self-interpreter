@@ -9,6 +9,8 @@
 #define LOBBY_H_
 
 #include <string>
+#include <stdexcept>
+#include <map>
 #include "opcodes.h"
 
 typedef struct {
@@ -19,32 +21,42 @@ typedef struct {
 
 class Lobby {
 public:
-	  typedef Lobby*(*delegate)(std::vector<Lobby*>);
- private:
+  typedef Lobby* (Lobby::*delegate)(const std::vector<Lobby*>&);
+ protected:
   std::string name;
   bool _mutable;
   std::map<std::string, slot_t> slots;
   std::map<std::string, delegate> methods;
 
  public:
+  Lobby();
+  // Constructor copia
+  Lobby(const Lobby& _lobby);
   void setName(std::string newName);
   void _AddSlots(std::string name, slot_t newSlot);
   void _RemoveSlots(std::string name);
   void setMutable(bool state);
-  bool getMutable();
+  bool getMutable() const;
 
-  slot_t getSlot(std::string name);
-  delegate getMethod(std::string name);
+  slot_t getSlot(std::string name) const;
+  delegate getMethod(std::string name) const;
 
-  Lobby* clone();
-  virtual Lobby* print();
-  virtual ~Lobby();
+  Lobby* clone(const std::vector<Lobby*>& args);
   Lobby* collect();
 
   // Sobrecarga de operadores y definicion de nuevas operaciones
-  Lobby& operator=(const Lobby& inmutableValue);
-  Lobby& modifyMutableValue(const Lobby& mutableValue);
-  Lobby& mutableAsignation(const Lobby& mutableValue);
+  virtual Lobby* operator=(const std::vector<Lobby*>& args);
+  virtual Lobby* operator*(const std::vector<Lobby*>& args);
+  virtual Lobby* operator+(const std::vector<Lobby*>& args);
+  virtual Lobby* operator-(const std::vector<Lobby*>& args);
+  virtual Lobby* operator/(const std::vector<Lobby*>& args);
+  virtual Lobby* operator==(const std::vector<Lobby*>& args);
+  virtual Lobby* operator!=(const std::vector<Lobby*>& args);
+  virtual Lobby* modifyMutableValue(const std::vector<Lobby*>& args);
+  virtual Lobby* mutableAsignation(const std::vector<Lobby*>& args);
+
+  virtual Lobby* print(const std::vector<Lobby*>& args);
+  virtual ~Lobby();
 
 
 };

@@ -10,16 +10,19 @@
 
 #include "lobby.h"
 #include <string>
+#include <iostream>
 
 class String : public Lobby {
  private:
   std::string _internalString;
 
  public:
-  String(std::string _string);
+  String();
   ~String();
 
-  Lobby* print();
+  Lobby* print(const std::vector<Lobby*>& args);
+  Lobby* operator=(const std::vector<Lobby*>& args);
+  Lobby* mutableAsignation(const std::vector<Lobby*>& args);
 };
 
 

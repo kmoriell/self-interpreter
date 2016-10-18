@@ -9,18 +9,24 @@
 #define NUMBER_H_
 
 #include "lobby.h"
+#include <iostream>
 
 class Number : public Lobby {
  private:
   float number;
 
  public:
-  Number(float number);
+  Number();
+  Lobby* print(const std::vector<Lobby*>& args);
+  Lobby* mutableAsignation(const std::vector<Lobby*>& args);
+  Lobby* operator=(const std::vector<Lobby*>& args);
+  Lobby* operator*(const std::vector<Lobby*>& args);
+  Lobby* operator+(const std::vector<Lobby*>& args);
+  Lobby* operator-(const std::vector<Lobby*>& args);
+  Lobby* operator/(const std::vector<Lobby*>& args);
 
-  Number operator+(const Number& otherNumber);
-  Number operator-(const Number& otherNumber);
-  Number operator*(const Number& otherNumber);
-  Number operator/(const Number& otherNumber);
+  //Lobby* operator==(const std::vector<Lobby*>& args);
+  //Lobby* operator!=(const std::vector<Lobby*>& args);
 };
 
 
