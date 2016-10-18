@@ -4,6 +4,11 @@ Number::Number() {
     this->number = 0.0;
 }
 
+Number::Number(float newNumber) {
+    this->number = newNumber;
+}
+
+
 Lobby* Number::print(const std::vector<Lobby*>& args) {
     std::string number_str = std::to_string(this->number);
 

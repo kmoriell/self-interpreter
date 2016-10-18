@@ -17,6 +17,7 @@ class Number : public Lobby {
 
  public:
   Number();
+  Number(float newNumber);
   Lobby* print(const std::vector<Lobby*>& args);
   Lobby* mutableAsignation(const std::vector<Lobby*>& args);
   Lobby* operator=(const std::vector<Lobby*>& args);

@@ -4,6 +4,10 @@ String::String() {
     this->_internalString = "";
 }
 
+String::String(std::string _string) {
+    this->_internalString = _string;
+}
+
 String::~String() {
 }
 

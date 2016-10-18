@@ -18,6 +18,7 @@ class String : public Lobby {
 
  public:
   String();
+  String(std::string _string);
   ~String();
 
   Lobby* print(const std::vector<Lobby*>& args);

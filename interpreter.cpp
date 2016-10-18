@@ -41,30 +41,38 @@ void Interpreter::addSlot(std::string object, std::string slot_name, slot_t newS
 
   Lobby *_object = it->second;
 
-  std::string operand1 = newSlot.instructions[0].operands[0];
+  //
   Lobby *type;
 
   // Verifico que el slot tenga una operacion de "=" o "<-".
-  std::string operation = newSlot.instructions[0].method;
-  if (operation == "print") {
+  for (auto i : newSlot.instructions) {
+    std::string operation = i.method;
+    std::string operand1 = i.operands[0];
+     if (operation == "print") {
     if (operand1.find('\'') != std::string::npos ||
                 operand1.find('"') != std::string::npos) {
-        type = new String();
+        std::string newString = operand1.substr(1, operand1.size() - 2);
+        type = new String(newString);
         slot_t _type_slot = newSlot;
-        opcode_t assignation;
+        /*opcode_t assignation;
         assignation.method = "=";
-        assignation.operands = std::vector<std::string>{operand1};
-        newSlot.instructions.push_back(assignation);
-        type->_AddSlots(operand1, _type_slot);
+        assignation.operands = std::vector<std::string>{operand1};*/
+        newSlot.localVariables.insert(std::make_pair(operand1, type));
+        //std::vector<opcode_t> _newSlot_instructions = newSlot.instructions;
+        //newSlot.instructions = std::vector<opcode_t> { assignation };
+        /*for ( auto i : _newSlot_instructions)
+            newSlot.instructions.push_back(i);*/
+
+        type->_AddSlots(operand1, newSlot);
     }
   }
   else if (operation == "=" || operation == "<-") {
-    std::string operand2 = newSlot.instructions[0].operands[1];
+    std::string operand2 = i.operands[1];
     if (::atof(operand2.c_str()) || (operand2 == "0" || operand2 == "0.0")) {
-        type = new Number();
-        slot_t _type_slot = newSlot;
-        _type_slot.localVariables.insert(std::make_pair(slot_name, type));
-        type->_AddSlots(operand1, _type_slot);
+        type = new Number(::atof(operand2.c_str()));
+        //slot_t _type_slot = newSlot;
+        newSlot.localVariables.insert(std::make_pair(slot_name, type));
+        type->_AddSlots(operand1, newSlot);
     } else if (operand2.find('\'') != std::string::npos ||
                 operand2.find('"') != std::string::npos) {
         type = new String();
@@ -76,7 +84,7 @@ void Interpreter::addSlot(std::string object, std::string slot_name, slot_t newS
     }
     newSlot.localVariables.insert(std::make_pair(slot_name, type));
   }
-
+  }
   _object->_AddSlots(slot_name, newSlot);
   it->second = _object;
 }
@@ -113,7 +121,10 @@ Lobby* Interpreter::process_internal(opcode_t __opcode, slot_t currentSlot, Lobb
   // Busco el primer y segundo operando en el slot actual, si no lo encuentro
   // voy al slot principal, si no emito un error
   operand1 = getOperand(__opcode.operands[0], currentSlot, object);
-  Lobby* operand2 = getOperand(__opcode.operands[1], currentSlot, object);
+  std::vector<Lobby*> vec;
+  for (uint32_t i = 1; i < __opcode.operands.size(); i++) {
+    vec.push_back(getOperand(__opcode.operands[i], currentSlot, object));
+  }
 
   // Busco en los slots del operando la instuccion que quiero ejecutar
   slot_t _slot = operand1->getSlot(__opcode.operands[0]);
@@ -137,10 +148,8 @@ Lobby* Interpreter::process_internal(opcode_t __opcode, slot_t currentSlot, Lobb
   // hasta resolver la consulta.
   Lobby::delegate method = operand1->getMethod(__opcode.method);
   if (method == nullptr) {
-    return this->process(_slot, operand1);
+    return nullptr; //this->process(_slot, operand1);
   } else {
-    std::vector<Lobby*> vec;
-    vec.push_back(operand2);
     Lobby* ret = (operand1->*method)(vec);
     return ret;
     }

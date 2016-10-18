@@ -48,14 +48,41 @@ int main() {
     _print.operands = std::vector<std::string> { "'hola mundo'"};
     slot_print.instructions = std::vector<opcode_t> {_print};
 
+    // pruebo overraidear print de punto
+    slot_t slot_punto_print;
+    opcode_t _punto_print1;
+    _punto_print1.method = "print";
+    _punto_print1.operands = std::vector<std::string> { "'('"};
+
+    opcode_t _punto_print2;
+    _punto_print2.method = "print";
+    _punto_print2.operands = std::vector<std::string> { "x"};
+
+    opcode_t _punto_print3;
+    _punto_print3.method = "print";
+    _punto_print3.operands = std::vector<std::string> { "';'"};
+
+    opcode_t _punto_print4;
+    _punto_print4.method = "print";
+    _punto_print4.operands = std::vector<std::string> { "y"};
+
+    opcode_t _punto_print5;
+    _punto_print5.method = "print";
+    _punto_print5.operands = std::vector<std::string> { "')'"};
+
+    slot_punto_print.instructions = std::vector<opcode_t> {_punto_print1, _punto_print2,
+    _punto_print3, _punto_print4, _punto_print5};
+
+
     Interpreter interpreter;
     interpreter.createObject("punto");
-    //interpreter.addSlot("punto", "square_norm", square_norm);
-    //interpreter.addSlot("punto", "x", slot_x);
-    //interpreter.addSlot("punto", "y", slot_y);
-    interpreter.addSlot("punto", "print", slot_print);
+    interpreter.addSlot("punto", "square_norm", square_norm);
+    interpreter.addSlot("punto", "x", slot_x);
+    interpreter.addSlot("punto", "y", slot_y);
+    interpreter.addSlot("punto", "print", slot_punto_print);
     std::vector<Lobby*> parameters;
-    //interpreter.call("punto", "square_norm", parameters);
+    // TODO: no esta clonando los atributos.
+    interpreter.call("punto", "square_norm", parameters);
     interpreter.call("punto", "print", parameters);
 
     return 0;
