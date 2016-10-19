@@ -54,23 +54,34 @@ void Object::setCode(const std::vector<opcode_t> code) {
   this->instructions = code;
 }
 
-Object* Object::recvMessage(std::string message, std::vector<std::string> args) {
+Object* Object::recvMessage(Object *object, std::string message, std::vector<std::string> args) {
   // Reviso en los slots del objeto si existe el mensaje
-  auto it = slots.find(message);
-  if (it == slots.end()) {
+  auto it = object->slots.find(message);
+  if (it == object->slots.end()) {
     // Entonces busco en los slots del parent slot
     auto parentSlots = getParentSlots();
-    for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it)  {
-      auto parent = std::get<0>(_it->second);
+    std::vector<Object*> parentsFound;
 
+    for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it)  {
+      Object *parent = std::get<0>(_it->second);
+      parentsFound.push_back(parent);
     }
+
+    // Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
+    if (parentsFound.size() != 1) {
+      std::string error = message;
+      error += " no reconocido por " + this->name;
+      throw std::runtime_error(error);
+    }
+    return recvMessage(parentsFound[0], message, args);
+
   } else {
     // Aca tengo mi puntero a objeto, lo que tendria que hacer es ejecutar el codigo
     // del mensaje, tomando
-    Object* object = std::get<0>(it->second);
+    Object* foundObject = std::get<0>(it->second);
     // Una vez que tengo el objeto, necesito los argumentos, si es que tiene
     // y les cambio el valor con los argumentos que se pasaron como parametro
-    auto object_slots = object->getSlots();
+    auto object_slots = foundObject->getSlots();
     uint32_t i = 0;
     for (auto object_slots_it = object_slots.begin();
         object_slots_it != object_slots.end(); ++object_slots_it) {
@@ -80,17 +91,23 @@ Object* Object::recvMessage(std::string message, std::vector<std::string> args) 
         break;
 
       // Verifico que sea argumento y que el slot sea mutable para poder modificarlo
-      if (object_slots_it[0] == ':' && (std::get<1>(object_slots_it))) {
+      bool __isMutable = std::get<1>(object_slots_it);
+      std::string slotName = object_slots_it->first;
+      if (slotName[0] == ':' && __isMutable) {
         ((Object*)std::get<0>(object_slots_it))->setValue(args[i]);
         i++;
       }
     }
 
-    for (uint32_t instr = 0; instr < object->instructions; instr++) {
+    for (uint32_t i_instr = 0; i_instr < foundObject->instructions; i_instr++) {
+      opcode_t instr = foundObject->instructions[i_instr];
+
+      Object *receiver = recvMessage(foundObject, instr, args);
+
 
     }
 
-    return object;
+    return foundObject;
   }
 }
 
