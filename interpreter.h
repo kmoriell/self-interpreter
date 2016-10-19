@@ -15,23 +15,22 @@
 #include <cstdlib>
 #include <cctype>
 #include "opcodes.h"
-#include "lobby.h"
 #include "number.h"
+#include "object.h"
 #include "string.h"
 
 class Interpreter {
  private:
-  std::map<std::string, Lobby*> global_objects;
-  Lobby* process(slot_t currentSlot, Lobby* object);
-  Lobby* process_internal(opcode_t __opcode, slot_t currentSlot, Lobby* object);
+  std::map<std::string, Object*> global_objects;
+  Object* process(slot_t currentSlot, Object* object);
+  Object* process_internal(opcode_t __opcode, slot_t currentSlot, Object* object);
 
  public:
   void createObject(std::string name);
-  void setObjectAttributes(std::string name, std::map<std::string, Lobby*> attributes);
-  //void setObjectMethods(std::string name, std::map<std::string, std::vector<opcode_t> > instructions, std::map<std::string, Lobby*> parameters);
-  void addSlot(std::string object, std::string slot_name, slot_t newSlot);
-  void call(std::string name, std::string method, std::vector<Lobby*> params);
-  Lobby* getOperand(std::string instr, slot_t currentSlot, Lobby* object);
+  void setObjectAttributes(std::string name, std::map<std::string, Object*> attributes);
+  void addSlot(std::string object, std::string slot_name, std::vector<std::string> );
+  void call(std::string name, std::string method, std::vector<Object*> params);
+  Object* getOperand(std::string instr, slot_t currentSlot, Object* object);
 };
 
 

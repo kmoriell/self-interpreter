@@ -11,14 +11,6 @@
 #include <vector>
 #include <string>
 
-/*#define MUL 0x0
-#define ADD 0x1
-#define RET 0x2
-#define DEF 0x3
-#define MOV 0x4
-#define CALL 0x5
-#define EXE 0xff*/
-
 typedef struct {
   std::string method;
   std::vector<std::string> operands;

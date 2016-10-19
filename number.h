@@ -8,23 +8,24 @@
 #ifndef NUMBER_H_
 #define NUMBER_H_
 
-#include "lobby.h"
 #include <iostream>
+#include "object.h"
 
-class Number : public Lobby {
+class Number : public Object {
  private:
   float number;
 
  public:
   Number();
-  Number(float newNumber);
-  Lobby* print(const std::vector<Lobby*>& args);
-  Lobby* mutableAsignation(const std::vector<Lobby*>& args);
-  Lobby* operator=(const std::vector<Lobby*>& args);
-  Lobby* operator*(const std::vector<Lobby*>& args);
-  Lobby* operator+(const std::vector<Lobby*>& args);
-  Lobby* operator-(const std::vector<Lobby*>& args);
-  Lobby* operator/(const std::vector<Lobby*>& args);
+  Number(float newNumber, bool _mutable);
+  Number(const Number& _number);
+  Object* print(const std::vector<Object*>& args);
+  Object* mutableAsignation(const std::vector<Object*>& args);
+  Object* operator=(const std::vector<Object*>& args);
+  Object* operator*(const std::vector<Object*>& args);
+  Object* operator+(const std::vector<Object*>& args);
+  Object* operator-(const std::vector<Object*>& args);
+  Object* operator/(const std::vector<Object*>& args);
 
   //Lobby* operator==(const std::vector<Lobby*>& args);
   //Lobby* operator!=(const std::vector<Lobby*>& args);

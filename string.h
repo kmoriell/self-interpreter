@@ -8,11 +8,11 @@
 #ifndef STRING_H_
 #define STRING_H_
 
-#include "lobby.h"
 #include <string>
 #include <iostream>
+#include "object.h"
 
-class String : public Lobby {
+class String : public Object {
  private:
   std::string _internalString;
 
@@ -21,9 +21,9 @@ class String : public Lobby {
   String(std::string _string);
   ~String();
 
-  Lobby* print(const std::vector<Lobby*>& args);
-  Lobby* operator=(const std::vector<Lobby*>& args);
-  Lobby* mutableAsignation(const std::vector<Lobby*>& args);
+  Object* print(const std::vector<Object*>& args);
+  Object* operator=(const std::vector<Object*>& args);
+  Object* mutableAsignation(const std::vector<Object*>& args);
 };
 
 

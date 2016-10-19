@@ -1,7 +1,7 @@
 #include <iostream>
 #include "interpreter.h"
-#include "lobby.h"
 #include "number.h"
+#include "object.h"
 
 int main() {
     slot_t square_norm;
@@ -80,7 +80,7 @@ int main() {
     interpreter.addSlot("punto", "x", slot_x);
     interpreter.addSlot("punto", "y", slot_y);
     interpreter.addSlot("punto", "print", slot_punto_print);
-    std::vector<Lobby*> parameters;
+    std::vector<Object*> parameters;
     // TODO: no esta clonando los atributos.
     interpreter.call("punto", "square_norm", parameters);
     interpreter.call("punto", "print", parameters);

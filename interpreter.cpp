@@ -6,7 +6,8 @@
  */
 
 #include "interpreter.h"
-#include "lobby.h"
+
+#include "object.h"
 
 void Interpreter::createObject(std::string name) {
   // Tengo la posibilidad de tener objetos sin nombre
@@ -17,13 +18,13 @@ void Interpreter::createObject(std::string name) {
       throw std::runtime_error("Ya existe un objeto con este nombre.");
   }
 
-  Lobby *newObject = new Lobby();
+  Object *newObject = new Object();
   newObject->setName(name);
 
   global_objects.insert(std::make_pair(name, newObject));
 }
 
-void Interpreter::setObjectAttributes(std::string name, std::map<std::string, Lobby*> attributes) {
+void Interpreter::setObjectAttributes(std::string name, std::map<std::string, Object*> attributes) {
   /*auto it = global_objects.find(name);
 
   if (it == global_objects.end())
@@ -33,77 +34,49 @@ void Interpreter::setObjectAttributes(std::string name, std::map<std::string, Lo
   object->setAttributes(attributes);*/
 }
 
-void Interpreter::addSlot(std::string object, std::string slot_name, slot_t newSlot) {
+
+void Interpreter::addSlot(std::string object, std::string slot_name, std::vector<std::string> args, bool _mutable,
+                          std::vector<opcode_t> code) {
   auto it = global_objects.find(object);
 
   if (it == global_objects.end())
     throw std::runtime_error("El objeto no existe.");
 
-  Lobby *_object = it->second;
+  Object *_object = it->second;
+  Object *type;
 
-  //
-  Lobby *type;
-
-  // Verifico que el slot tenga una operacion de "=" o "<-".
-  for (auto i : newSlot.instructions) {
-    std::string operation = i.method;
-    std::string operand1 = i.operands[0];
-     if (operation == "print") {
-    if (operand1.find('\'') != std::string::npos ||
-                operand1.find('"') != std::string::npos) {
-        std::string newString = operand1.substr(1, operand1.size() - 2);
-        type = new String(newString);
-        slot_t _type_slot = newSlot;
-        /*opcode_t assignation;
-        assignation.method = "=";
-        assignation.operands = std::vector<std::string>{operand1};*/
-        newSlot.localVariables.insert(std::make_pair(operand1, type));
-        //std::vector<opcode_t> _newSlot_instructions = newSlot.instructions;
-        //newSlot.instructions = std::vector<opcode_t> { assignation };
-        /*for ( auto i : _newSlot_instructions)
-            newSlot.instructions.push_back(i);*/
-
-        type->_AddSlots(operand1, newSlot);
-    }
-  }
-  else if (operation == "=" || operation == "<-") {
-    std::string operand2 = i.operands[1];
-    if (::atof(operand2.c_str()) || (operand2 == "0" || operand2 == "0.0")) {
-        type = new Number(::atof(operand2.c_str()));
-        //slot_t _type_slot = newSlot;
-        newSlot.localVariables.insert(std::make_pair(slot_name, type));
-        type->_AddSlots(operand1, newSlot);
-    } else if (operand2.find('\'') != std::string::npos ||
-                operand2.find('"') != std::string::npos) {
-        type = new String();
-        slot_t _type_slot = newSlot;
-        _type_slot.localVariables.insert(std::make_pair(slot_name, type));
-        type->_AddSlots(operand1, _type_slot);
+  for (auto arg : args) {
+    // Verifico que args sea un objeto existente en global_objects
+    auto _it = global_objects.find(arg);
+    if (_it == global_objects.end()) {
+      type = new Object();
+      if (::atof(arg) || arg == "0" || arg == "0.0" || arg.find('\'') != std::string::npos)
+        type->setValue(arg);
+      else {
+        Object *__slot = new Object();
+        type->_AddSlots(arg, __slot, true, false);
+      }
     } else {
-        type = new Lobby();
+      type = _it->second;
     }
-    newSlot.localVariables.insert(std::make_pair(slot_name, type));
   }
-  }
-  _object->_AddSlots(slot_name, newSlot);
-  it->second = _object;
+
+  type->setCode(code);
 }
 
-void Interpreter::call(std::string name, std::string method, std::vector<Lobby*> params) {
+void Interpreter::call(std::string name, std::string method, std::vector<Object*> params) {
   // Si tiene parentesis llamar recursivamente con el contenido del parentesis
   auto it = global_objects.find(name);
 
   if (it == global_objects.end())
     throw std::runtime_error("El objeto no existe.");
 
-  Lobby *object = it->second;
-  slot_t current_slot = object->getSlot(method);
-
-
-  process(current_slot, object);
+  Object *object = it->second;
+  object->recvMessage(method, params);
 }
 
-Lobby* Interpreter::process(slot_t currentSlot, Lobby* object) {
+Object* Interpreter::process(Object* object) {
+
   std::vector<opcode_t> instructions = currentSlot.instructions;
   //Lobby* _object = object;
   for (uint32_t i = 0; i < instructions.size(); i++) {
@@ -114,14 +87,14 @@ Lobby* Interpreter::process(slot_t currentSlot, Lobby* object) {
   return object;
 }
 
-Lobby* Interpreter::process_internal(opcode_t __opcode, slot_t currentSlot, Lobby* object) {
+Object* Interpreter::process_internal(opcode_t __opcode, slot_t currentSlot, Object* object) {
 
-  Lobby* operand1;
+  Object* operand1;
 
   // Busco el primer y segundo operando en el slot actual, si no lo encuentro
   // voy al slot principal, si no emito un error
   operand1 = getOperand(__opcode.operands[0], currentSlot, object);
-  std::vector<Lobby*> vec;
+  std::vector<Object*> vec;
   for (uint32_t i = 1; i < __opcode.operands.size(); i++) {
     vec.push_back(getOperand(__opcode.operands[i], currentSlot, object));
   }
@@ -146,16 +119,16 @@ Lobby* Interpreter::process_internal(opcode_t __opcode, slot_t currentSlot, Lobb
   // busco el nombre en los metodos y tengo el puntero a la funcion que lo hace.
   // Si devuelve nullptr, llamo recursivamente sobre la lista de instrucciones
   // hasta resolver la consulta.
-  Lobby::delegate method = operand1->getMethod(__opcode.method);
+  Object::delegate method = operand1->getMethod(__opcode.method);
   if (method == nullptr) {
     return nullptr; //this->process(_slot, operand1);
   } else {
-    Lobby* ret = (operand1->*method)(vec);
+    Object* ret = (operand1->*method)(vec);
     return ret;
     }
 }
 
-Lobby* Interpreter::getOperand(std::string instr, slot_t currentSlot, Lobby* object) {
+Object* Interpreter::getOperand(std::string instr, slot_t currentSlot, Object* object) {
   auto it = currentSlot.arguments.find(instr);
   if (it == currentSlot.arguments.end()) {
     // No lo encontre en los argumentos, busco en las variables locales
@@ -166,17 +139,17 @@ Lobby* Interpreter::getOperand(std::string instr, slot_t currentSlot, Lobby* obj
       // hasta llegar al principal.
       try {
         slot_t _main_slot = object->getSlot(instr);
-        return (Lobby*)_main_slot.localVariables.find(instr)->second;
+        return (Object*)_main_slot.localVariables.find(instr)->second;
       } catch(const std::runtime_error &e) {
         std::string error1 = "No existe el slot ";
         error1 += instr;
         throw std::runtime_error(error1);
       }
     } else {
-      return (Lobby*)_local_vars_it->second;
+      return (Object*)_local_vars_it->second;
     }
   }
 
-  return (Lobby*)it->second;
+  return (Object*)it->second;
 }
 
