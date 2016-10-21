@@ -17,18 +17,26 @@
 class Object {
 public:
   typedef Object* (Object::*delegate)(const std::vector<Object*>&);
+
+  /* puntero a Object con la referencia al objeto*
+   * booleano que indica si es mutable o no
+   * booleano que indica si el objeto apuntado es un parent slot
+   */
+  typedef std::tuple<Object*, bool, bool> slot_t;
+  typedef std::map<std::string, slot_t> slot_map;
  private:
   std::string name;
   std::string internal_value;
-  // {nombre, (Object*, mutable?, parentSlot?
-  std::map<std::string, std::tuple<Object*, bool, bool> > slots;
+  slot_map slots;
   std::vector<opcode_t> instructions;
-  std::map<std::string, std::tuple<Object*, bool, bool> > getParentSlots();
 
-  std::map<std::string, std::tuple<Object*, bool, bool> > getSlots() const;
+  slot_map getParentSlots() const;
+  Object* findObject(std::string name, Object* object);
+  //slot_t findSlot(std::string name, slot_map slots);
 
  public:
   Object();
+  ~Object();
   // Constructor copia
   Object(const Object& _lobby);
   void setName(const std::string newName);
@@ -42,7 +50,8 @@ public:
   void setCode(const std::vector<opcode_t> code);
   std::vector<opcode_t> getCode() const;
 
-  Object* recvMessage(std::string message, std::vector<std::string> args);
+  Object* recvMessage(std::string objectName, std::string messageName,
+                       std::vector<opcode_t> args);
   Object* clone(const std::vector<Object*>& args);
   Object* collect();
 };

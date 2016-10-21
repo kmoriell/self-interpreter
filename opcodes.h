@@ -11,9 +11,13 @@
 #include <vector>
 #include <string>
 
-typedef struct {
-  std::string method;
-  std::vector<std::string> operands;
-} opcode_t;
+class opcode_t;
+
+class opcode_t {
+ public:
+  std::string receiver;
+  std::string message;
+  std::vector<opcode_t*> args;
+};
 
 #endif /* OPCODES_H_ */

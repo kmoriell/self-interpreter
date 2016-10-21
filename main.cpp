@@ -1,89 +1,40 @@
 #include <iostream>
 #include "interpreter.h"
-#include "number.h"
 #include "object.h"
 
 int main() {
-    slot_t square_norm;
-    opcode_t code;
-    code.operands.push_back("x");
-    code.operands.push_back("x");
-    code.method = "*";
+  /*
+   *  void addSlot(std::string object, std::string slot_name, std::vector<std::string> args, bool _mutable,
+   std::vector<opcode_t> code);
+   */
 
-    opcode_t _code;
-    _code.operands.push_back("y");
-    _code.operands.push_back("y");
-    _code.method = "*";
+  Interpreter interpreter;
+  interpreter.createObject("punto");
+  std::vector<std::string> args;
+  // Creo el slot x
+  std::vector<opcode_t> slot_punto1;
 
-    opcode_t __code;
-    __code.operands.push_back("x");
-    __code.operands.push_back("y");
-    __code.method = "+";
+  opcode_t punto1;
+  punto1.receiver = "0";
 
-    std::vector<opcode_t> instructions;
-    instructions.push_back(code);
-    instructions.push_back(_code);
-    instructions.push_back(__code);
-    square_norm.instructions =instructions;
+  slot_punto1.push_back(punto1);
 
-    // slot x <- 0
-    slot_t slot_x;
-    opcode_t mutable1;
-    mutable1.method = "<-";
-    mutable1.operands = std::vector<std::string> { "x", "0"};
+  // Creo el slot y
+  std::vector<opcode_t> slot_y;
 
-    slot_x.instructions = std::vector<opcode_t> {mutable1};
+  opcode_t y_code;
+  y_code.receiver = "1";
 
-    // slot y <- 1
-    slot_t slot_y;
-    opcode_t mutable2;
-    mutable2.method = "<-";
-    mutable2.operands = std::vector<std::string> { "y", "1"};
-    slot_y.instructions = std::vector<opcode_t> {mutable2};
+  slot_y.push_back(y_code);
 
-    // pruebo un print
-    slot_t slot_print;
-    opcode_t _print;
-    _print.method = "print";
-    _print.operands = std::vector<std::string> { "'hola mundo'"};
-    slot_print.instructions = std::vector<opcode_t> {_print};
+  interpreter.addSlot("punto", "x", args, true, slot_punto1);
+  interpreter.addSlot("punto", "y", args, true, slot_y);
 
-    // pruebo overraidear print de punto
-    slot_t slot_punto_print;
-    opcode_t _punto_print1;
-    _punto_print1.method = "print";
-    _punto_print1.operands = std::vector<std::string> { "'('"};
+  std::vector<opcode_t> parameters;
+  opcode_t print;
+  print.message = "print";
 
-    opcode_t _punto_print2;
-    _punto_print2.method = "print";
-    _punto_print2.operands = std::vector<std::string> { "x"};
+  interpreter.call("punto", "x", parameters);
 
-    opcode_t _punto_print3;
-    _punto_print3.method = "print";
-    _punto_print3.operands = std::vector<std::string> { "';'"};
-
-    opcode_t _punto_print4;
-    _punto_print4.method = "print";
-    _punto_print4.operands = std::vector<std::string> { "y"};
-
-    opcode_t _punto_print5;
-    _punto_print5.method = "print";
-    _punto_print5.operands = std::vector<std::string> { "')'"};
-
-    slot_punto_print.instructions = std::vector<opcode_t> {_punto_print1, _punto_print2,
-    _punto_print3, _punto_print4, _punto_print5};
-
-
-    Interpreter interpreter;
-    interpreter.createObject("punto");
-    interpreter.addSlot("punto", "square_norm", square_norm);
-    interpreter.addSlot("punto", "x", slot_x);
-    interpreter.addSlot("punto", "y", slot_y);
-    interpreter.addSlot("punto", "print", slot_punto_print);
-    std::vector<Object*> parameters;
-    // TODO: no esta clonando los atributos.
-    interpreter.call("punto", "square_norm", parameters);
-    interpreter.call("punto", "print", parameters);
-
-    return 0;
+  return 0;
 }
