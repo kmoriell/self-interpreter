@@ -1,6 +1,7 @@
 #include "object.h"
 
 #include <map>
+#include <iostream>
 
 Object::Object() {
   this->name = "object";
@@ -75,7 +76,7 @@ Object* Object::findObject(std::string name, Object* object) {
     // Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
     if (parentsFound.size() != 1) {
       std::string error = "Objeto ";
-      error += this->name + " no encontrado.";
+      error += name + " no encontrado.";
       throw std::runtime_error(error);
     }
     return parentsFound[0];
@@ -85,30 +86,40 @@ Object* Object::findObject(std::string name, Object* object) {
 }
 
 /*slot_t Object::findSlot(std::string name, slot_map slots) {
-  auto it = slots.find(name);
-  if (it == slots.end()) {
-    // Entonces busco en los slots del parent slot
-    slot_map parentSlots = getParentSlots();
-    std::vector<slot_t> parentsFound;
+ auto it = slots.find(name);
+ if (it == slots.end()) {
+ // Entonces busco en los slots del parent slot
+ slot_map parentSlots = getParentSlots();
+ std::vector<slot_t> parentsFound;
 
-    for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
-      slot_t parent = findSlot(name, _it->second);
-      parentsFound.push_back(parent);
-    }
+ for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
+ slot_t parent = findSlot(name, _it->second);
+ parentsFound.push_back(parent);
+ }
 
-    // Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
-    if (parentsFound.size() != 1) {
-      std::string error = "Slot ";
-      error += this->name + " no encontrado.";
-      throw std::runtime_error(error);
-    }
-    return parentsFound[0];
-  } else {
-    return it->second;
-  }
-}*/
+ // Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
+ if (parentsFound.size() != 1) {
+ std::string error = "Slot ";
+ error += this->name + " no encontrado.";
+ throw std::runtime_error(error);
+ }
+ return parentsFound[0];
+ } else {
+ return it->second;
+ }
+ }*/
 
 Object* Object::recvMessage(std::string objectName, std::string messageName,
+                            std::vector<opcode_t> args) {
+  Object* object = findObject(objectName, this);
+
+  if (messageName == "")
+    return object;
+
+  return recvMessage(object, messageName, args);
+}
+
+Object* Object::recvMessage(Object* object, std::string messageName,
                             std::vector<opcode_t> args) {
   /*// Reviso en los slots del objeto si existe el mensaje
    auto it = object->slots.find(message);
@@ -132,11 +143,72 @@ Object* Object::recvMessage(std::string objectName, std::string messageName,
 
    } else {*/
 
-
   // Aca tengo mi puntero a objeto, lo que tendria que hacer es ejecutar el codigo
   // del mensaje
   //Object* foundObject = std::get < 0 > (it->second);
-  Object* object = findObject(objectName, this);
+  if (messageName == "")
+    return object;
+
+  if (messageName == "print") {
+    std::cout << object->internal_value;
+    return object;
+  } else if (messageName == "+") {
+    std::vector<opcode_t> _arguments;
+    for (auto _arg : args[0].args)
+      _arguments.push_back(*_arg);
+
+    Object* _operand = this->recvMessage(args[0].receiver, args[0].message,
+                                         _arguments);
+    std::string _operandValue = _operand->internal_value;
+    float _operandValuef = ::atof(_operandValue.c_str());
+    float internalValuef = ::atof(object->internal_value.c_str());
+    Object* _returnValue = new Object;
+
+    if (_operandValuef || _operandValue == "0" || _operandValue == "0.0")
+      if (internalValuef || object->internal_value == "0" || object->internal_value == "0.0") {
+        float _value_ = _operandValuef + internalValuef;
+        _returnValue->internal_value = std::to_string(_value_);
+        return _returnValue;
+      }
+      else {
+        delete _returnValue;
+        throw std::runtime_error("Mensaje + desconocido");
+      }
+    else {
+      delete _returnValue;
+      throw std::runtime_error("Mensaje + desconocido");
+    }
+  } else if (messageName == "-") {
+  } else if (messageName == "*") {
+    std::vector<opcode_t> _arguments;
+    for (auto _arg : args[0].args)
+      _arguments.push_back(*_arg);
+
+    Object* _operand = this->recvMessage(args[0].receiver, args[0].message,
+                                         _arguments);
+    std::string _operandValue = _operand->internal_value;
+    float _operandValuef = ::atof(_operandValue.c_str());
+    float internalValuef = ::atof(object->internal_value.c_str());
+    Object* _returnValue = new Object;
+
+    if (_operandValuef || _operandValue == "0" || _operandValue == "0.0")
+      if (internalValuef || object->internal_value == "0" || object->internal_value == "0.0") {
+        float _value_ = _operandValuef * internalValuef;
+        _returnValue->internal_value = std::to_string(_value_);
+        return _returnValue;
+      }
+      else {
+        delete _returnValue;
+        throw std::runtime_error("Mensaje * desconocido");
+      }
+    else {
+      delete _returnValue;
+      throw std::runtime_error("Mensaje * desconocido");
+    }
+
+  } else if (messageName == "/") {
+  }
+
   Object* message = findObject(messageName, object);
   //slot_t message = findSlot(messageName, object->slots);
 
@@ -162,36 +234,39 @@ Object* Object::recvMessage(std::string objectName, std::string messageName,
     }
   }
 
+  Object *result;
   // Ejecuto las instrucciones de codigo que tiene el slot devuelto
   for (auto instr : message->instructions) {
     std::string recv = instr.receiver;
     Object *receiver;
 
-    if (::atof(recv.c_str()) || recv == "0" || recv == "0.0" || recv.find('\'') != std::string::npos) {
-      receiver = new Object();
-      receiver->setValue(recv);
+    if (::atof(recv.c_str()) || recv == "0" || recv == "0.0"
+        || recv.find('\'') != std::string::npos) {
       auto object_slots_it = this->slots.find(messageName);
 
       bool __isMutable = std::get < 1 > (object_slots_it->second);
-          std::string slotName = object_slots_it->first;
-          if (__isMutable) {
-            auto actual_value = object_slots_it->second;
-            std::get < 0 > (actual_value) = receiver;
-            object_slots_it->second = actual_value;
-          }
+      std::string slotName = object_slots_it->first;
+      if (__isMutable) {
+        auto actual_value = object_slots_it->second;
+        ((Object*) std::get < 0 > (actual_value))->setValue(recv);
+        result = (Object*) std::get < 0 > (actual_value);
+        object_slots_it->second = actual_value;
+      }
 
     } else {
-      receiver = findObject(instr.receiver, this);
+      if (instr.receiver == "")
+        receiver = result;
+      else
+        receiver = findObject(instr.receiver, this);
 
-    std::vector<opcode_t> _arguments;
-    for (auto _arg : instr.args)
-      _arguments.push_back(*_arg);
+      std::vector<opcode_t> _arguments;
+      for (auto _arg : instr.args)
+        _arguments.push_back(*_arg);
 
-    this->recvMessage(instr.receiver, instr.message, _arguments);
+      result = this->recvMessage(receiver, instr.message, _arguments);
     }
   }
 
-  Object *result;
   for (auto arg : args) {
     Object *receiver;
     if (arg.receiver == "") {
@@ -204,7 +279,7 @@ Object* Object::recvMessage(std::string objectName, std::string messageName,
     for (auto _arg : arg.args)
       _arguments.push_back(*_arg);
 
-    result = this->recvMessage(arg.receiver, arg.message, _arguments);
+    result = this->recvMessage(receiver, arg.message, _arguments);
   }
 
   if (args.size() > 0)

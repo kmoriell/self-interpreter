@@ -66,7 +66,5 @@ void Interpreter::call(std::string name, std::string message, std::vector<opcode
     throw std::runtime_error("El objeto no existe.");
 
   Object *object = it->second;
-  //object->recvMessage(name, message, args);
-
-  std::cout << object->recvMessage(name, message, args)->getValue() << std::endl;
+  object->recvMessage(name, message, args);
 }

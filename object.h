@@ -32,6 +32,8 @@ public:
 
   slot_map getParentSlots() const;
   Object* findObject(std::string name, Object* object);
+  Object* recvMessage(Object* object, std::string messageName,
+                              std::vector<opcode_t> args);
   //slot_t findSlot(std::string name, slot_map slots);
 
  public:
