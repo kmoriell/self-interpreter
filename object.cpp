@@ -26,10 +26,6 @@ std::string Object::getName() const {
   return this->name;
 }
 
-void Object::setValue(const std::string newValue) {
-  this->internal_value = newValue;
-}
-
 void Object::_AddSlots(std::string name, Object* obj, bool _mutable,
                        bool isParentSlot) {
   this->slots.insert(
@@ -48,12 +44,12 @@ Object* Object::clone(const std::vector<Object *> &args) {
   return new Object(*this);
 }
 
-std::vector<opcode_t> Object::getCode() const {
-  return this->instructions;
+std::string Object::getCodeSegment() const {
+  return this->codeSegment;
 }
 
-void Object::setCode(const std::vector<opcode_t> code) {
-  this->instructions = code;
+void Object::setCodeSegment(const std::string code) {
+  this->codeSegment = code;
 }
 
 Object* Object::findObject(std::string name, Object* object) {
@@ -109,7 +105,7 @@ Object* Object::findObject(std::string name, Object* object) {
  }
  }*/
 
-Object* Object::recvMessage(std::string objectName, std::string messageName,
+/*Object* Object::recvMessage(std::string objectName, std::string messageName,
                             std::vector<opcode_t> args) {
   Object* object = findObject(objectName, this);
 
@@ -117,10 +113,10 @@ Object* Object::recvMessage(std::string objectName, std::string messageName,
     return object;
 
   return recvMessage(object, messageName, args);
-}
+}*/
 
 Object* Object::recvMessage(Object* object, std::string messageName,
-                            std::vector<opcode_t> args) {
+                            std::vector<Object*> args) {
   /*// Reviso en los slots del objeto si existe el mensaje
    auto it = object->slots.find(message);
    if (it == object->slots.end()) {
@@ -146,68 +142,6 @@ Object* Object::recvMessage(Object* object, std::string messageName,
   // Aca tengo mi puntero a objeto, lo que tendria que hacer es ejecutar el codigo
   // del mensaje
   //Object* foundObject = std::get < 0 > (it->second);
-  if (messageName == "")
-    return object;
-
-  if (messageName == "print") {
-    std::cout << object->internal_value;
-    return object;
-  } else if (messageName == "+") {
-    std::vector<opcode_t> _arguments;
-    for (auto _arg : args[0].args)
-      _arguments.push_back(*_arg);
-
-    Object* _operand = this->recvMessage(args[0].receiver, args[0].message,
-                                         _arguments);
-    std::string _operandValue = _operand->internal_value;
-    float _operandValuef = ::atof(_operandValue.c_str());
-    float internalValuef = ::atof(object->internal_value.c_str());
-    Object* _returnValue = new Object;
-
-    if (_operandValuef || _operandValue == "0" || _operandValue == "0.0")
-      if (internalValuef || object->internal_value == "0" || object->internal_value == "0.0") {
-        float _value_ = _operandValuef + internalValuef;
-        _returnValue->internal_value = std::to_string(_value_);
-        return _returnValue;
-      }
-      else {
-        delete _returnValue;
-        throw std::runtime_error("Mensaje + desconocido");
-      }
-    else {
-      delete _returnValue;
-      throw std::runtime_error("Mensaje + desconocido");
-    }
-  } else if (messageName == "-") {
-  } else if (messageName == "*") {
-    std::vector<opcode_t> _arguments;
-    for (auto _arg : args[0].args)
-      _arguments.push_back(*_arg);
-
-    Object* _operand = this->recvMessage(args[0].receiver, args[0].message,
-                                         _arguments);
-    std::string _operandValue = _operand->internal_value;
-    float _operandValuef = ::atof(_operandValue.c_str());
-    float internalValuef = ::atof(object->internal_value.c_str());
-    Object* _returnValue = new Object;
-
-    if (_operandValuef || _operandValue == "0" || _operandValue == "0.0")
-      if (internalValuef || object->internal_value == "0" || object->internal_value == "0.0") {
-        float _value_ = _operandValuef * internalValuef;
-        _returnValue->internal_value = std::to_string(_value_);
-        return _returnValue;
-      }
-      else {
-        delete _returnValue;
-        throw std::runtime_error("Mensaje * desconocido");
-      }
-    else {
-      delete _returnValue;
-      throw std::runtime_error("Mensaje * desconocido");
-    }
-
-  } else if (messageName == "/") {
-  }
 
   Object* message = findObject(messageName, object);
   //slot_t message = findSlot(messageName, object->slots);
@@ -227,63 +161,18 @@ Object* Object::recvMessage(Object* object, std::string messageName,
     bool __isMutable = std::get < 1 > (object_slots_it->second);
     std::string slotName = object_slots_it->first;
     if (slotName[0] == ':' && __isMutable) {
-      std::string argValueToCopy = args[i].message;
-      ((Object*) std::get < 0 > (object_slots_it->second))->setValue(
-          argValueToCopy);
+      slot_t tupla = object_slots_it->second;
+
+      Object *__object = ((Object*) std::get < 0 > (tupla));
+      delete __object;
+      __object = args[i];
+      std::get < 0 > (tupla) = __object;
+
+      // actualizo el valor del mapa
+      object_slots_it->second = tupla;
       i++;
     }
   }
-
-  Object *result;
-  // Ejecuto las instrucciones de codigo que tiene el slot devuelto
-  for (auto instr : message->instructions) {
-    std::string recv = instr.receiver;
-    Object *receiver;
-
-    if (::atof(recv.c_str()) || recv == "0" || recv == "0.0"
-        || recv.find('\'') != std::string::npos) {
-      auto object_slots_it = this->slots.find(messageName);
-
-      bool __isMutable = std::get < 1 > (object_slots_it->second);
-      std::string slotName = object_slots_it->first;
-      if (__isMutable) {
-        auto actual_value = object_slots_it->second;
-        ((Object*) std::get < 0 > (actual_value))->setValue(recv);
-        result = (Object*) std::get < 0 > (actual_value);
-        object_slots_it->second = actual_value;
-      }
-
-    } else {
-      if (instr.receiver == "")
-        receiver = result;
-      else
-        receiver = findObject(instr.receiver, this);
-
-      std::vector<opcode_t> _arguments;
-      for (auto _arg : instr.args)
-        _arguments.push_back(*_arg);
-
-      result = this->recvMessage(receiver, instr.message, _arguments);
-    }
-  }
-
-  for (auto arg : args) {
-    Object *receiver;
-    if (arg.receiver == "") {
-      receiver = result;
-    } else {
-      // Poner rutina que me devuelva el objeto
-      receiver = findObject(arg.receiver, this);
-    }
-    std::vector<opcode_t> _arguments;
-    for (auto _arg : arg.args)
-      _arguments.push_back(*_arg);
-
-    result = this->recvMessage(receiver, arg.message, _arguments);
-  }
-
-  if (args.size() > 0)
-    message = result;
 
   return message;
 }
@@ -295,8 +184,4 @@ std::map<std::string, std::tuple<Object*, bool, bool> > Object::getParentSlots()
       parentSlots.insert(std::make_pair(it->first, it->second));
   }
   return parentSlots;
-}
-
-std::string Object::getValue() const {
-  return this->internal_value;
 }

@@ -12,7 +12,7 @@
 #include <stdexcept>
 #include <map>
 #include <tuple>
-#include "opcodes.h"
+#include <vector>
 
 class Object {
 public:
@@ -26,14 +26,13 @@ public:
   typedef std::map<std::string, slot_t> slot_map;
  private:
   std::string name;
-  std::string internal_value;
   slot_map slots;
-  std::vector<opcode_t> instructions;
+  std::string codeSegment;
 
   slot_map getParentSlots() const;
   Object* findObject(std::string name, Object* object);
-  Object* recvMessage(Object* object, std::string messageName,
-                              std::vector<opcode_t> args);
+  /*Object* recvMessage(Object* object, std::string messageName,
+                              std::vector<opcode_t> args);*/
   //slot_t findSlot(std::string name, slot_map slots);
 
  public:
@@ -46,14 +45,11 @@ public:
   void _AddSlots(std::string name, Object* obj, bool _mutable, bool isParentSlot);
   void _RemoveSlots(std::string name);
 
-  void setValue(const std::string newValue);
-  std::string getValue() const;
+  void setCodeSegment(const std::string code);
+  std::string getCodeSegment() const;
 
-  void setCode(const std::vector<opcode_t> code);
-  std::vector<opcode_t> getCode() const;
-
-  Object* recvMessage(std::string objectName, std::string messageName,
-                       std::vector<opcode_t> args);
+  Object* recvMessage(Object* object, std::string messageName,
+                              std::vector<Object*> args);
   Object* clone(const std::vector<Object*>& args);
   Object* collect();
 };

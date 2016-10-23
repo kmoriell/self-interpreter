@@ -1,92 +1,156 @@
-/*
- * parser.cpp
- *
- *  Created on: 14 de oct. de 2016
- *      Author: kmoriell
- */
-
 #include "parser.h"
-#include "opcodes.h"
-//#include "interpreter.h"
-#include <sstream>
+#include "object.h"
+#include <vector>
+#include <tuple>
 
-void Parser::parseText(std::string text) {
-  std::istringstream iss(text);
-  std::string object;
-  std::string method_name;
-  std::string x, instructions;
+const int KEYWORD_MESSAGE = 0;
+const int BINARY_MESSAGE = 1;
+const int UNARY_MESSAGE = 2;
+const int EXPRESSION_CP = 3;
+const int EXPRESSION_P = 4;
+const int CONSTANT = 5;
+const int NUMBER = 6;
+const int STRING = 7;
+const int NIL = 8;
+const int NAME = 9;
+const int OBJECT = 10;
 
-  iss >> std::noskipws;
-  iss >> std::ws >> object >> std::ws >> method_name;
+Object* Parser::script(std::string strScript) {
+	std::vector<std::string> strExpressions;
+	Object* obj = nullptr;
 
-  while (iss >> std::skipws >> x) {
-    instructions += x;
-  }
+	//Parseo que genera el strExpressions
 
+	for (auto strExpression : strExpressions) {
+		//Sacamos el . del final
+		strExpression = strExpression.substr(0, strExpression.size()-1);
+		obj = expression(strExpression);
+	}
+	return obj;
 }
 
-void Parser::parseInstructions(std::string instructions) {
-  std::istringstream iss(instructions);
-  std::string x;
-  std::string name;
-  std::string line;
+Object* Parser::expression(std::string strExpression) {
+	Object* obj = nullptr;
+	int tipoExpression = 0;
+	std::string strReceiver;
 
-  while (iss >> std::skipws >> x) {
-    if (x == "(") {
-      openParenthesis = true;
-      parenthesisCount++;
-      line += x;
-    } else if (x == "|") {
-      pipesCount++;
-      line += x;
-    } else if (x == "=") {
-      continue;
-    } else {
-      name = x;
-    }
-  }
+	std::string lower_keyword, strExpressionCP, name, operador;
+	std::vector< std::tuple<std::string, std::string> > vTuple;
+
+	//Parseo ti
+
+	switch (tipoExpression) {
+		case 0:
+			//obj = keywordMessage(expresionCP(strReceiver), lower_keyword, expressionCP(strExpressionCP), vTuple);
+			break;
+		case BINARY_MESSAGE:
+			//obj = binaryMessage(expressionCP(strReceiver), operador, strExpressionCP);
+			break;
+		case UNARY_MESSAGE:
+			obj = unaryMessage(expressionCP(strReceiver), name);
+			break;
+		case EXPRESSION_CP:
+			obj = expressionCP(strExpressionCP);
+			break;
+	}
+	return obj;
 }
 
-void Parser::processAtom(std::string atom) {
-  // traduzco por ejemplo: (x * x) + (y * y)
-  std::istringstream iss(atom);
-  std::string::size_type start, end;
-  std::string operand, x;
-  char sep;
+Object* Parser::expressionCP(std::string strExpressionCP) {
+	int tipoExpressionCP = 0;
+	Object* obj = nullptr;
 
-  if ((start = atom.find('(')) != std::string::npos) {
-    // Entonces tiene un parentesis
-    if ((end = atom.find('(', start)) != std::string::npos) {
-      std::string _atom = atom.substr(start + 1, atom.size() - end);
-      processAtom(_atom);
-    }
-  } else {
-    // Ya se que no tiene parentesis
+	//Parseo..
 
-    // Pongo todos los operandos en un vector de strings,
-    // el primero es el que recibe el mensaje.
-    // Si tiene 2 elementos es un mensaje unario
-    // Si tiene 3 elementos es un mensaje binario
-    // Si tiene mas de 3 es un mensaje n-ario.
-    std::vector<std::string> operands;
-    while (iss >> std::skipws >> x) {
-      operands.push_back(x);
-    }
-    uint32_t countOfElements = operands.size();
-    if (countOfElements == 2) {
-      // Mensaje unario
-      opcode_t oper;
-      oper.oper = CALL;
-      oper.operands.push_back(operands[1]);
-    } else if (countOfElements == 3) {
-      opcode_t oper;
-      Lobby *_oper1 = new Lobby(operands[0]);
-      Lobby *_oper2 = new Lobby(operands[2]);
-      oper.oper = operands[1];
-      oper.operands.push_back(_oper1);
-      oper.operands.push_back(_oper2);
-    }
-  }
-
+	switch (tipoExpressionCP) {
+		case EXPRESSION_P:
+		{
+			//Sacamos los ( )
+			std::string strExpressionP = strExpressionCP.substr(1, strExpressionCP.size()-2);
+			obj = expression(strExpressionP);
+			break;
+		}
+		case CONSTANT:
+		{
+			std::string strConstant = strExpressionCP;
+			obj = constant(strConstant);
+			break;
+		}
+	}
+	return obj;
 }
 
+Object* Parser::constant(std::string strConstant) {
+	int tipoConstant = 10;
+	Object* obj = nullptr;
+
+	//Parseo...
+
+	switch (tipoConstant) {
+		case NUMBER:
+		{
+			std::string strNumber = strConstant;
+			//obj = number(strNumber);
+			break;
+		}
+		case STRING:
+		{
+			std::string strString = strConstant;
+			obj = stringObj(strString);
+			break;
+		}
+		case NIL:
+			//obj = nil();
+			break;
+		case NAME:
+			//Hay que hacer un lookup y devolver el objeto encontrado
+			break;
+		case OBJECT:
+		{
+			std::string strObject = strConstant;
+			//obj = object(strObject);
+			break;
+		}
+	}
+	return obj;
+}
+
+Object* Parser::unaryMessage(Object* receiver, std::string name) {
+
+  Object* message = receiver->recvMessage(receiver, name, std::vector< Object* > {});
+	//message = (|*print|)
+	return message;
+	//estoy retornando (||'hola'.)
+}
+
+Object* Parser::stringObj(std::string strString) {
+	//parsing strObject...
+	//parsing "(||3.)"...
+	//vSlotList = ""; //Aca hay que parsear y devolver un vector todo lo que esta entre los dos || que termina en .
+	Object *stringObj = new Object();
+	stringObj->setCodeSegment(strString);
+
+	return stringObj;
+}
+
+/*
+main() {
+	std::string strScript = ... obtiene archivo;
+	Object* object = script(strScript);
+	script(object->getCodeSegment());
+}
+
+std::string number(std::string strNumber) {
+	//parsing strNumber...
+	//parsing "3"...
+	//vSlotList = ""; //Aca hay que parsear y devolver un vector todo lo que esta entre los dos || que termina en .
+	slotList(vSlotList);
+	strScript = "3." //se parseo hasta que quedo script
+}
+
+Object* string(std::string strString) {
+	Object* object = new Object();
+	object->setCodeSegment(strString);
+	return object;
+	//Aca creamos un objeto (||'hola'.)
+}*/

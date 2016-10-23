@@ -1,25 +1,17 @@
-/*
- * parser.h
- *
- *  Created on: 14 de oct. de 2016
- *      Author: kmoriell
- */
-
 #ifndef PARSER_H_
 #define PARSER_H_
 
 #include <string>
+#include "object.h"
 
 class Parser {
- private:
-  void parseInstructions(std::string instructions);
-  void processAtom(std::string atom);
-
- public:
-  void parseText(std::string text);
+public:
+	Object* script(std::string strScript);
+	Object* expression(std::string strExpression);
+	Object* expressionCP(std::string strExpressionCP);
+	Object* constant(std::string strConstant);
+	Object* unaryMessage(Object* receiver, std::string name);
+	Object* stringObj(std::string strString);
 };
-
-
-
 
 #endif /* PARSER_H_ */
