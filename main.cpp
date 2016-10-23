@@ -2,5 +2,9 @@
 #include "parser.h"
 
 int main() {
-  return 0;
+	Parser parser;
+	//Object *msg = parser.script("'hola' print.");
+	Object *msg = parser.script("'nil'.");
+	msg->mostrar();
+	return 0;
 }

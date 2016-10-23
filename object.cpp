@@ -27,9 +27,17 @@ std::string Object::getName() const {
 }
 
 void Object::_AddSlots(std::string name, Object* obj, bool _mutable,
-                       bool isParentSlot) {
+                       bool isParentSlot, bool isNative) {
+	/*delegate _delegate;
+
+	if (isNative) {
+		_delegate = &Object::print;
+		void *pointer = _delegate;
+		Object* (*func)(const std::vector<Object*>&) = (Object*(*)(const std::vector<Object*>&))message;
+	}*/
+
   this->slots.insert(
-      std::make_pair(name, std::make_tuple(obj, _mutable, isParentSlot)));
+      std::make_pair(name, std::make_tuple(obj, _mutable, isParentSlot,isNative)));
 }
 
 void Object::_RemoveSlots(std::string name) {
@@ -52,7 +60,7 @@ void Object::setCodeSegment(const std::string code) {
   this->codeSegment = code;
 }
 
-Object* Object::findObject(std::string name, Object* object) {
+bool Object::findObject(std::string name, Object* object, Object* &messsage) {
   if (name == object->name)
     return object;
 
@@ -65,7 +73,8 @@ Object* Object::findObject(std::string name, Object* object) {
 
     for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
       Object *_temp = (Object*) std::get < 0 > (_it->second);
-      Object *parent = findObject(name, _temp);
+      Object *parent;
+      findObject(name, _temp, parent);
       parentsFound.push_back(parent);
     }
 
@@ -77,7 +86,8 @@ Object* Object::findObject(std::string name, Object* object) {
     }
     return parentsFound[0];
   } else {
-    return (Object*) std::get < 0 > (it->second);
+	  messsage = std::get < 0 > (it->second);
+	  return std::get < 3 > (it->second);
   }
 }
 
@@ -143,7 +153,14 @@ Object* Object::recvMessage(Object* object, std::string messageName,
   // del mensaje
   //Object* foundObject = std::get < 0 > (it->second);
 
-  Object* message = findObject(messageName, object);
+ Object* message;
+ if (findObject(messageName, object, message)) {
+	 //ejecuto message;
+	 Object* (*func)(const std::vector<Object*>&) = (Object*(*)(const std::vector<Object*>&))message;
+	 //delegate method = reinterpret_cast<delegate>(message);
+
+	 return (func)(args);
+ }
   //slot_t message = findSlot(messageName, object->slots);
 
   // Una vez que tengo el objeto, necesito los argumentos, si es que tiene
@@ -177,11 +194,21 @@ Object* Object::recvMessage(Object* object, std::string messageName,
   return message;
 }
 
-std::map<std::string, std::tuple<Object*, bool, bool> > Object::getParentSlots() const {
-  std::map<std::string, std::tuple<Object*, bool, bool> > parentSlots;
+Object::slot_map Object::getParentSlots() const {
+  slot_map parentSlots;
   for (auto it = slots.begin(); it != slots.end(); ++it) {
     if (std::get < 2 > (it->second))
       parentSlots.insert(std::make_pair(it->first, it->second));
   }
   return parentSlots;
+}
+
+Object* Object::print(const std::vector<Object*>&) {
+	std::cout << codeSegment << std::endl;
+	return this;
+}
+
+void Object::mostrar() {
+	std::cout << "Nombre objeto: " << name << std::endl;
+	std::cout << "Code Segment: " << std::endl << codeSegment << std::endl;
 }

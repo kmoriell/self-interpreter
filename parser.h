@@ -12,6 +12,7 @@ public:
 	Object* constant(std::string strConstant);
 	Object* unaryMessage(Object* receiver, std::string name);
 	Object* stringObj(std::string strString);
+	Object* nilObj();
 };
 
 #endif /* PARSER_H_ */
