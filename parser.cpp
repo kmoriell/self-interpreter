@@ -142,6 +142,12 @@ Object* Parser::stringObj(std::string strString) {
 
 Object* Parser::nilObj() {
 	Object *obj = new Object();
+	obj->setName("nil");
+
+	Object *objTmp = new Object();
+	objTmp->setName("pepito");
+	objTmp->setCodeSegment("'pepito' print.");
+	obj->_AddSlots("metodo0", objTmp, true, false, false);
 	return obj;
 }
 
