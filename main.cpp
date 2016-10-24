@@ -5,6 +5,6 @@ int main() {
 	Parser parser;
 	Object *msg = parser.script("'hola' print.");
 	//Object *msg = parser.script("'nil'.");
-	msg->mostrar();
+	msg->mostrar("lobby");
 	return 0;
 }

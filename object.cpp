@@ -208,7 +208,7 @@ Object::slot_map Object::getParentSlots() const {
 	return parentSlots;
 }
 
-void Object::mostrar() {
+/*void Object::mostrar() {
 	std::cout << std::endl;
 	std::cout << "Nombre objeto: " << name << std::endl;
 	std::cout << "Direccion objeto: " << this << std::endl;
@@ -235,7 +235,54 @@ void Object::mostrar() {
 			std::cout << "El Slot no apunta a ningun objeto." << std::endl;
 		nSlot++;
 	}
+}*/
+
+void Object::mostrar(std::string slotContenedor) {
+	std::cout << std::endl;
+	std::cout << "SlotContenedor: " << slotContenedor;
+	std::cout << " | &Obj: " << this << std::endl;
+	std::cout << "(|";
+
+	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
+		std::string slotName = _it->first;
+		std::cout << slotName << std::endl;
+		slot_t slot = _it->second;
+		std::cout << " " << slotName;
+
+		bool esMutable = std::get < 1 > (slot);
+		bool esParent = std::get < 2 > (slot);
+		//std::cout << "# Slot: " << nSlot << std::endl;
+		if (esMutable)
+			std::cout << " <- ";
+		else
+			std::cout << " = ";
+		//std::cout << "Es parent? " << esParent << std::endl;
+		std::cout << ".";
+	}
+
+	for (auto _it = nativeMethods.begin(); _it != nativeMethods.end(); ++_it) {
+		std::string slotNameNative = _it->first;
+		fpointTuple tuple = _it->second;
+		if (std::get < 1 > (tuple))
+			std::cout << " <" << slotNameNative << ">.";
+	}
+
+	std::cout << " | ";
+	std::cout << codeSegment << " )" << std::endl;
+	std::cout << std::endl;
+
+	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
+		std::string slotName = _it->first;
+		slot_t slot = _it->second;
+		Object* dirObj;
+		dirObj = (Object*) std::get < 0 > (slot);
+		if (dirObj != nullptr)
+			dirObj->mostrar(slotName);
+		else
+			std::cout << "ERROR: El Slot no apunta a ningun objeto." << std::endl;
+	}
 }
+
 void Object::enableNativeMethod(Object* object, std::string methodName) {
     auto fpoint = object->nativeMethods.find(methodName);
     if (fpoint == object->nativeMethods.end()) {

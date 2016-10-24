@@ -66,7 +66,8 @@ public:
   Object* operator-(const std::vector<Object*>& args);
   Object* operator/(const std::vector<Object*>& args);
 
-  void mostrar();
+ // void mostrar();
+  void mostrar(std::string slotContenedor);
 
   void enableNativeMethod(Object* object, std::string methodName);
   void disableNativeMethod(Object* object, std::string methodName);

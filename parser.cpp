@@ -2,6 +2,7 @@
 #include "object.h"
 #include <vector>
 #include <tuple>
+#include <regex>
 
 const int KEYWORD_MESSAGE = 0;
 const int BINARY_MESSAGE = 1;
