@@ -40,12 +40,12 @@ Object* Parser::expression(std::string strExpression) {
 	std::vector<std::tuple<std::string, std::string> > vTuple;
 
 	//Parseo ti
-	//tipoExpression = UNARY_MESSAGE; //todo
-	//strReceiver = "'hola'"; //todo
-	//name = "print"; //todo
+	tipoExpression = UNARY_MESSAGE; //todo
+	strReceiver = "'hola'"; //todo
+	name = "print"; //todo
 
-	tipoExpression = EXPRESSION_CP; //todo
-	strExpressionCP = "'nil'"; //todo
+	//tipoExpression = EXPRESSION_CP; //todo
+	//strExpressionCP = "'nil'"; //todo
 
 	switch (tipoExpression) {
 	case 0:
@@ -93,8 +93,8 @@ Object* Parser::constant(std::string strConstant) {
 	Object* obj = nullptr;
 
 	//Parseo...
-	//tipoConstant = STRING; //todo
-	tipoConstant = NIL; //todo
+	tipoConstant = STRING; //todo
+	//tipoConstant = NIL; //todo
 
 	switch (tipoConstant) {
 	case NUMBER: {
@@ -135,7 +135,7 @@ Object* Parser::stringObj(std::string strString) {
 	obj->setCodeSegment(strString);
 
 	//TODO: agregar slot para print.
-	obj->_AddSlots("print", nullptr, false, false, true);
+	obj->enableNativeMethod(obj, "print");
 
 	return obj;
 }
@@ -147,7 +147,7 @@ Object* Parser::nilObj() {
 	Object *objTmp = new Object();
 	objTmp->setName("pepito");
 	objTmp->setCodeSegment("'pepito' print.");
-	obj->_AddSlots("metodo0", objTmp, true, false, false);
+	obj->_AddSlots("metodo0", objTmp, true, false);
 	return obj;
 }
 

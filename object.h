@@ -23,16 +23,18 @@ public:
    * booleano que indica si el objeto apuntado es un parent slot
    * booleano que indica si esta implementado nativamente
    */
-  typedef std::tuple<Object*, bool, bool, bool> slot_t;
+  typedef std::tuple<Object*, bool, bool> slot_t;
   typedef std::map<std::string, slot_t> slot_map;
+  typedef std::tuple<delegate, bool> fpointTuple;
  private:
   std::string name;
   slot_map slots;
   std::string codeSegment;
+  std::map<std::string, fpointTuple> nativeMethods;
 
   slot_map getParentSlots() const;
   //Object* findObject(std::string name, Object* object);
-  bool findObject(std::string name, Object* object, Object* &messsage);
+  Object* findObject(std::string name, Object* object);
 
   /*Object* recvMessage(Object* object, std::string messageName,
                               std::vector<opcode_t> args);*/
@@ -46,7 +48,7 @@ public:
   void setName(const std::string newName);
   std::string getName() const;
   void _AddSlots(std::string name, Object* obj, bool _mutable,
-          bool isParentSlot, bool isNative);
+          bool isParentSlot);
   void _RemoveSlots(std::string name);
 
   void setCodeSegment(const std::string code);
@@ -59,6 +61,9 @@ public:
 
   Object* print(const std::vector<Object*>&);
   void mostrar();
+
+  void enableNativeMethod(Object* object, std::string methodName);
+  void disableNativeMethod(Object* object, std::string methodName);
 };
 
 

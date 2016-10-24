@@ -5,6 +5,7 @@
 
 Object::Object() {
 	this->name = "object";
+	this->nativeMethods.insert(std::make_pair("print", std::make_tuple(&Object::print, false)));
 }
 
 Object::Object(const Object& _lobby) {
@@ -27,18 +28,10 @@ std::string Object::getName() const {
 }
 
 void Object::_AddSlots(std::string name, Object* obj, bool _mutable,
-		bool isParentSlot, bool isNative) {
-	/*delegate _delegate;
-
-	 if (isNative) {
-	 _delegate = &Object::print;
-	 void *pointer = _delegate;
-	 Object* (*func)(const std::vector<Object*>&) = (Object*(*)(const std::vector<Object*>&))message;
-	 }*/
-
+		bool isParentSlot) {
 	this->slots.insert(
 			std::make_pair(name,
-					std::make_tuple(obj, _mutable, isParentSlot, isNative)));
+					std::make_tuple(obj, _mutable, isParentSlot)));
 }
 
 void Object::_RemoveSlots(std::string name) {
@@ -61,7 +54,7 @@ void Object::setCodeSegment(const std::string code) {
 	this->codeSegment = code;
 }
 
-bool Object::findObject(std::string name, Object* object, Object* &messsage) {
+Object* Object::findObject(std::string name, Object* object) {
 	if (name == object->name)
 		return object;
 
@@ -74,21 +67,17 @@ bool Object::findObject(std::string name, Object* object, Object* &messsage) {
 
 		for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
 			Object *_temp = (Object*) std::get < 0 > (_it->second);
-			Object *parent;
-			findObject(name, _temp, parent);
+			Object *parent = findObject(name, _temp);
 			parentsFound.push_back(parent);
 		}
 
 		// Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
-		if (parentsFound.size() != 1) {
-			std::string error = "Objeto ";
-			error += name + " no encontrado.";
-			throw std::runtime_error(error);
+        if (parentsFound.size() != 1) {
+            return nullptr;
 		}
 		return parentsFound[0];
 	} else {
-		messsage = std::get < 0 > (it->second);
-		return std::get < 3 > (it->second);
+		return (Object*)std::get < 0 > (it->second);
 	}
 }
 
@@ -154,13 +143,24 @@ Object* Object::recvMessage(Object* object, std::string messageName,
 	// del mensaje
 	//Object* foundObject = std::get < 0 > (it->second);
 	Object* message;
-	if (findObject(messageName, object, message)) {
-		//ejecuto message;
-		Object* (*func)(
-				const std::vector<Object*>&) = (Object*(*)(const std::vector<Object*>&))message;
-		//delegate method = reinterpret_cast<delegate>(message);
-
-		return (func)(args);
+	if (!(message = findObject(messageName, object))) {
+	    // es un puntero a funcion
+	    auto fpoint = object->nativeMethods.find(messageName);
+	    if (fpoint == object->nativeMethods.end()) {
+	        std::string error = "No existe el mensaje ";
+	        error += messageName;
+	        throw std::runtime_error(error);
+	    }
+	    fpointTuple tuple = fpoint->second;
+	    if (std::get<1>(tuple)) {
+	        // llamo a la funcion apuntada
+	        delegate fpointer = std::get<0>(tuple);
+	        return (object->*fpointer)(args);
+	    } else {
+	    	std::string error = "No existe el mensaje ";
+	        error += messageName;
+	        throw std::runtime_error(error);
+	    }
 	}
 	//slot_t message = findSlot(messageName, object->slots);
 
@@ -236,4 +236,26 @@ void Object::mostrar() {
 			std::cout << "El Slot no apunta a ningun objeto." << std::endl;
 		nSlot++;
 	}
+}
+void Object::enableNativeMethod(Object* object, std::string methodName) {
+    auto fpoint = object->nativeMethods.find(methodName);
+    if (fpoint == object->nativeMethods.end()) {
+        std::string error = "No existe el mensaje ";
+        error += methodName;
+        throw std::runtime_error(error);
+    }
+    fpointTuple tuple = fpoint->second;
+    std::get<1>(tuple) = true;
+    fpoint->second = tuple;
+}
+void Object::disableNativeMethod(Object* object, std::string methodName) {
+    auto fpoint = object->nativeMethods.find(methodName);
+    if (fpoint == object->nativeMethods.end()) {
+        std::string error = "No existe el mensaje ";
+        error += methodName;
+        throw std::runtime_error(error);
+    }
+    fpointTuple tuple = fpoint->second;
+    std::get<1>(tuple) = false;
+    fpoint->second = tuple;
 }
