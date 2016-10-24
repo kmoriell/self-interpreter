@@ -59,7 +59,13 @@ public:
   Object* clone(const std::vector<Object*>& args);
   Object* collect();
 
+  // funciones Nativas
   Object* print(const std::vector<Object*>&);
+  Object* operator*(const std::vector<Object*>& args);
+  Object* operator+(const std::vector<Object*>& args);
+  Object* operator-(const std::vector<Object*>& args);
+  Object* operator/(const std::vector<Object*>& args);
+
   void mostrar();
 
   void enableNativeMethod(Object* object, std::string methodName);

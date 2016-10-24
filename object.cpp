@@ -6,6 +6,10 @@
 Object::Object() {
 	this->name = "object";
 	this->nativeMethods.insert(std::make_pair("print", std::make_tuple(&Object::print, false)));
+	this->nativeMethods.insert(std::make_pair("+", std::make_tuple(&Object::operator+, false)));
+	this->nativeMethods.insert(std::make_pair("-", std::make_tuple(&Object::operator-, false)));
+	this->nativeMethods.insert(std::make_pair("*", std::make_tuple(&Object::operator*, false)));
+	this->nativeMethods.insert(std::make_pair("/", std::make_tuple(&Object::operator/, false)));
 }
 
 Object::Object(const Object& _lobby) {
@@ -204,11 +208,6 @@ Object::slot_map Object::getParentSlots() const {
 	return parentSlots;
 }
 
-Object* Object::print(const std::vector<Object*>&) {
-	std::cout << codeSegment << std::endl;
-	return this;
-}
-
 void Object::mostrar() {
 	std::cout << std::endl;
 	std::cout << "Nombre objeto: " << name << std::endl;
@@ -258,4 +257,42 @@ void Object::disableNativeMethod(Object* object, std::string methodName) {
     fpointTuple tuple = fpoint->second;
     std::get<1>(tuple) = false;
     fpoint->second = tuple;
+}
+
+// Funciones nativas
+
+Object* Object::print(const std::vector<Object*>&) {
+	std::cout << codeSegment.substr(1, codeSegment.size() - 2) << std::endl;
+	return this;
+}
+Object* Object::operator*(const std::vector<Object*>& args) {
+    Object* first = (Object*)args[0];
+    float number = ::atof(this->codeSegment.c_str());
+    float operand = ::atof(first->codeSegment.c_str());
+    this->codeSegment = std::to_string(number * operand);
+    return this;
+}
+
+Object* Object::operator+(const std::vector<Object*>& args) {
+    Object* first = (Object*)args[0];
+    float number = ::atof(this->codeSegment.c_str());
+    float operand = ::atof(first->codeSegment.c_str());
+    this->codeSegment = std::to_string(number + operand);
+    return this;
+}
+
+Object* Object::operator-(const std::vector<Object*>& args) {
+    Object* first = (Object*)args[0];
+    float number = ::atof(this->codeSegment.c_str());
+    float operand = ::atof(first->codeSegment.c_str());
+    this->codeSegment = std::to_string(number - operand);
+    return this;
+}
+
+Object* Object::operator/(const std::vector<Object*>& args) {
+    Object* first = (Object*)args[0];
+    float number = ::atof(this->codeSegment.c_str());
+    float operand = ::atof(first->codeSegment.c_str());
+    this->codeSegment = std::to_string(number / operand);
+    return this;
 }
