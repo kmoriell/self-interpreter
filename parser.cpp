@@ -7,104 +7,92 @@
 #include <string>
 #include <iostream>
 
-const int KEYWORD_MESSAGE = 0;
-const int BINARY_MESSAGE = 1;
-const int UNARY_MESSAGE = 2;
-const int EXPRESSION_CP = 3;
-const int EXPRESSION_P = 4;
-const int CONSTANT = 5;
-const int NUMBER = 6;
-const int STRING = 7;
-const int NIL = 8;
-const int NAME = 9;
-const int OBJECT = 10;
-
 const std::string REGEX_NIL = "'nil'";
-const std::string REGEX_NAME = "^[a-z][[:alnum:]]*$";
-const std::string REGEX_STRING = "^'[^ \'\"]*'$";
-const std::string REGEX_LOWER_KEYWORD = "^'[^ \'\"]*'$";
-const std::string REGEX_CAP_KEYWORD = "^[_A-Z][[:alnum:]]*$";
-const std::string REGEX_NUMBER = "^((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?$";
+const std::string REGEX_NAME = "[a-z][[:alnum:]]*";
+const std::string REGEX_STRING = "'[^ \'\"]*'";
+const std::string REGEX_LOWER_KEYWORD = "'[^ \'\"]*'";
+const std::string REGEX_CAP_KEYWORD = "[_A-Z][[:alnum:]]*";
+const std::string REGEX_NUMBER = "((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?";
+
+Object* Parser::run(std::string cad){
+	std::cout << ">>> " << cad << std::endl;
+	Object* obj;
+	if ((obj = script(cad)) != nullptr)
+		return obj;
+	else
+		throw std::runtime_error("Cadena: '" + cad + "' inválida. \n");
+}
 
 bool Parser::isNil(std::string cad) {
-	std::regex regExp(REGEX_NIL);
+	std::regex regExp("^" + REGEX_NIL + "$");
 	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isName(std::string cad) {
-	std::regex regExp(REGEX_NAME);
+	std::regex regExp("^" + REGEX_NAME + "$");
 	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isString(std::string cad) {
 	if (isNil(cad))
 		return false;
-	std::regex regExp(REGEX_STRING);
+	std::regex regExp("^" + REGEX_STRING + "$");
 	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isLowerKeyword(std::string cad) {
-	std::regex regExp(REGEX_LOWER_KEYWORD);
+	std::regex regExp("^" + REGEX_LOWER_KEYWORD + "$");
 	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isCapKeyword(std::string cad) {
-	std::regex regExp(REGEX_CAP_KEYWORD);
+	std::regex regExp("^" + REGEX_CAP_KEYWORD + "$");
 	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isNumber(std::string cad) {
-	std::regex regExp(REGEX_NUMBER);
+	std::regex regExp("^" + REGEX_NUMBER + "$");
 	return (std::regex_match(cad, regExp));
 }
 
+bool Parser::isOperador(std::string cad) {
+	return (cad == "+" or cad == "-" or cad == "*" or cad == "/" or cad == "!=" or cad == "==");
+}
+
+Object* Parser::nilObj(std::string strNil) {
+	Object *obj = nullptr;
+	if (isNil(strNil))
+		obj = new Object();
+	return obj;
+}
+
+Object* Parser::stringObj(std::string strString) {
+	Object *obj = nullptr;
+	if (isString(strString)) {
+		obj = new Object();
+		obj->setCodeSegment(strString + ".");
+		obj->enableNativeMethod(obj, "print");
+	}
+	return obj;
+}
+
+Object* Parser::numberObj(std::string strNumber) {
+	Object *obj = nullptr;
+	if (isNumber(strNumber)) {
+		obj = new Object();
+		obj->setCodeSegment(strNumber + ".");
+		obj->enableNativeMethod(obj, "print");
+	}
+	return obj;
+}
+
 //todo
-bool Parser::isObject(std::string cad) {
-	return false;
+Object* Parser::objectObj(std::string strObject) {
+	return nullptr;
 }
 
-bool Parser::isExpression(std::string cad) {
-	return false;
-}
 
-bool Parser::isExpressionP(std::string cad, std::string &strExpression) {
-	bool p0 = (cad.substr(0, 1) == "(");
-	bool pf = (cad.substr(cad.size()-1, 1) == ")");
-	std::string tmp = cad.substr(1, cad.size()-2);
-	if (p0 and pf and isExpression(tmp)) {
-		strExpression = tmp;
-		return true;
-	} else
-		return false;
-}
-
-bool Parser::isExpressionCP(std::string cad) {
-	std::string strExpression;
-	return (isConstant(cad) or isExpressionP(cad, strExpression));
-}
-
-bool Parser::isReceiver(std::string cad) {
-	return isExpressionCP(cad);
-}
-
-bool Parser::isConstant(std::string cad) {
-	return (isNil(cad) or isName(cad) or isString(cad) or isNumber(cad) or isObject(cad));
-}
-
-//No funciona para receiver complejo
-bool Parser::isUnaryMessage(std::string cad, std::string &receiverCandidate,
-		std::string &nameCandidate) {
-	std::istringstream iss(cad);
-	iss >> std::noskipws;
-	//std::string candidatoReceiver, candidatoName;
-	iss >> std::ws >> receiverCandidate >> std::ws >> nameCandidate;
-
-	if (isName(nameCandidate) and isReceiver(receiverCandidate))
-		return true;
-	else
-		return false;
-}
-
+//todo hardcode
 Object* Parser::script(std::string strScript) {
 	std::vector<std::string> strExpressions;
 	Object* obj = nullptr;
@@ -122,140 +110,82 @@ Object* Parser::script(std::string strScript) {
 
 Object* Parser::expression(std::string strExpression) {
 	Object* obj = nullptr;
-	int tipoExpression = -1;
-	std::string strReceiver;
+	if ((obj = unaryMessage(strExpression)) != nullptr)
+		return obj;
+	else if ((obj = binaryMessage(strExpression)) != nullptr)
+		return obj;
+	else if ((obj = keywordMessage(strExpression)) != nullptr)
+		return obj;
+	else if ((obj = expressionCP(strExpression)) != nullptr)
+		return obj;
+	return obj;
+}
 
-	std::string lower_keyword, strExpressionCP, name, operador;
-	std::vector<std::tuple<std::string, std::string> > vTuple;
+Object* Parser::receiver(std::string strReceiver) {
+	Object* obj;
+	if ((obj = expressionCP(strReceiver)) != nullptr)
+		return obj;
+	return obj;
+}
 
-	//Parseo ti
-	if (isUnaryMessage(strExpression, strReceiver, name))
-		tipoExpression = UNARY_MESSAGE;
-
-	//todo: isExpressionCP()
-	//todo: binary
-	//todo: isExpressionCP()
-	//todo: keyword
-
-	switch (tipoExpression) {
-	case KEYWORD_MESSAGE:
-		//obj = keywordMessage(expresionCP(strReceiver), lower_keyword, expressionCP(strExpressionCP), vTuple);
-		break;
-	case BINARY_MESSAGE:
-		//obj = binaryMessage(expressionCP(strReceiver), operador, strExpressionCP);
-		break;
-	case UNARY_MESSAGE:
-		obj = unaryMessage(expressionCP(strReceiver), name);
-		break;
-	case EXPRESSION_CP:
-		obj = expressionCP(strExpressionCP);
-		break;
-	}
+//todo
+Object* Parser::expressionP(std::string strExpressionP) {
+	Object* obj;
+	if ((obj = expression(strExpressionP)) != nullptr)
+		return obj;
 	return obj;
 }
 
 Object* Parser::expressionCP(std::string strExpressionCP) {
-	int tipoExpressionCP = 0;
 	Object* obj = nullptr;
-
-	//Parseo..
-	tipoExpressionCP = CONSTANT; // TODO: no va
-
-	switch (tipoExpressionCP) {
-	case EXPRESSION_P: {
-		//Sacamos los ( )
-		std::string strExpressionP = strExpressionCP.substr(1,
-				strExpressionCP.size() - 2);
-		obj = expression(strExpressionP);
-		break;
-	}
-	case CONSTANT: {
-		std::string strConstant = strExpressionCP;
-		obj = constant(strConstant);
-		break;
-	}
+	if ((obj = constant(strExpressionCP)) != nullptr)
+		return obj;
+	else {
+		bool p0 = (strExpressionCP.substr(0, 1) == "(");
+		bool pf = (strExpressionCP.substr(strExpressionCP.size()-1, 1) == ")");
+		std::string strExpressionP = strExpressionCP.substr(1, strExpressionCP.size()-2);
+		if (p0 and pf and ((obj = expressionP(strExpressionP)) != nullptr))
+			return obj;
 	}
 	return obj;
 }
 
 Object* Parser::constant(std::string strConstant) {
-	int tipoConstant = -1;
 	Object* obj = nullptr;
-
-	//Parseo...
-	if (isString(strConstant))
-		tipoConstant = STRING;
-
-	if (isNil(strConstant))
-		tipoConstant = NIL;
-
-	if (isName(strConstant))
-		tipoConstant = NAME;
-
-	if (isNumber(strConstant))
-		tipoConstant = NUMBER;
-
-	if (isObject(strConstant))
-		tipoConstant = OBJECT;
-
-	if (tipoConstant == -1)
-		throw std::runtime_error(
-				"ERROR: " + strConstant + " no es una constante.\n");
-
-	switch (tipoConstant) {
-	case NUMBER: {
-		std::string strNumber = strConstant;
-		obj = numberObj(strNumber);
-		break;
-	}
-	case STRING: {
-		std::string strString = strConstant;
-		obj = stringObj(strString);
-		break;
-	}
-	case NIL:
-		obj = nilObj();
-		break;
-	case NAME:
-		//Hay que hacer un lookup y devolver el objeto encontrado
-		break;
-	case OBJECT: {
-		std::string strObject = strConstant;
-		//obj = object(strObject);
-		break;
-	}
-	}
+	if ((obj = nilObj(strConstant)) != nullptr)
+		return obj;
+	else if ((obj = stringObj(strConstant)) != nullptr)
+		return obj;
+	else if ((obj = numberObj(strConstant)) != nullptr)
+		return obj;
+	else if ((obj = objectObj(strConstant)) != nullptr)
+		return obj;
 	return obj;
 }
 
-Object* Parser::unaryMessage(Object* receiver, std::string name) {
-	Object* message = receiver->recvMessage(receiver, name,
+//todo hardcode
+Object* Parser::unaryMessage(std::string strUnaryMessage) {
+	//strName es la ultima palabra
+	//strReceiver el resto
+	std::string strName, strReceiver;
+	std::istringstream iss(strUnaryMessage);
+	iss >> std::noskipws;
+	//std::string candidatoReceiver, candidatoName;
+	iss >> std::ws >> strReceiver >> std::ws >> strName;
+
+	Object* objReceiver;
+	if ((objReceiver = receiver(strReceiver)) != nullptr and isName(strName))
+		return objReceiver->recvMessage(objReceiver, strName,
 			std::vector<Object*> { });
-	//message = (|*print|)
-	return message;
-	//estoy retornando (||'hola'.)
-}
-
-Object* Parser::stringObj(std::string strString) {
-	Object *obj = new Object();
-	obj->setCodeSegment(strString+".");
-	obj->enableNativeMethod(obj, "print");
-	return obj;
-}
-
-Object* Parser::numberObj(std::string strNumber) {
-	Object *obj = new Object();
-	obj->setCodeSegment(strNumber+".");
-	obj->enableNativeMethod(obj, "print");
-	return obj;
-}
-
-Object* Parser::nilObj() {
-	Object *obj = new Object();
-	return obj;
+	return objReceiver;
 }
 
 //todo
-Object* objectObj(std::string strObject) {
+Object* Parser::binaryMessage(std::string strBinaryMessage) {
+	return nullptr;
+}
+
+//todo
+Object* Parser::keywordMessage(std::string strKeywordMessage) {
 	return nullptr;
 }

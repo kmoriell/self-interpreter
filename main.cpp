@@ -3,24 +3,23 @@
 
 int main() {
 	Parser parser;
-	/*if (parser.esString("'hola'"))
-		std::cout << "Verdadero" << std::endl;
-	else
-		std::cout << "Falso" << std::endl;*/
 
-	Object *msg;
+	try {
+		//Testeando print de numeros
+		parser.run("0 print.")->mostrar();
+		parser.run("+1 print.")->mostrar();
+		parser.run("-5 print.")->mostrar();
+		parser.run("102120.11230 print.")->mostrar();
+		parser.run("-0.001230 print.")->mostrar();
 
-	//Testeando print de numeros
-	parser.script("0 print.")->mostrar();
-	parser.script("+1 print.")->mostrar();
-	parser.script("-5 print.")->mostrar();
-	parser.script("102120.11230 print.")->mostrar();
-	parser.script("-0.001230 print.")->mostrar();
+		//Testeando print de cadenas
+		parser.run("'hola' print.")->mostrar();
+		parser.run("'hola-mundo' print.")->mostrar();
 
-	//Testeando print de cadenas
-	parser.script("'hola' print.")->mostrar();
-	parser.script("'hola-mundo' print.")->mostrar();
-
-	//parser.script("'nil'.")->mostrar();
+		parser.run("(2) print.")->mostrar();
+		parser.run("('hola') print.")->mostrar();
+	} catch (const std::runtime_error &e) {
+		std::cerr << e.what() << std::endl;
+	}
 	return 0;
 }
