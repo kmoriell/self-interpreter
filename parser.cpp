@@ -4,6 +4,8 @@
 #include <tuple>
 #include <regex>
 #include <sstream>
+#include <string>
+#include <iostream>
 
 const int KEYWORD_MESSAGE = 0;
 const int BINARY_MESSAGE = 1;
@@ -37,6 +39,30 @@ bool Parser::isString(std::string cad) {
 		return false;
 
 	std::regex regExp("^'[^ \'\"]*'$");
+	if (std::regex_match(cad, regExp))
+		return true;
+	else
+		return false;
+}
+
+bool Parser::isLowerKeyword(std::string cad) {
+	std::regex regExp("^[_a-z][[:alnum:]]*$");
+	if (std::regex_match(cad, regExp))
+		return true;
+	else
+		return false;
+}
+
+bool Parser::isCapKeyword(std::string cad) {
+	std::regex regExp("^[_A-Z][[:alnum:]]*$");
+	if (std::regex_match(cad, regExp))
+		return true;
+	else
+		return false;
+}
+
+bool Parser::isNumber(std::string cad) {
+	std::regex regExp("((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?");
 	if (std::regex_match(cad, regExp))
 		return true;
 	else
@@ -148,8 +174,10 @@ Object* Parser::constant(std::string strConstant) {
 	if (isName(strConstant))
 		tipoConstant = NAME;
 
+	if (isNumber(strConstant))
+		tipoConstant = NUMBER;
+
 	//todo: pentiende el isObject
-	//todo: pentiende el isNumber
 
 	if (tipoConstant == -1)
 		throw std::runtime_error("ERROR: "+ strConstant + " no es una constante.\n");
@@ -157,7 +185,7 @@ Object* Parser::constant(std::string strConstant) {
 	switch (tipoConstant) {
 	case NUMBER: {
 		std::string strNumber = strConstant;
-		//obj = number(strNumber);
+		obj = numberObj(strNumber);
 		break;
 	}
 	case STRING: {
@@ -191,17 +219,19 @@ Object* Parser::unaryMessage(Object* receiver, std::string name) {
 Object* Parser::stringObj(std::string strString) {
 	Object *obj = new Object();
 	obj->setCodeSegment(strString);
-
-	//TODO: agregar slot para print.
 	obj->enableNativeMethod(obj, "print");
+	return obj;
+}
 
+Object* Parser::numberObj(std::string strNumber) {
+	Object *obj = new Object();
+	obj->setCodeSegment(strNumber);
+	obj->enableNativeMethod(obj, "print");
 	return obj;
 }
 
 Object* Parser::nilObj() {
 	Object *obj = new Object();
-	obj->setName("'nil'");
-
 	/*Object *objTmp = new Object();
 	objTmp->setName("pepito");
 	objTmp->setCodeSegment("'pepito' print.");

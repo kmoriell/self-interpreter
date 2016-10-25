@@ -237,10 +237,10 @@ Object::slot_map Object::getParentSlots() const {
 	}
 }*/
 
-void Object::mostrar(std::string slotContenedor) {
+void Object::mostrar() {
 	std::cout << std::endl;
-	std::cout << "SlotContenedor: " << slotContenedor;
-	std::cout << " | &Obj: " << this << std::endl;
+	//std::cout << "SlotContenedor: " << slotContenedor;
+	std::cout << this << ": ";
 	std::cout << "(|";
 
 	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
@@ -277,7 +277,7 @@ void Object::mostrar(std::string slotContenedor) {
 		Object* dirObj;
 		dirObj = (Object*) std::get < 0 > (slot);
 		if (dirObj != nullptr)
-			dirObj->mostrar(slotName);
+			dirObj->mostrar();
 		else
 			std::cout << "ERROR: El Slot no apunta a ningun objeto." << std::endl;
 	}
