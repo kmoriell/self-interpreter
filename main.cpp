@@ -6,7 +6,7 @@ int main() {
 
 	try {
 		//Testeando print de numeros
-		parser.run("0 print.")->mostrar();
+		parser.run("       0       print    .    ")->mostrar();
 		parser.run("+1 print.")->mostrar();
 		parser.run("-5 print.")->mostrar();
 		parser.run("102120.11230 print.")->mostrar();

@@ -16,6 +16,18 @@ const std::string REGEX_NUMBER = "((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?"
 
 Object* Parser::run(std::string cad){
 	std::cout << ">>> " << cad << std::endl;
+
+	std::string newCad, x;
+	std::istringstream iss(cad);
+
+	while (iss >> std::skipws >> x) {
+	    newCad += " " + x;
+	}
+
+	if (newCad[0] == '\t' || newCad[0] == '\n' || newCad[0] == ' ') {
+	  newCad = newCad.substr(1);
+	}
+
 	Object* obj;
 	if ((obj = script(cad)) != nullptr)
 		return obj;
@@ -167,11 +179,30 @@ Object* Parser::constant(std::string strConstant) {
 Object* Parser::unaryMessage(std::string strUnaryMessage) {
 	//strName es la ultima palabra
 	//strReceiver el resto
-	std::string strName, strReceiver;
+	/*std::string strName, strReceiver;
 	std::istringstream iss(strUnaryMessage);
 	iss >> std::noskipws;
 	//std::string candidatoReceiver, candidatoName;
-	iss >> std::ws >> strReceiver >> std::ws >> strName;
+	iss >> std::ws >> strReceiver >> std::ws >> strName;*/
+
+	int parenthesis_count = 0;
+	int charCount = 0;
+
+	std::string strReceiver, strName;
+
+	for (char _char : strUnaryMessage) {
+	  if ((_char == ' ' ) && parenthesis_count == 0 && charCount > 0){
+	    strName = strUnaryMessage.substr(charCount + 1);
+	    break;
+	  }
+	  if (_char == '(')
+	    parenthesis_count++;
+	  else if(_char == ')')
+	    parenthesis_count--;
+
+	  strReceiver.push_back(_char);
+	  charCount++;
+	}
 
 	Object* objReceiver;
 	if ((objReceiver = receiver(strReceiver)) != nullptr and isName(strName))
