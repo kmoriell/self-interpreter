@@ -19,63 +19,81 @@ const int NIL = 8;
 const int NAME = 9;
 const int OBJECT = 10;
 
+const std::string REGEX_NIL = "'nil'";
+const std::string REGEX_NAME = "^[a-z][[:alnum:]]*$";
+const std::string REGEX_STRING = "^'[^ \'\"]*'$";
+const std::string REGEX_LOWER_KEYWORD = "^'[^ \'\"]*'$";
+const std::string REGEX_CAP_KEYWORD = "^[_A-Z][[:alnum:]]*$";
+const std::string REGEX_NUMBER = "^((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?$";
+
 bool Parser::isNil(std::string cad) {
-	if (cad == "'nil'")
-		return true;
-	else
-		return false;
+	std::regex regExp(REGEX_NIL);
+	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isName(std::string cad) {
-	std::regex regExp("^[a-z][[:alnum:]]*$");
-	if (std::regex_match(cad, regExp))
-		return true;
-	else
-		return false;
+	std::regex regExp(REGEX_NAME);
+	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isString(std::string cad) {
 	if (isNil(cad))
 		return false;
-
-	std::regex regExp("^'[^ \'\"]*'$");
-	if (std::regex_match(cad, regExp))
-		return true;
-	else
-		return false;
+	std::regex regExp(REGEX_STRING);
+	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isLowerKeyword(std::string cad) {
-	std::regex regExp("^[_a-z][[:alnum:]]*$");
-	if (std::regex_match(cad, regExp))
-		return true;
-	else
-		return false;
+	std::regex regExp(REGEX_LOWER_KEYWORD);
+	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isCapKeyword(std::string cad) {
-	std::regex regExp("^[_A-Z][[:alnum:]]*$");
-	if (std::regex_match(cad, regExp))
-		return true;
-	else
-		return false;
+	std::regex regExp(REGEX_CAP_KEYWORD);
+	return (std::regex_match(cad, regExp));
 }
 
 bool Parser::isNumber(std::string cad) {
-	std::regex regExp("((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?");
-	if (std::regex_match(cad, regExp))
-		return true;
-	else
-		return false;
+	std::regex regExp(REGEX_NUMBER);
+	return (std::regex_match(cad, regExp));
 }
 
 //todo
+bool Parser::isObject(std::string cad) {
+	return false;
+}
+
+bool Parser::isExpression(std::string cad) {
+	return false;
+}
+
+bool Parser::isExpressionP(std::string cad, std::string &strExpression) {
+	bool p0 = (cad.substr(0, 1) == "(");
+	bool pf = (cad.substr(cad.size()-1, 1) == ")");
+	std::string tmp = cad.substr(1, cad.size()-2);
+	if (p0 and pf and isExpression(tmp)) {
+		strExpression = tmp;
+		return true;
+	} else
+		return false;
+}
+
+bool Parser::isExpressionCP(std::string cad) {
+	std::string strExpression;
+	return (isConstant(cad) or isExpressionP(cad, strExpression));
+}
+
 bool Parser::isReceiver(std::string cad) {
-	return true;
+	return isExpressionCP(cad);
+}
+
+bool Parser::isConstant(std::string cad) {
+	return (isNil(cad) or isName(cad) or isString(cad) or isNumber(cad) or isObject(cad));
 }
 
 //No funciona para receiver complejo
-bool Parser::isUnaryMessage(std::string cad, std::string &receiverCandidate, std::string &nameCandidate) {
+bool Parser::isUnaryMessage(std::string cad, std::string &receiverCandidate,
+		std::string &nameCandidate) {
 	std::istringstream iss(cad);
 	iss >> std::noskipws;
 	//std::string candidatoReceiver, candidatoName;
@@ -177,10 +195,12 @@ Object* Parser::constant(std::string strConstant) {
 	if (isNumber(strConstant))
 		tipoConstant = NUMBER;
 
-	//todo: pentiende el isObject
+	if (isObject(strConstant))
+		tipoConstant = OBJECT;
 
 	if (tipoConstant == -1)
-		throw std::runtime_error("ERROR: "+ strConstant + " no es una constante.\n");
+		throw std::runtime_error(
+				"ERROR: " + strConstant + " no es una constante.\n");
 
 	switch (tipoConstant) {
 	case NUMBER: {
@@ -218,23 +238,24 @@ Object* Parser::unaryMessage(Object* receiver, std::string name) {
 
 Object* Parser::stringObj(std::string strString) {
 	Object *obj = new Object();
-	obj->setCodeSegment(strString);
+	obj->setCodeSegment(strString+".");
 	obj->enableNativeMethod(obj, "print");
 	return obj;
 }
 
 Object* Parser::numberObj(std::string strNumber) {
 	Object *obj = new Object();
-	obj->setCodeSegment(strNumber);
+	obj->setCodeSegment(strNumber+".");
 	obj->enableNativeMethod(obj, "print");
 	return obj;
 }
 
 Object* Parser::nilObj() {
 	Object *obj = new Object();
-	/*Object *objTmp = new Object();
-	objTmp->setName("pepito");
-	objTmp->setCodeSegment("'pepito' print.");
-	obj->_AddSlots("metodo0", objTmp, true, false);*/
 	return obj;
+}
+
+//todo
+Object* objectObj(std::string strObject) {
+	return nullptr;
 }

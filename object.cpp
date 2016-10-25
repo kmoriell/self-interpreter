@@ -309,9 +309,11 @@ void Object::disableNativeMethod(Object* object, std::string methodName) {
 // Funciones nativas
 
 Object* Object::print(const std::vector<Object*>&) {
-	std::cout << codeSegment.substr(1, codeSegment.size() - 2) << std::endl;
+	//std::cout << codeSegment.substr(1, codeSegment.size() - 2) << std::endl;
+	std::cout << codeSegment << std::endl;
 	return this;
 }
+
 Object* Object::operator*(const std::vector<Object*>& args) {
     Object* first = (Object*)args[0];
     float number = ::atof(this->codeSegment.c_str());
