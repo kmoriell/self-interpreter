@@ -8,17 +8,19 @@ int main() {
 	else
 		std::cout << "Falso" << std::endl;*/
 
-	Object *msg = parser.script("3 print.");
-	msg->mostrar();
+	Object *msg;
 
-	//Object *msg2 = parser.script("'2do string' print.");
-	//Object *msg = parser.script("'nil'.");
-	//msg2->mostrar("lobby");
+	//Testeando print de numeros
+	parser.script("0 print.")->mostrar();
+	parser.script("+1 print.")->mostrar();
+	parser.script("-5 print.")->mostrar();
+	parser.script("102120.11230 print.")->mostrar();
+	parser.script("-0.001230 print.")->mostrar();
 
-	Object *msg3 = parser.script("-5 print.");
-	msg3->mostrar();
+	//Testeando print de cadenas
+	parser.script("'hola' print.")->mostrar();
+	parser.script("'hola-mundo' print.")->mostrar();
 
-	Object *msg4 = parser.script("-10.10 print.");
-	msg4->mostrar();
+	//parser.script("'nil'.")->mostrar();
 	return 0;
 }

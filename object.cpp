@@ -238,7 +238,7 @@ Object::slot_map Object::getParentSlots() const {
 }*/
 
 void Object::mostrar() {
-	std::cout << std::endl;
+	//std::cout << std::endl;
 	//std::cout << "SlotContenedor: " << slotContenedor;
 	std::cout << this << ": ";
 	std::cout << "(|";
