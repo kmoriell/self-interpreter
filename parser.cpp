@@ -3,6 +3,7 @@
 #include <vector>
 #include <tuple>
 #include <regex>
+#include <sstream>
 
 const int KEYWORD_MESSAGE = 0;
 const int BINARY_MESSAGE = 1;
@@ -16,12 +17,55 @@ const int NIL = 8;
 const int NAME = 9;
 const int OBJECT = 10;
 
+bool Parser::isNil(std::string cad) {
+	if (cad == "'nil'")
+		return true;
+	else
+		return false;
+}
+
+bool Parser::isName(std::string cad) {
+	std::regex regExp("^[a-z][[:alnum:]]*$");
+	if (std::regex_match(cad, regExp))
+		return true;
+	else
+		return false;
+}
+
+bool Parser::isString(std::string cad) {
+	if (isNil(cad))
+		return false;
+
+	std::regex regExp("^'[^ \'\"]*'$");
+	if (std::regex_match(cad, regExp))
+		return true;
+	else
+		return false;
+}
+
+//todo
+bool Parser::isReceiver(std::string cad) {
+	return true;
+}
+
+//No funciona para receiver complejo
+bool Parser::isUnaryMessage(std::string cad, std::string &receiverCandidate, std::string &nameCandidate) {
+	std::istringstream iss(cad);
+	iss >> std::noskipws;
+	//std::string candidatoReceiver, candidatoName;
+	iss >> std::ws >> receiverCandidate >> std::ws >> nameCandidate;
+
+	if (isName(nameCandidate) and isReceiver(receiverCandidate))
+		return true;
+	else
+		return false;
+}
 
 Object* Parser::script(std::string strScript) {
 	std::vector<std::string> strExpressions;
 	Object* obj = nullptr;
 
-	//Parseo que genera el strExpressions
+	//todo Parseo que genera el strExpressions
 	strExpressions.push_back(strScript); // TODO: NO VA
 
 	for (auto strExpression : strExpressions) {
@@ -34,22 +78,23 @@ Object* Parser::script(std::string strScript) {
 
 Object* Parser::expression(std::string strExpression) {
 	Object* obj = nullptr;
-	int tipoExpression = 0;
+	int tipoExpression = -1;
 	std::string strReceiver;
 
 	std::string lower_keyword, strExpressionCP, name, operador;
 	std::vector<std::tuple<std::string, std::string> > vTuple;
 
 	//Parseo ti
-	tipoExpression = UNARY_MESSAGE; //todo
-	strReceiver = "'hola'"; //todo
-	name = "print"; //todo
+	if (isUnaryMessage(strExpression, strReceiver, name))
+		tipoExpression = UNARY_MESSAGE;
 
-	//tipoExpression = EXPRESSION_CP; //todo
-	//strExpressionCP = "'nil'"; //todo
+	//todo: isExpressionCP()
+	//todo: binary
+	//todo: isExpressionCP()
+	//todo: keyword
 
 	switch (tipoExpression) {
-	case 0:
+	case KEYWORD_MESSAGE:
 		//obj = keywordMessage(expresionCP(strReceiver), lower_keyword, expressionCP(strExpressionCP), vTuple);
 		break;
 	case BINARY_MESSAGE:
@@ -90,12 +135,24 @@ Object* Parser::expressionCP(std::string strExpressionCP) {
 }
 
 Object* Parser::constant(std::string strConstant) {
-	int tipoConstant;
+	int tipoConstant = -1;
 	Object* obj = nullptr;
 
 	//Parseo...
-	tipoConstant = STRING; //todo
-	//tipoConstant = NIL; //todo
+	if (isString(strConstant))
+		tipoConstant = STRING;
+
+	if (isNil(strConstant))
+		tipoConstant = NIL;
+
+	if (isName(strConstant))
+		tipoConstant = NAME;
+
+	//todo: pentiende el isObject
+	//todo: pentiende el isNumber
+
+	if (tipoConstant == -1)
+		throw std::runtime_error("ERROR: "+ strConstant + " no es una constante.\n");
 
 	switch (tipoConstant) {
 	case NUMBER: {
@@ -143,26 +200,11 @@ Object* Parser::stringObj(std::string strString) {
 
 Object* Parser::nilObj() {
 	Object *obj = new Object();
-	obj->setName("nil");
+	obj->setName("'nil'");
 
-	Object *objTmp = new Object();
+	/*Object *objTmp = new Object();
 	objTmp->setName("pepito");
 	objTmp->setCodeSegment("'pepito' print.");
-	obj->_AddSlots("metodo0", objTmp, true, false);
+	obj->_AddSlots("metodo0", objTmp, true, false);*/
 	return obj;
 }
-
-/*
- main() {
- std::string strScript = ... obtiene archivo;
- Object* object = script(strScript);
- script(object->getCodeSegment());
- }
-
- std::string number(std::string strNumber) {
- //parsing strNumber...
- //parsing "3"...
- //vSlotList = ""; //Aca hay que parsear y devolver un vector todo lo que esta entre los dos || que termina en .
- slotList(vSlotList);
- strScript = "3." //se parseo hasta que quedo script
- }*/

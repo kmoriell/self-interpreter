@@ -13,6 +13,12 @@ public:
 	Object* unaryMessage(Object* receiver, std::string name);
 	Object* stringObj(std::string strString);
 	Object* nilObj();
+
+	bool isNil(std::string cad);
+	bool isName(std::string cad);
+	bool isString(std::string cad);
+	bool isReceiver(std::string cad); //todo
+	bool isUnaryMessage(std::string cad, std::string &receiverCandidate, std::string &nameCandidate);
 };
 
 #endif /* PARSER_H_ */
