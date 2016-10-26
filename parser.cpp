@@ -17,22 +17,24 @@ const std::string REGEX_NUMBER = "((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?"
 Object* Parser::run(std::string cad){
 	std::cout << ">>> " << cad << std::endl;
 
-	std::string newCad, x;
-	std::istringstream iss(cad);
-
-	while (iss >> std::skipws >> x) {
-	    newCad += " " + x;
-	}
-
-	if (newCad[0] == '\t' || newCad[0] == '\n' || newCad[0] == ' ') {
-	  newCad = newCad.substr(1);
-	}
-
 	Object* obj;
 	if ((obj = script(cad)) != nullptr)
 		return obj;
 	else
 		throw std::runtime_error("Cadena: '" + cad + "' inválida. \n");
+}
+
+void Parser::trim(std::string &cad) {
+  std::string newCad, x;
+    std::istringstream iss(cad);
+
+    while (iss >> std::skipws >> x) {
+        newCad += " " + x;
+    }
+
+    if (newCad[0] == '\t' || newCad[0] == '\n' || newCad[0] == ' ') {
+      cad = newCad.substr(1);
+    }
 }
 
 bool Parser::isNil(std::string cad) {
@@ -106,7 +108,8 @@ Object* Parser::objectObj(std::string strObject) {
 
 //todo hardcode
 Object* Parser::script(std::string strScript) {
-	std::vector<std::string> strExpressions;
+  trim(strScript);
+  std::vector<std::string> strExpressions;
 	Object* obj = nullptr;
 
 	//todo Parseo que genera el strExpressions
@@ -121,7 +124,8 @@ Object* Parser::script(std::string strScript) {
 }
 
 Object* Parser::expression(std::string strExpression) {
-	Object* obj = nullptr;
+  trim(strExpression);
+  Object* obj = nullptr;
 	if ((obj = unaryMessage(strExpression)) != nullptr)
 		return obj;
 	else if ((obj = binaryMessage(strExpression)) != nullptr)
@@ -142,14 +146,16 @@ Object* Parser::receiver(std::string strReceiver) {
 
 //todo
 Object* Parser::expressionP(std::string strExpressionP) {
-	Object* obj;
+  trim(strExpressionP);
+  Object* obj;
 	if ((obj = expression(strExpressionP)) != nullptr)
 		return obj;
 	return obj;
 }
 
 Object* Parser::expressionCP(std::string strExpressionCP) {
-	Object* obj = nullptr;
+  trim(strExpressionCP);
+  Object* obj = nullptr;
 	if ((obj = constant(strExpressionCP)) != nullptr)
 		return obj;
 	else {
@@ -163,7 +169,8 @@ Object* Parser::expressionCP(std::string strExpressionCP) {
 }
 
 Object* Parser::constant(std::string strConstant) {
-	Object* obj = nullptr;
+  trim(strConstant);
+  Object* obj = nullptr;
 	if ((obj = nilObj(strConstant)) != nullptr)
 		return obj;
 	else if ((obj = stringObj(strConstant)) != nullptr)
@@ -177,7 +184,8 @@ Object* Parser::constant(std::string strConstant) {
 
 //todo hardcode
 Object* Parser::unaryMessage(std::string strUnaryMessage) {
-	//strName es la ultima palabra
+  trim(strUnaryMessage);
+  //strName es la ultima palabra
 	//strReceiver el resto
 	/*std::string strName, strReceiver;
 	std::istringstream iss(strUnaryMessage);

@@ -9,6 +9,7 @@ public:
 	Object* run(std::string cad);
 
 private:
+	void trim(std::string &cad);
 	bool isNil(std::string cad);
 	bool isName(std::string cad);
 	bool isString(std::string cad);
