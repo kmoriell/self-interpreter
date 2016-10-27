@@ -14,217 +14,456 @@ const std::string REGEX_LOWER_KEYWORD = "'[^ \'\"]*'";
 const std::string REGEX_CAP_KEYWORD = "[_A-Z][[:alnum:]]*";
 const std::string REGEX_NUMBER = "((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?";
 
-Object* Parser::run(std::string cad){
-	std::cout << ">>> " << cad << std::endl;
+std::vector<Object*> Parser::run(std::string &cad) {
+	std::cout << ">>> " << cad << " <<<" << std::endl;
+	pCad = 0;
+	std::vector<Object*> objects = script(cad);
+	for (int i = 0; i < objects.size(); i++)
+		objects[i]->mostrar();
+	return objects;
+}
 
+std::vector<Object*> Parser::script(std::string &cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "script pos: " << _pCad << std::endl;
+	Object* obj = nullptr;
+	std::vector<Object*> objects;
+	char cCad;
+
+	while (pCad < cad.size()) {
+		cCad = cad[pCad];
+		if (((obj = expression(cad)) != nullptr) and (punto(cad)))
+			objects.push_back(obj);
+		else {
+			pCad = _pCad;
+			//destruir objeto creado y vaciar el vector
+			break;
+		}
+	}
+	return objects;
+}
+
+Object * Parser::expression(std::string & cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "expression pos: " << _pCad << std::endl;
 	Object* obj;
-	if ((obj = script(cad)) != nullptr)
+
+	if ((obj = keywordMessage(cad)) != nullptr)
 		return obj;
-	else
-		throw std::runtime_error("Cadena: '" + cad + "' inválida. \n");
-}
+	else if ((obj = binaryMessage(cad)) != nullptr)
+		return obj;
+	else if ((obj = unaryMessage(cad)) != nullptr)
+		return obj;
+	else if ((obj = expressionCP(cad)) != nullptr)
+		return obj;
 
-void Parser::trim(std::string &cad) {
-  std::string newCad, x;
-    std::istringstream iss(cad);
-
-    while (iss >> std::skipws >> x) {
-        newCad += " " + x;
-    }
-
-    if (newCad[0] == '\t' || newCad[0] == '\n' || newCad[0] == ' ') {
-      cad = newCad.substr(1);
-    }
-}
-
-bool Parser::isNil(std::string cad) {
-	std::regex regExp("^" + REGEX_NIL + "$");
-	return (std::regex_match(cad, regExp));
-}
-
-bool Parser::isName(std::string cad) {
-	std::regex regExp("^" + REGEX_NAME + "$");
-	return (std::regex_match(cad, regExp));
-}
-
-bool Parser::isString(std::string cad) {
-	if (isNil(cad))
-		return false;
-	std::regex regExp("^" + REGEX_STRING + "$");
-	return (std::regex_match(cad, regExp));
-}
-
-bool Parser::isLowerKeyword(std::string cad) {
-	std::regex regExp("^" + REGEX_LOWER_KEYWORD + "$");
-	return (std::regex_match(cad, regExp));
-}
-
-bool Parser::isCapKeyword(std::string cad) {
-	std::regex regExp("^" + REGEX_CAP_KEYWORD + "$");
-	return (std::regex_match(cad, regExp));
-}
-
-bool Parser::isNumber(std::string cad) {
-	std::regex regExp("^" + REGEX_NUMBER + "$");
-	return (std::regex_match(cad, regExp));
-}
-
-bool Parser::isOperador(std::string cad) {
-	return (cad == "+" or cad == "-" or cad == "*" or cad == "/" or cad == "!=" or cad == "==");
-}
-
-Object* Parser::nilObj(std::string strNil) {
-	Object *obj = nullptr;
-	if (isNil(strNil))
-		obj = new Object();
+	pCad = _pCad;
 	return obj;
 }
 
-Object* Parser::stringObj(std::string strString) {
+Object * Parser::expressionCP(std::string & cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "expressionCP pos: " << _pCad << std::endl;
+	Object* obj;
+
+	if ((obj = expressionP(cad)) != nullptr)
+		return obj;
+	else if ((obj = constant(cad)) != nullptr)
+		return obj;
+
+	pCad = _pCad;
+	return obj;
+}
+
+//todo
+Object * Parser::expressionP(std::string & cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "expressionP pos: " << _pCad << std::endl;
+	Object* obj = nullptr;
+
+	if (pLeft(cad) and ((obj = expression(cad)) != nullptr) and (pRight(cad)))
+		return obj;
+	pCad = _pCad;
+	return obj;
+}
+
+//todo
+Object * Parser::keywordMessage(std::string & strKeywordMessage) {
+	//std::cout << "keywordMessage pos: " << pCad << std::endl;
+	return nullptr;
+}
+
+//todo
+Object * Parser::binaryMessage(std::string & strBinaryMessage) {
+	//std::cout << "binaryMessage pos: " << pCad << std::endl;
+	return nullptr;
+}
+
+Object * Parser::unaryMessage(std::string & cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "unaryMessage pos: " << _pCad << std::endl;
+	Object* obj = receiver(cad);
+	if (obj != nullptr) {
+		std::string strName = name(cad);
+		if (strName != "") {
+			obj->recvMessage(obj, strName, std::vector<Object*> { });
+			//Si recvMessage al fallar no devuelve nullptr tengo que hacerlo capturando una excepcion.
+			if (obj != nullptr)
+				return obj;
+		} else {
+			//aca es donde cambiamos la def de unary_message := (receiver name | receiver)
+			return obj;
+		}
+	}
+
+	pCad = _pCad;
+	return obj;
+}
+
+Object * Parser::receiver(std::string &cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "receiver pos: " << _pCad << std::endl;
+	Object* obj;
+	if ((obj = expressionCP(cad)) != nullptr)
+		return obj;
+
+	pCad = _pCad;
+	return obj;
+}
+
+std::string Parser::name(const std::string &cad) {
+	//std::cout << "name pos: " << pCad << std::endl;
+	skipSpaces(cad);
+	std::string strName = "";
+	char cCad = cad[pCad];
+	if ('a' <= cCad and cCad <= 'z') {
+		pCad++;
+		strName += cCad;
+		while (pCad < cad.size()) {
+			cCad = cad[pCad];
+			if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
+					or ('0' <= cCad and cCad <= '9')) {
+				pCad++;
+				strName += cCad;
+			} else
+				break;
+		}
+	}
+	return strName;
+}
+
+//Asi como esta soporta strings con espacios en medio
+//No soporta 'hola "'" zaraza' -> falta un detector de doble comilla
+std::string Parser::string(const std::string &cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "string pos: " << _pCad << std::endl;
+	skipSpaces(cad);
+	std::string strString = "";
+	bool esString = false;
+	char cCad = cad[pCad];
+	if ('\'' == cCad) {
+		pCad++;
+		strString += cCad;
+		while (pCad < cad.size() and !esString) {
+			cCad = cad[pCad];
+			strString += cCad;
+			pCad++;
+			if ('\'' == cCad)
+				esString = true;
+		}
+	}
+
+	if (!esString) {
+		pCad = _pCad;
+		strString = "";
+	}
+	return strString;
+}
+
+//Por ahora solo soporta numeros enteros positivos
+std::string Parser::number(const std::string &cad) {
+	//std::cout << "lowerKeyword pos: " << pCad << std::endl;
+	skipSpaces(cad);
+
+	std::string strNumber = "";
+	char cCad = cad[pCad];
+	while (pCad < cad.size()) {
+		cCad = cad[pCad];
+		if ('0' <= cCad and cCad <= '9') {
+			pCad++;
+			strNumber += cCad;
+		} else
+			break;
+	}
+
+	return strNumber;
+}
+
+std::string Parser::lowerKeyword(const std::string &cad) {
+	//std::cout << "lowerKeyword pos: " << pCad << std::endl;
+	skipSpaces(cad);
+	std::string strLowerKeyword = "";
+	char cCad = cad[pCad];
+	if (('a' <= cCad and cCad <= 'z') or (cCad == '_')) {
+		pCad++;
+		strLowerKeyword += cCad;
+		while (pCad < cad.size()) {
+			cCad = cad[pCad];
+			if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
+					or ('0' <= cCad and cCad <= '9')) {
+				pCad++;
+				strLowerKeyword += cCad;
+			} else
+				break;
+		}
+	}
+	return strLowerKeyword;
+}
+
+std::string Parser::capKeyword(const std::string &cad) {
+	//std::cout << "capKeyword pos: " << pCad << std::endl;
+	skipSpaces(cad);
+	std::string strCapKeyword = "";
+	char cCad = cad[pCad];
+	if ('A' <= cCad and cCad <= 'Z') {
+		pCad++;
+		strCapKeyword += cCad;
+		while (pCad < cad.size()) {
+			cCad = cad[pCad];
+			if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
+					or ('0' <= cCad and cCad <= '9')) {
+				pCad++;
+				strCapKeyword += cCad;
+			} else
+				break;
+		}
+	}
+	return strCapKeyword;
+}
+
+Object * Parser::object(std::string & cad) {
+	return nullptr;
+}
+
+Object * Parser::slotList(std::string & cad) {
+	return nullptr;
+}
+
+Object * Parser::slotNameExtended(std::string & cad) {
+	return nullptr;
+}
+
+Object * Parser::constant(std::string & cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "constant pos: " << _pCad << std::endl;
+	Object* obj;
+
+	if ((obj = nilObj(cad)) != nullptr)
+		return obj;
+	else if ((obj = stringObj(cad)) != nullptr)
+		return obj;
+	else if ((obj = numberObj(cad)) != nullptr)
+		return obj;
+	else if ((obj = objectObj(cad)) != nullptr)
+		return obj;
+
+	pCad = _pCad;
+	return obj;
+}
+
+void Parser::skipSpaces(const std::string &cad) {
+	//std::cout << "skipSpaces pos: " << pCad << std::endl;
+	char cCad;
+	bool salir = false;
+	while (pCad < cad.size() and !salir) {
+		cCad = cad[pCad];
+		if (cCad == ' ' or cCad == '\t' or cCad == '\n')
+			pCad++;
+		else
+			salir = true;
+	}
+}
+
+bool Parser::isChar(const std::string &cad, const char cMatch) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "isChar pos: " << _pCad << std::endl;
+	skipSpaces(cad);
+	char cCad = cad[pCad];
+	pCad++;
+
+	if (cCad == cMatch)
+		return true;
+
+	pCad = _pCad;
+	return false;
+}
+
+bool Parser::punto(const std::string &cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "punto pos: " << _pCad << std::endl;
+	if (isChar(cad, '.'))
+		return true;
+	pCad = _pCad;
+	return false;
+}
+
+bool Parser::pLeft(const std::string &cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "pLeft pos: " << _pCad << std::endl;
+	if (isChar(cad, '('))
+		return true;
+	pCad = _pCad;
+	return false;
+}
+
+bool Parser::pRight(const std::string &cad) {
+	int _pCad = pCad; //checkpoint
+	//std::cout << "pRight pos: " << _pCad << std::endl;
+	if (isChar(cad, ')'))
+		return true;
+	pCad = _pCad;
+	return false;
+}
+
+bool Parser::nil(const std::string &cad) {
+	int _pCad = pCad; //checkpoint
+	skipSpaces(cad);
+	std::string candNil = cad.substr(pCad, 5);
+	if (candNil == "'nil'") {
+		pCad += 5;
+		return true;
+	}
+
+	pCad = _pCad;
+	return false;
+}
+
+std::string Parser::operador(const std::string &cad) {
+	int _pCad = pCad; //checkpoint
+	std::string strOp;
+	skipSpaces(cad);
+
+	strOp = cad.substr(pCad, 2);
+	if (strOp == "==" or strOp == "!=") {
+		pCad += 2;
+		return strOp;
+	}
+
+	strOp = cad.substr(pCad, 1);
+	if (strOp == "+" or strOp == "-" or strOp == "*" or strOp == "/") {
+		pCad += 1;
+		return strOp;
+	}
+
+	pCad = _pCad;
+	return strOp;
+}
+
+Object* Parser::nilObj(const std::string &cad) {
+	int _pCad = pCad; //checkpoint
 	Object *obj = nullptr;
-	if (isString(strString)) {
+	skipSpaces(cad);
+	if (nil(cad))
+		obj = new Object();
+	pCad = _pCad;
+	return obj;
+}
+
+Object* Parser::stringObj(const std::string &cad) {
+	int _pCad = pCad; //checkpoint
+	Object *obj = nullptr;
+	skipSpaces(cad);
+	std::string strString = string(cad);
+
+	if (strString != "") {
 		obj = new Object();
 		obj->setCodeSegment(strString + ".");
 		obj->enableNativeMethod(obj, "print");
+		//obj->enableNativeMethod(obj, "+");
+		//obj->enableNativeMethod(obj, "==");
+		//obj->enableNativeMethod(obj, "!=");
+		return obj;
 	}
+
+	pCad = _pCad;
 	return obj;
 }
 
-Object* Parser::numberObj(std::string strNumber) {
+Object* Parser::numberObj(const std::string &cad) {
+	int _pCad = pCad; //checkpoint
 	Object *obj = nullptr;
-	if (isNumber(strNumber)) {
+	skipSpaces(cad);
+	std::string strNumber = number(cad);
+
+	if (strNumber != "") {
 		obj = new Object();
 		obj->setCodeSegment(strNumber + ".");
 		obj->enableNativeMethod(obj, "print");
+		obj->enableNativeMethod(obj, "+");
+		obj->enableNativeMethod(obj, "-");
+		obj->enableNativeMethod(obj, "*");
+		obj->enableNativeMethod(obj, "/");
+		//obj->enableNativeMethod(obj, "==");
+		//obj->enableNativeMethod(obj, "!=");
+
+		return obj;
 	}
+
+	pCad = _pCad;
 	return obj;
 }
 
 //todo
-Object* Parser::objectObj(std::string strObject) {
+Object * Parser::objectObj(const std::string & cad) {
 	return nullptr;
 }
 
-
-//todo hardcode
-Object* Parser::script(std::string strScript) {
-  trim(strScript);
-  std::vector<std::string> strExpressions;
-	Object* obj = nullptr;
-
-	//todo Parseo que genera el strExpressions
-	strExpressions.push_back(strScript); // TODO: NO VA
-
-	for (auto strExpression : strExpressions) {
-		//Sacamos el . del final
-		strExpression = strExpression.substr(0, strExpression.size() - 1);
-		obj = expression(strExpression);
-	}
-	return obj;
-}
-
-Object* Parser::expression(std::string strExpression) {
-  trim(strExpression);
-  Object* obj = nullptr;
-	if ((obj = unaryMessage(strExpression)) != nullptr)
-		return obj;
-	else if ((obj = binaryMessage(strExpression)) != nullptr)
-		return obj;
-	else if ((obj = keywordMessage(strExpression)) != nullptr)
-		return obj;
-	else if ((obj = expressionCP(strExpression)) != nullptr)
-		return obj;
-	return obj;
-}
-
-Object* Parser::receiver(std::string strReceiver) {
-	Object* obj;
-	if ((obj = expressionCP(strReceiver)) != nullptr)
-		return obj;
-	return obj;
-}
-
-//todo
-Object* Parser::expressionP(std::string strExpressionP) {
-  trim(strExpressionP);
-  Object* obj;
-	if ((obj = expression(strExpressionP)) != nullptr)
-		return obj;
-	return obj;
-}
-
-Object* Parser::expressionCP(std::string strExpressionCP) {
-  trim(strExpressionCP);
-  Object* obj = nullptr;
-	if ((obj = constant(strExpressionCP)) != nullptr)
-		return obj;
-	else {
-		bool p0 = (strExpressionCP.substr(0, 1) == "(");
-		bool pf = (strExpressionCP.substr(strExpressionCP.size()-1, 1) == ")");
-		std::string strExpressionP = strExpressionCP.substr(1, strExpressionCP.size()-2);
-		if (p0 and pf and ((obj = expressionP(strExpressionP)) != nullptr))
-			return obj;
-	}
-	return obj;
-}
-
-Object* Parser::constant(std::string strConstant) {
-  trim(strConstant);
-  Object* obj = nullptr;
-	if ((obj = nilObj(strConstant)) != nullptr)
-		return obj;
-	else if ((obj = stringObj(strConstant)) != nullptr)
-		return obj;
-	else if ((obj = numberObj(strConstant)) != nullptr)
-		return obj;
-	else if ((obj = objectObj(strConstant)) != nullptr)
-		return obj;
-	return obj;
-}
-
-//todo hardcode
-Object* Parser::unaryMessage(std::string strUnaryMessage) {
-  trim(strUnaryMessage);
-  //strName es la ultima palabra
-	//strReceiver el resto
-	/*std::string strName, strReceiver;
-	std::istringstream iss(strUnaryMessage);
-	iss >> std::noskipws;
-	//std::string candidatoReceiver, candidatoName;
-	iss >> std::ws >> strReceiver >> std::ws >> strName;*/
-
-	int parenthesis_count = 0;
-	int charCount = 0;
-
-	std::string strReceiver, strName;
-
-	for (char _char : strUnaryMessage) {
-	  if ((_char == ' ' ) && parenthesis_count == 0 && charCount > 0){
-	    strName = strUnaryMessage.substr(charCount + 1);
-	    break;
-	  }
-	  if (_char == '(')
-	    parenthesis_count++;
-	  else if(_char == ')')
-	    parenthesis_count--;
-
-	  strReceiver.push_back(_char);
-	  charCount++;
-	}
-
-	Object* objReceiver;
-	if ((objReceiver = receiver(strReceiver)) != nullptr and isName(strName))
-		return objReceiver->recvMessage(objReceiver, strName,
-			std::vector<Object*> { });
-	return objReceiver;
-}
-
-//todo
-Object* Parser::binaryMessage(std::string strBinaryMessage) {
+Object * Parser::boolObj(const std::string & cad) {
 	return nullptr;
 }
 
-//todo
-Object* Parser::keywordMessage(std::string strKeywordMessage) {
-	return nullptr;
-}
+/*void Parser::trim(std::string &cad) {
+ std::string newCad, x;
+ std::istringstream iss(cad);
+
+ while (iss >> std::skipws >> x) {
+ newCad += " " + x;
+ }
+
+ if (newCad[0] == '\t' || newCad[0] == '\n' || newCad[0] == ' ') {
+ cad = newCad.substr(1);
+ }
+ }
+
+
+ bool Parser::isName(std::string cad) {
+ std::regex regExp("^" + REGEX_NAME + "$");
+ return (std::regex_match(cad, regExp));
+ }
+
+ bool Parser::isString(std::string cad) {
+ if (isNil(cad))
+ return false;
+ std::regex regExp("^" + REGEX_STRING + "$");
+ return (std::regex_match(cad, regExp));
+ }
+
+ bool Parser::isLowerKeyword(std::string cad) {
+ std::regex regExp("^" + REGEX_LOWER_KEYWORD + "$");
+ return (std::regex_match(cad, regExp));
+ }
+
+ bool Parser::isCapKeyword(std::string cad) {
+ std::regex regExp("^" + REGEX_CAP_KEYWORD + "$");
+ return (std::regex_match(cad, regExp));
+ }
+
+ bool Parser::isNumber(std::string cad) {
+ std::regex regExp("^" + REGEX_NUMBER + "$");
+ return (std::regex_match(cad, regExp));
+ }
+
+ bool Parser::isOperador(std::string cad) {
+ return (cad == "+" or cad == "-" or cad == "*" or cad == "/" or cad == "!="
+ or cad == "==");
+ }*/

@@ -208,35 +208,6 @@ Object::slot_map Object::getParentSlots() const {
 	return parentSlots;
 }
 
-/*void Object::mostrar() {
-	std::cout << std::endl;
-	std::cout << "Nombre objeto: " << name << std::endl;
-	std::cout << "Direccion objeto: " << this << std::endl;
-	if (codeSegment == "")
-		std::cout << "Code Segment: " << std::endl;
-	else
-		std::cout << "Code Segment: " << std::endl << codeSegment << std::endl;
-	std::cout << "Número de slots: " << slots.size() << std::endl;
-	int nSlot = 1;
-	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
-		std::string slotName = _it->first;
-		slot_t slot = _it->second;
-		bool esMutable = std::get < 1 > (slot);
-		bool esParent = std::get < 2 > (slot);
-		std::cout << "# Slot: " << nSlot << std::endl;
-		std::cout << "SlotName " << nSlot << ": " << slotName << std::endl;
-		std::cout << "Es mutable? " << esMutable << std::endl;
-		std::cout << "Es parent? " << esParent << std::endl;
-		Object* dirObj;
-		dirObj = (Object*) std::get < 0 > (slot);
-		if (dirObj != nullptr)
-			dirObj->mostrar();
-		else
-			std::cout << "El Slot no apunta a ningun objeto." << std::endl;
-		nSlot++;
-	}
-}*/
-
 void Object::mostrar() {
 	//std::cout << std::endl;
 	//std::cout << "SlotContenedor: " << slotContenedor;
@@ -269,7 +240,7 @@ void Object::mostrar() {
 
 	std::cout << " | ";
 	std::cout << codeSegment << " )" << std::endl;
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
 		std::string slotName = _it->first;

@@ -3,23 +3,41 @@
 
 int main() {
 	Parser parser;
+	std::string cad;
 
-	try {
-		//Testeando print de numeros
-		parser.run("    (   0   )    print    .    ")->mostrar();
-		parser.run("+1 print.")->mostrar();
-		parser.run("-5 print.")->mostrar();
-		parser.run("102120.11230 print.")->mostrar();
-		parser.run("-0.001230 print.")->mostrar();
+	//Testeando print de numeros
+	cad = "'hola mundo' print. ('hola mundo') print.";
+	parser.run(cad);
 
-		//Testeando print de cadenas
-		parser.run("'hola' print.")->mostrar();
-		parser.run("'hola-mundo' print.")->mostrar();
+	cad = "2 print.  ( 1022 ) print.";
+	parser.run(cad);
 
-		parser.run("(2) print.")->mostrar();
-		parser.run("('hola') print.")->mostrar();
-	} catch (const std::runtime_error &e) {
-		std::cerr << e.what() << std::endl;
-	}
+	//script
+	//expression
+	//unary
+	//receiver
+	//
+
+	/*cad = "    (   0   )    print    .    ";
+	parser.run(cad);
+	cad = "+1 print.";
+	parser.run(cad);
+	cad = "-5 print.";
+	parser.run(cad);
+	cad = "102120.11230 print.";
+	parser.run(cad);
+	cad = "-0.001230 print.";
+	parser.run(cad);
+
+	//Testeando print de cadenas
+	cad = "'hola' print.";
+	parser.run(cad);
+	cad = "'hola-mundo' print.";
+	parser.run(cad);
+	cad = "(2) print.";
+	parser.run(cad);
+	cad = "('hola') print.";
+	parser.run(cad);*/
+
 	return 0;
 }
