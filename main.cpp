@@ -21,7 +21,7 @@ int main() {
 	cad = "(10+1) print.";
 	parser.run(cad);
 
-	cad = "( (( 10    +1)*5) - 2 ) print . ";
+	cad = "( (( (10 print)    +1)*5) - 2 ) print . ";
 	parser.run(cad);
 
 	//script
