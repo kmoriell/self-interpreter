@@ -18,8 +18,6 @@ std::vector<Object*> Parser::run(const std::string &cad) {
 	std::cout << ">>> " << cad << " <<<" << std::endl;
 	pCad = 0;
 	std::vector<Object*> objects = script(cad);
-	for (int i = 0; i < objects.size(); i++)
-		objects[i]->mostrar();
 	return objects;
 }
 
@@ -391,8 +389,12 @@ Object* Parser::nilObj(const std::string &cad) {
 	int _pCad = pCad; //checkpoint
 	Object *obj = nullptr;
 	skipSpaces(cad);
-	if (nil(cad))
+
+	if (nil(cad)) {
 		obj = new Object();
+		return obj;
+	}
+
 	pCad = _pCad;
 	return obj;
 }

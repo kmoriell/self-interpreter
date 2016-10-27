@@ -5,6 +5,7 @@
 
 Object::Object() {
 	this->name = "object";
+	this->nativeMethods.insert(std::make_pair("printObj", std::make_tuple(&Object::printObj, true)));
 	this->nativeMethods.insert(std::make_pair("print", std::make_tuple(&Object::print, false)));
 	this->nativeMethods.insert(std::make_pair("+", std::make_tuple(&Object::operator+, false)));
 	this->nativeMethods.insert(std::make_pair("-", std::make_tuple(&Object::operator-, false)));
@@ -208,9 +209,32 @@ Object::slot_map Object::getParentSlots() const {
 	return parentSlots;
 }
 
-void Object::mostrar() {
-	//std::cout << std::endl;
-	//std::cout << "SlotContenedor: " << slotContenedor;
+void Object::enableNativeMethod(Object* object, std::string methodName) {
+    auto fpoint = object->nativeMethods.find(methodName);
+    if (fpoint == object->nativeMethods.end()) {
+        std::string error = "No existe el mensaje ";
+        error += methodName;
+        throw std::runtime_error(error);
+    }
+    fpointTuple tuple = fpoint->second;
+    std::get<1>(tuple) = true;
+    fpoint->second = tuple;
+}
+void Object::disableNativeMethod(Object* object, std::string methodName) {
+    auto fpoint = object->nativeMethods.find(methodName);
+    if (fpoint == object->nativeMethods.end()) {
+        std::string error = "No existe el mensaje ";
+        error += methodName;
+        throw std::runtime_error(error);
+    }
+    fpointTuple tuple = fpoint->second;
+    std::get<1>(tuple) = false;
+    fpoint->second = tuple;
+}
+
+// Funciones nativas
+
+Object* Object::printObj(const std::vector<Object*>&) {
 	std::cout << this << ": ";
 	std::cout << "(|";
 
@@ -248,36 +272,12 @@ void Object::mostrar() {
 		Object* dirObj;
 		dirObj = (Object*) std::get < 0 > (slot);
 		if (dirObj != nullptr)
-			dirObj->mostrar();
+			dirObj->printObj(std::vector<Object*>{});
 		else
 			std::cout << "ERROR: El Slot no apunta a ningun objeto." << std::endl;
 	}
+	return this;
 }
-
-void Object::enableNativeMethod(Object* object, std::string methodName) {
-    auto fpoint = object->nativeMethods.find(methodName);
-    if (fpoint == object->nativeMethods.end()) {
-        std::string error = "No existe el mensaje ";
-        error += methodName;
-        throw std::runtime_error(error);
-    }
-    fpointTuple tuple = fpoint->second;
-    std::get<1>(tuple) = true;
-    fpoint->second = tuple;
-}
-void Object::disableNativeMethod(Object* object, std::string methodName) {
-    auto fpoint = object->nativeMethods.find(methodName);
-    if (fpoint == object->nativeMethods.end()) {
-        std::string error = "No existe el mensaje ";
-        error += methodName;
-        throw std::runtime_error(error);
-    }
-    fpointTuple tuple = fpoint->second;
-    std::get<1>(tuple) = false;
-    fpoint->second = tuple;
-}
-
-// Funciones nativas
 
 Object* Object::print(const std::vector<Object*>&) {
 	//std::cout << codeSegment.substr(1, codeSegment.size() - 2) << std::endl;

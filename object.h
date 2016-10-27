@@ -61,6 +61,7 @@ public:
 
   // funciones Nativas
   Object* print(const std::vector<Object*>&);
+  Object* printObj(const std::vector<Object*>&);
   Object* operator*(const std::vector<Object*>& args);
   Object* operator+(const std::vector<Object*>& args);
   Object* operator-(const std::vector<Object*>& args);
