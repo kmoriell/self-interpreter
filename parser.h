@@ -9,22 +9,22 @@ public:
 	int pCad;
 
 public:
-	std::vector<Object*> run(std::string &cad);
+	std::vector<Object*> run(const std::string &cad);
 
 private:
-	std::vector<Object*> script(std::string &cad);
-	Object* expression(std::string &cad);
-	Object* expressionCP(std::string &cad);
-	Object* expressionP(std::string &cad);
-	Object* keywordMessage(std::string &cad);
-	Object* binaryMessage(std::string &cad);
-	Object* unaryMessage(std::string &cad);
-	Object* receiver(std::string &cad);
-	Object* object(std::string &cad);
-	Object* slotList(std::string &cad);
-	Object* slotNameExtended(std::string &cad);
-	Object* constant(std::string &cad);
-	bool operador(std::string &cad);
+	std::vector<Object*> script(const std::string &cad);
+	Object* expression(const std::string &cad);
+	Object* expressionCP(const std::string &cad);
+	Object* expressionP(const std::string &cad);
+	Object* keywordMessage(const std::string &cad);
+	Object* binaryMessage(const std::string &cad);
+	Object* unaryMessage(const std::string &cad);
+	Object* receiver(const std::string &cad);
+	Object* object(const std::string &cad);
+	Object* slotList(const std::string &cad);
+	Object* slotNameExtended(const std::string &cad);
+	Object* constant(const std::string &cad);
+	std::string operador(const std::string &cad);
 
 	void skipSpaces(const std::string &cad);
 	bool isChar(const std::string &cad, const char cMatch);
@@ -44,7 +44,6 @@ private:
 	std::string capKeyword(const std::string &cad);
 	std::string string(const std::string &cad);
 	std::string number(const std::string &cad);
-	std::string operador(const std::string &cad);
 
 	/*void trim(std::string &cad);
 	bool isNil(std::string &cad);
