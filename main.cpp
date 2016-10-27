@@ -9,7 +9,7 @@ int main() {
 	cad = "'hola mundo' print. ('hola-mundo') print.";
 	parser.run(cad);
 
-	cad = "2 print.  ( 1022 ) print.";
+	cad = "2 print.  ( 1022 ) print. +16 print. -2 print.";
 	parser.run(cad);
 
 	cad = "'hola'.";

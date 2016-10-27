@@ -208,13 +208,18 @@ std::string Parser::number(const std::string &cad) {
 
 	std::string strNumber = "";
 	char cCad = cad[pCad];
-	while (pCad < cad.size()) {
-		cCad = cad[pCad];
-		if ('0' <= cCad and cCad <= '9') {
-			pCad++;
-			strNumber += cCad;
-		} else
-			break;
+	if (cCad == '-' or cCad == '+' or ('0' <= cCad and cCad <= '9')) {
+		pCad++;
+		strNumber += cCad;
+
+		while (pCad < cad.size()) {
+			cCad = cad[pCad];
+			if ('0' <= cCad and cCad <= '9') {
+				pCad++;
+				strNumber += cCad;
+			} else
+				break;
+		}
 	}
 
 	return strNumber;
@@ -456,37 +461,31 @@ Object * Parser::boolObj(const std::string & cad) {
  if (newCad[0] == '\t' || newCad[0] == '\n' || newCad[0] == ' ') {
  cad = newCad.substr(1);
  }
- }
-
-
- bool Parser::isName(std::string cad) {
- std::regex regExp("^" + REGEX_NAME + "$");
- return (std::regex_match(cad, regExp));
- }
-
- bool Parser::isString(std::string cad) {
- if (isNil(cad))
- return false;
- std::regex regExp("^" + REGEX_STRING + "$");
- return (std::regex_match(cad, regExp));
- }
-
- bool Parser::isLowerKeyword(std::string cad) {
- std::regex regExp("^" + REGEX_LOWER_KEYWORD + "$");
- return (std::regex_match(cad, regExp));
- }
-
- bool Parser::isCapKeyword(std::string cad) {
- std::regex regExp("^" + REGEX_CAP_KEYWORD + "$");
- return (std::regex_match(cad, regExp));
- }
-
- bool Parser::isNumber(std::string cad) {
- std::regex regExp("^" + REGEX_NUMBER + "$");
- return (std::regex_match(cad, regExp));
- }
-
- bool Parser::isOperador(std::string cad) {
- return (cad == "+" or cad == "-" or cad == "*" or cad == "/" or cad == "!="
- or cad == "==");
  }*/
+
+/*bool Parser::isName(const std::string cad) {
+	std::regex regExp("^" + REGEX_NAME + "$");
+	return (std::regex_match(cad, regExp));
+}
+
+bool Parser::isString(const std::string cad) {
+	if (isNil(cad))
+		return false;
+	std::regex regExp("^" + REGEX_STRING + "$");
+	return (std::regex_match(cad, regExp));
+}
+
+bool Parser::isLowerKeyword(const std::string cad) {
+	std::regex regExp("^" + REGEX_LOWER_KEYWORD + "$");
+	return (std::regex_match(cad, regExp));
+}
+
+bool Parser::isCapKeyword(const std::string cad) {
+	std::regex regExp("^" + REGEX_CAP_KEYWORD + "$");
+	return (std::regex_match(cad, regExp));
+}
+
+bool Parser::isNumber(const std::string cad) {
+	std::regex regExp("^" + REGEX_NUMBER + "$");
+	return (std::regex_match(cad, regExp));
+}*/

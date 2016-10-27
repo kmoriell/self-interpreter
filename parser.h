@@ -45,14 +45,13 @@ private:
 	std::string string(const std::string &cad);
 	std::string number(const std::string &cad);
 
-	/*void trim(std::string &cad);
-	bool isNil(std::string &cad);
-	bool isName(std::string cad);
-	bool isString(std::string cad);
-	bool isNumber(std::string cad);
-	bool isLowerKeyword(std::string cad);
-	bool isCapKeyword(std::string cad);
-	bool isOperador(std::string cad);*/
+	/*void trim(std::string &cad);*/
+	/*bool isNil(const std::string &cad);
+	bool isName(const std::string cad);
+	bool isString(const std::string cad);
+	bool isNumber(const std::string cad);
+	bool isLowerKeyword(const std::string cad);
+	bool isCapKeyword(const std::string cad);*/
 };
 
 #endif /* PARSER_H_ */
