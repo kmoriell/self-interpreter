@@ -6,44 +6,45 @@
 
 class Parser {
 public:
+	std::string *cad;
 	int pCad;
 
 public:
-	std::vector<Object*> run(const std::string &cad);
+	std::vector<Object*> run(std::string &cad);
 
 private:
-	std::vector<Object*> script(const std::string &cad);
-	Object* expression(const std::string &cad);
-	Object* expressionCP(const std::string &cad);
-	Object* expressionP(const std::string &cad);
-	Object* keywordMessage(const std::string &cad);
-	Object* binaryMessage(const std::string &cad);
-	Object* unaryMessage(const std::string &cad);
-	Object* receiver(const std::string &cad);
-	Object* object(const std::string &cad);
-	Object* slotList(const std::string &cad);
-	Object* slotNameExtended(const std::string &cad);
-	Object* constant(const std::string &cad);
-	std::string operador(const std::string &cad);
+	std::vector<Object*> script();
+	Object* expression();
+	Object* expressionCP();
+	Object* expressionP();
+	Object* keywordMessage();
+	Object* binaryMessage();
+	Object* unaryMessage();
+	Object* receiver();
+	Object* object();
+	Object* slotList();
+	Object* slotNameExtended();
+	Object* constant();
+	std::string operador();
 
-	void skipSpaces(const std::string &cad);
-	bool isChar(const std::string &cad, const char cMatch);
-	bool punto(const std::string &cad);
-	bool pLeft(const std::string &cad);
-	bool pRight(const std::string &cad);
+	void skipSpaces();
+	bool isString(const std::string strMatch);
 
-	Object* nilObj(const std::string &cad);
-	Object* stringObj(const std::string &cad);
-	Object* numberObj(const std::string &cad);
-	Object* objectObj(const std::string &cad);
-	Object* boolObj(const std::string &cad);
+	Object* nilObj();
+	Object* boolObj();
+	Object* stringObj();
+	Object* numberObj();
+	Object* objectObj();
+	Object* nameObj();
 
-	bool nil(const std::string &cad);
-	std::string name(const std::string &cad);
-	std::string lowerKeyword(const std::string &cad);
-	std::string capKeyword(const std::string &cad);
-	std::string string(const std::string &cad);
-	std::string number(const std::string &cad);
+	bool nil();
+	bool isTrue();
+	bool isFalse();
+	std::string name();
+	std::string lowerKeyword();
+	std::string capKeyword();
+	std::string string();
+	std::string number();
 
 	/*void trim(std::string &cad);*/
 	/*bool isNil(const std::string &cad);
