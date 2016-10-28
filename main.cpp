@@ -5,7 +5,7 @@ int main() {
 	Parser parser;
 	std::string cad;
 
-	//std::cout << "Testeando unaryMessage con printObj." << std::endl;
+	/*std::cout << "Testeando unaryMessage con printObj." << std::endl;
 	cad = "3 printObj.";
 	parser.run(cad);
 	cad = "'hola' printObj.";
@@ -57,7 +57,11 @@ int main() {
 	std::cout << "Testeando espacios y caracteres ocultos." << std::endl;
 	cad = " (\t (5*2) +1) print  . (\t (5*2) +1) printObj  . ";
 	parser.run(cad);
-	std::cout << std::endl;
+	std::cout << std::endl;*/
+
+	std::cout << "Testeando objetos." << std::endl;
+	cad = "(||) printObj.";
+	parser.run(cad);
 
 	return 0;
 }

@@ -22,8 +22,8 @@ private:
 	Object* binaryMessage();
 	Object* unaryMessage();
 	Object* receiver();
-	Object* object();
-	Object* slotList();
+	//Object* object();
+	bool slotList(Object* objContenedor);
 	Object* slotNameExtended();
 	Object* constant();
 	std::string operador();

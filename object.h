@@ -49,6 +49,9 @@ public:
   std::string getName() const;
   void _AddSlots(std::string name, Object* obj, bool _mutable,
           bool isParentSlot);
+  Object* addSlot(std::string name, Object* obj, bool _mutable,
+  		bool isParentSlot);
+
   void _RemoveSlots(std::string name);
 
   void setCodeSegment(const std::string code);

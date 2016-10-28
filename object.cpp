@@ -39,6 +39,14 @@ void Object::_AddSlots(std::string name, Object* obj, bool _mutable,
 					std::make_tuple(obj, _mutable, isParentSlot)));
 }
 
+Object* Object::addSlot(std::string name, Object* obj, bool _mutable,
+		bool isParentSlot) {
+	this->slots.insert(
+			std::make_pair(name,
+					std::make_tuple(obj, _mutable, isParentSlot)));
+	return this;
+}
+
 void Object::_RemoveSlots(std::string name) {
 	auto it = slots.find(name);
 	if (it != slots.end()) {

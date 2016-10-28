@@ -310,19 +310,28 @@ std::string Parser::capKeyword() {
 }
 
 //todo
-Object * Parser::object() {
+Object * Parser::objectObj() {
 	if (debug)
 		std::cout << "object pos: " << pCad << std::endl;
 
+	int _pCad = pCad; //checkpoint
+	Object* obj;
+	obj = new Object();
+
+	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj) and isString(SLOT_LIST_SEP) and isString(P_RIGHT))
+		return obj;
+
+	//todo destruir objeto creado
+	pCad = _pCad;
 	return nullptr;
 }
 
 //todo
-Object * Parser::slotList() {
+bool Parser::slotList(Object* objContenedor) {
 	if (debug)
 		std::cout << "slotList pos: " << pCad << std::endl;
 
-	return nullptr;
+	return true; //sintaxis buena pero no tenia objetos
 }
 
 //todo
@@ -499,9 +508,9 @@ Object* Parser::numberObj() {
 }
 
 //todo
-Object * Parser::objectObj() {
+/*Object * Parser::objectObj() {
 	return nullptr;
-}
+}*/
 
 Object * Parser::nameObj() {
 	//Aca deberia hacer un recv del objeto contexto y pedirle el slot name.
