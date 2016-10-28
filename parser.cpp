@@ -26,7 +26,7 @@ const std::string OP_ASIGNACION = ":";
 const std::string OP_SLOT_INMUTABLE = "=";
 const std::string OP_SLOT_MUTABLE = "<-";
 const std::string OP_DIVISION = "/";
-const std::string FIN_EXPRESSION = ".";
+const std::string PUNTO = ".";
 const std::string OP_ARG = ":";
 const std::string SLOT_LIST_SEP = "|";
 const std::string OP_PARENT = "*";
@@ -51,7 +51,7 @@ std::vector<Object*> Parser::script() {
 	std::vector<Object*> objects;
 
 	while (pCad < (*cad).size()) {
-		if (((obj = expression()) != nullptr) and isString(FIN_EXPRESSION))
+		if (((obj = expression()) != nullptr) and isString(PUNTO))
 			objects.push_back(obj);
 		else {
 			pCad = _pCad;
@@ -126,8 +126,8 @@ Object * Parser::binaryMessage() {
 	int _pCad = pCad; //checkpoint
 	Object* obj = receiver();
 	if (obj != nullptr) {
-		std::string strOp = operador();
-		if (strOp != "") {
+		std::string strOp;
+		if (operador(strOp)) {
 			Object* obj2 = expressionCP();
 			if (obj2 != nullptr) {
 				obj->recvMessage(obj, strOp, std::vector<Object*> { obj2 });
@@ -157,8 +157,11 @@ Object * Parser::unaryMessage() {
 	int _pCad = pCad; //checkpoint
 	Object* obj = receiver();
 	if (obj != nullptr) {
-		std::string strName = name();
-		if (strName != "") {
+		std::string strName;
+		if (name(strName)) {
+			/*std::cout << "objeto:" << obj << std::endl;
+			std::cout << "enviando mensaje..." << std::endl;
+			std::cout << "strName: " << strName << std::endl;*/
 			obj->recvMessage(obj, strName, std::vector<Object*> { });
 			//Si recvMessage al fallar no devuelve nullptr tengo que hacerlo capturando una excepcion.
 			if (obj != nullptr)
@@ -186,12 +189,13 @@ Object * Parser::receiver() {
 	return obj;
 }
 
-std::string Parser::name() {
+bool Parser::name(std::string &strName) {
 	if (debug)
 		std::cout << "name pos: " << pCad << std::endl;
 
+	int _pCad = pCad; //checkpoint
 	skipSpaces();
-	std::string strName = "";
+	strName = "";
 	char cCad = (*cad)[pCad];
 	if ('a' <= cCad and cCad <= 'z') {
 		pCad++;
@@ -206,7 +210,13 @@ std::string Parser::name() {
 				break;
 		}
 	}
-	return strName;
+
+	if (strName == "") {
+		int pCad = _pCad; //checkpoint
+		return false;
+	} else {
+		return true;
+	}
 }
 
 //todo //Asi como esta soporta strings con espacios en medio //No soporta 'hola "'" zaraza' -> falta un detector de doble comilla
@@ -309,7 +319,7 @@ std::string Parser::capKeyword() {
 	return strCapKeyword;
 }
 
-//todo
+//todo se anulo el script de momento
 Object * Parser::objectObj() {
 	if (debug)
 		std::cout << "object pos: " << pCad << std::endl;
@@ -318,28 +328,82 @@ Object * Parser::objectObj() {
 	Object* obj;
 	obj = new Object();
 
-	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj) and isString(SLOT_LIST_SEP) and isString(P_RIGHT))
+	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj) and isString(SLOT_LIST_SEP) /*and script(obj) */and isString(P_RIGHT)) {
 		return obj;
-
-	//todo destruir objeto creado
-	pCad = _pCad;
-	return nullptr;
+	} else {
+		//todo destruir objeto creado
+		pCad = _pCad;
+		return nullptr;
+	}
+	return obj;
 }
 
 //todo
 bool Parser::slotList(Object* objContenedor) {
 	if (debug)
 		std::cout << "slotList pos: " << pCad << std::endl;
+	int _pCad = pCad; //checkpoint
+	int tipoSlot; //0 normal, 1 argumento, 2 parent
+	std::string strName;
+	std::string strOpSlot;
+	Object* objSlot;
 
-	return true; //sintaxis buena pero no tenia objetos
+	//todo, quedo medio negro, hay que cambiar las definiciones de tipoSlot
+	if (slotNameExtended(tipoSlot, strName) and (operadorSlot(strOpSlot)) and (objSlot = expression()) and isString(PUNTO)) {
+		bool esMutable = false;
+		bool esParent = false;
+		bool esArgument = false;
+		if (tipoSlot == 1)
+			esArgument = true;
+		else if (tipoSlot == 2)
+			esParent = true;
+
+		if (strOpSlot == OP_SLOT_INMUTABLE)
+			esMutable = false;
+		else if (strOpSlot == OP_SLOT_MUTABLE)
+			esMutable = true;
+		//else
+			//no se deberia nunca llegar aca porque operadorSlot daria false sino.
+
+		/*std::cout << "Se agrego slot. pos: " << pCad << std::endl;
+		std::cout << "objSlot: " << objSlot << std::endl;
+		objSlot->recvMessage(objSlot, "printObj", std::vector<Object*> { });
+		std::cout << "strName= " << strName << std::endl;
+		std::cout << "esMutable= " << esMutable << std::endl;
+		std::cout << "esParent= " << esParent << std::endl;
+		if (esParent)
+			std::cout << "soy slot parent" << std::endl;*/
+		objContenedor->addSlot(strName, objSlot, esMutable, esParent);
+		//std::cout << "slot agregado" << std::endl;
+		return true;
+	}
+
+	pCad = _pCad;
+	return true;
+	//pCad = _pCad;
+	//return false; //sintaxis buena pero no tenia objetos
 }
 
-//todo
-Object * Parser::slotNameExtended() {
+bool Parser::slotNameExtended(int &tipoSlot, std::string &strName) {
 	if (debug)
 		std::cout << "slotNameExtended pos: " << pCad << std::endl;
 
-	return nullptr;
+	skipSpaces();
+	int _pCad = pCad; //checkpoint
+	if (isString(OP_ARG) and name(strName)) {
+		tipoSlot = 1;
+	} else {
+		pCad = _pCad;
+		if (name(strName) and isString(OP_PARENT)) {
+			tipoSlot = 2;
+		} else {
+			pCad = _pCad;
+			if (name(strName)) {
+				tipoSlot = 0;
+			}
+		}
+	}
+	return true;
 }
 
 //todo falta name bool
@@ -362,12 +426,13 @@ Object * Parser::constant() {
 		return obj;
 	else if ((obj = nameObj()) != nullptr)
 		return obj;
-
-	pCad = _pCad;
-	return obj;
+	else {
+		pCad = _pCad;
+		return nullptr;
+	}
 }
 
-std::string Parser::operador() {
+bool Parser::operador(std::string &strOperador) {
 	if (debug)
 		std::cout << "operador pos: " << pCad << std::endl;
 
@@ -375,20 +440,46 @@ std::string Parser::operador() {
 	skipSpaces();
 
 	if (isString(OP_SUMA)) {
-		return OP_SUMA;
+		strOperador = OP_SUMA;
+		return true;
 	} else if (isString(OP_RESTA)) {
-		return OP_RESTA;
+		strOperador = OP_RESTA;
+		return true;
 	} else if (isString(OP_MULTIPLICACION)) {
-		return OP_MULTIPLICACION;
+		strOperador = OP_MULTIPLICACION;
+		return true;
 	} else if (isString(OP_DIVISION)) {
-		return OP_DIVISION;
+		strOperador = OP_DIVISION;
+		return true;
 	} else if (isString(OP_DISTINTO)) {
-		return OP_DISTINTO;
+		strOperador = OP_DISTINTO;
+		return true;
 	} else if (isString(OP_IGUAL)) {
-		return OP_IGUAL;
+		strOperador = OP_IGUAL;
+		return true;
 	} else {
+		strOperador = "";
+		return false;
+	}
+}
+
+bool Parser::operadorSlot(std::string &strOperadorSlot) {
+	if (debug)
+		std::cout << "operadorSlot pos: " << pCad << std::endl;
+
+	int _pCad = pCad; //checkpoint
+	skipSpaces();
+
+	if (isString(OP_SLOT_INMUTABLE)) {
+		strOperadorSlot = OP_SLOT_INMUTABLE;
+		return true;
+	} else if (isString(OP_SLOT_MUTABLE)) {
+		strOperadorSlot = OP_SLOT_MUTABLE;
+		return true;
+	} else {
+		strOperadorSlot = "";
 		pCad = _pCad;
-		return "";
+		return false;
 	}
 }
 
@@ -434,7 +525,7 @@ Object* Parser::nilObj() {
 
 	if (isString(NIL)) {
 		obj = new Object();
-		obj->setCodeSegment(NIL + FIN_EXPRESSION);
+		obj->setCodeSegment(NIL + PUNTO);
 		return obj;
 	}
 
@@ -449,12 +540,12 @@ Object* Parser::boolObj() {
 
 	if (isString(TRUE)) {
 		obj = new Object();
-		obj->setCodeSegment(TRUE + FIN_EXPRESSION);
+		obj->setCodeSegment(TRUE + PUNTO);
 		obj->enableNativeMethod(obj, METHOD_PRINT);
 		return obj;
 	} else if (isString(FALSE)) {
 		obj = new Object();
-		obj->setCodeSegment(FALSE + FIN_EXPRESSION);
+		obj->setCodeSegment(FALSE + PUNTO);
 		obj->enableNativeMethod(obj, METHOD_PRINT);
 		return obj;
 	}
@@ -471,7 +562,7 @@ Object* Parser::stringObj() {
 
 	if (strString != "") {
 		obj = new Object();
-		obj->setCodeSegment(strString + FIN_EXPRESSION);
+		obj->setCodeSegment(strString + PUNTO);
 		obj->enableNativeMethod(obj, METHOD_PRINT);
 		//obj->enableNativeMethod(obj, OP_SUMA);
 		//obj->enableNativeMethod(obj, OP_IGUAL);
@@ -491,7 +582,7 @@ Object* Parser::numberObj() {
 
 	if (strNumber != "") {
 		obj = new Object();
-		obj->setCodeSegment(strNumber + FIN_EXPRESSION);
+		obj->setCodeSegment(strNumber + PUNTO);
 		obj->enableNativeMethod(obj, METHOD_PRINT);
 		obj->enableNativeMethod(obj, OP_SUMA);
 		obj->enableNativeMethod(obj, OP_RESTA);
@@ -508,7 +599,7 @@ Object* Parser::numberObj() {
 }
 
 //todo
-/*Object * Parser::objectObj() {
+/*bObject * Parser::objectObj() {
 	return nullptr;
 }*/
 

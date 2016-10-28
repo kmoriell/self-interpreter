@@ -32,6 +32,8 @@ std::string Object::getName() const {
 	return this->name;
 }
 
+//todo hay que hacer que el addSlots reciba un unico objeto
+//y transpase los slots (y sus punteros) del objeto recibido por parametro al objeto propio
 void Object::_AddSlots(std::string name, Object* obj, bool _mutable,
 		bool isParentSlot) {
 	this->slots.insert(
@@ -246,23 +248,26 @@ Object* Object::printObj(const std::vector<Object*>&) {
 	std::cout << this << ": ";
 	std::cout << "(|";
 
+	//Escribe los slots (metodos no nativos)
 	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
 		std::string slotName = _it->first;
-		std::cout << slotName << std::endl;
 		slot_t slot = _it->second;
 		std::cout << " " << slotName;
 
 		bool esMutable = std::get < 1 > (slot);
 		bool esParent = std::get < 2 > (slot);
-		//std::cout << "# Slot: " << nSlot << std::endl;
+
 		if (esMutable)
 			std::cout << " <- ";
 		else
 			std::cout << " = ";
+		Object* dirObj = (Object*) std::get < 0 > (slot);
+		std::cout << dirObj;
 		//std::cout << "Es parent? " << esParent << std::endl;
 		std::cout << ".";
 	}
 
+	//Escribe los slots nativos (metodos nativos)
 	for (auto _it = nativeMethods.begin(); _it != nativeMethods.end(); ++_it) {
 		std::string slotNameNative = _it->first;
 		fpointTuple tuple = _it->second;

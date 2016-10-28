@@ -24,9 +24,10 @@ private:
 	Object* receiver();
 	//Object* object();
 	bool slotList(Object* objContenedor);
-	Object* slotNameExtended();
+	bool slotNameExtended(int &tipoSlot, std::string &strName);
 	Object* constant();
-	std::string operador();
+	bool operador(std::string &strOperador);
+	bool operadorSlot(std::string &strOperadorSlot);
 
 	void skipSpaces();
 	bool isString(const std::string strMatch);
@@ -41,7 +42,7 @@ private:
 	bool nil();
 	bool isTrue();
 	bool isFalse();
-	std::string name();
+	bool name(std::string &strName);
 	std::string lowerKeyword();
 	std::string capKeyword();
 	std::string string();
