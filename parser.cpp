@@ -160,8 +160,8 @@ Object * Parser::unaryMessage() {
 		std::string strName;
 		if (name(strName)) {
 			/*std::cout << "objeto:" << obj << std::endl;
-			std::cout << "enviando mensaje..." << std::endl;
-			std::cout << "strName: " << strName << std::endl;*/
+			 std::cout << "enviando mensaje..." << std::endl;
+			 std::cout << "strName: " << strName << std::endl;*/
 			obj->recvMessage(obj, strName, std::vector<Object*> { });
 			//Si recvMessage al fallar no devuelve nullptr tengo que hacerlo capturando una excepcion.
 			if (obj != nullptr)
@@ -214,9 +214,8 @@ bool Parser::name(std::string &strName) {
 	if (strName == "") {
 		int pCad = _pCad; //checkpoint
 		return false;
-	} else {
+	} else
 		return true;
-	}
 }
 
 //todo //Asi como esta soporta strings con espacios en medio //No soporta 'hola "'" zaraza' -> falta un detector de doble comilla
@@ -328,7 +327,9 @@ Object * Parser::objectObj() {
 	Object* obj;
 	obj = new Object();
 
-	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj) and isString(SLOT_LIST_SEP) /*and script(obj) */and isString(P_RIGHT)) {
+	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj)
+			and isString(SLOT_LIST_SEP) /*and script(obj) */
+			and isString(P_RIGHT)) {
 		return obj;
 	} else {
 		//todo destruir objeto creado
@@ -348,40 +349,53 @@ bool Parser::slotList(Object* objContenedor) {
 	std::string strOpSlot;
 	Object* objSlot;
 
+	/*
+	 while (pCad < (*cad).size()) {
+	 if (((obj = expression()) != nullptr) and isString(PUNTO))
+	 objects.push_back(obj);
+	 else {
+	 pCad = _pCad;
+	 //destruir objeto creado y vaciar el vector
+	 break;
+	 }
+	 }
+	 return objects;*/
+
 	//todo, quedo medio negro, hay que cambiar las definiciones de tipoSlot
-	if (slotNameExtended(tipoSlot, strName) and (operadorSlot(strOpSlot)) and (objSlot = expression()) and isString(PUNTO)) {
-		bool esMutable = false;
-		bool esParent = false;
-		bool esArgument = false;
-		if (tipoSlot == 1)
-			esArgument = true;
-		else if (tipoSlot == 2)
-			esParent = true;
+	int pLastSlot = pCad;
+	while (pCad < (*cad).size()) {
+		if (slotNameExtended(tipoSlot, strName) and (operadorSlot(strOpSlot))
+				and (objSlot = expression()) and isString(PUNTO)) {
+			bool esMutable = false;
+			bool esParent = false;
+			bool esArgument = false;
+			if (tipoSlot == 1)
+				esArgument = true;
+			else if (tipoSlot == 2)
+				esParent = true;
 
-		if (strOpSlot == OP_SLOT_INMUTABLE)
-			esMutable = false;
-		else if (strOpSlot == OP_SLOT_MUTABLE)
-			esMutable = true;
-		//else
-			//no se deberia nunca llegar aca porque operadorSlot daria false sino.
+			if (strOpSlot == OP_SLOT_INMUTABLE)
+				esMutable = false;
+			else if (strOpSlot == OP_SLOT_MUTABLE)
+				esMutable = true;
+			else
+				throw std::runtime_error(
+						"ERROR: si operadorSlot() no detectó un operador valido no"
+								" se debería llegar a esta instancia en el slotList()"
+								" porque deberia devolver false.");
 
-		/*std::cout << "Se agrego slot. pos: " << pCad << std::endl;
-		std::cout << "objSlot: " << objSlot << std::endl;
-		objSlot->recvMessage(objSlot, "printObj", std::vector<Object*> { });
-		std::cout << "strName= " << strName << std::endl;
-		std::cout << "esMutable= " << esMutable << std::endl;
-		std::cout << "esParent= " << esParent << std::endl;
-		if (esParent)
-			std::cout << "soy slot parent" << std::endl;*/
-		objContenedor->addSlot(strName, objSlot, esMutable, esParent);
-		//std::cout << "slot agregado" << std::endl;
-		return true;
+			objContenedor->addSlot(strName, objSlot, esMutable,
+					esParent/*, esMutable*/);
+			pLastSlot = pCad;
+		} else {
+			pCad = pLastSlot;
+			break;
+		}
 	}
-
-	pCad = _pCad;
-	return true;
+	//es equivalente a decir que el slotlist esta vacio
+	//por eso se devuelve true, porque es una opcion válida
 	//pCad = _pCad;
-	//return false; //sintaxis buena pero no tenia objetos
+	return true;
 }
 
 bool Parser::slotNameExtended(int &tipoSlot, std::string &strName) {
@@ -518,7 +532,7 @@ bool Parser::isString(const std::string strMatch) {
 	return isMatch;
 }
 
-Object* Parser::nilObj() {
+Object * Parser::nilObj() {
 	int _pCad = pCad; //checkpoint
 	Object *obj = nullptr;
 	skipSpaces();
@@ -533,7 +547,7 @@ Object* Parser::nilObj() {
 	return obj;
 }
 
-Object* Parser::boolObj() {
+Object * Parser::boolObj() {
 	int _pCad = pCad; //checkpoint
 	Object *obj = nullptr;
 	skipSpaces();
@@ -554,7 +568,7 @@ Object* Parser::boolObj() {
 	return obj;
 }
 
-Object* Parser::stringObj() {
+Object * Parser::stringObj() {
 	int _pCad = pCad; //checkpoint
 	Object *obj = nullptr;
 	skipSpaces();
@@ -574,7 +588,7 @@ Object* Parser::stringObj() {
 	return obj;
 }
 
-Object* Parser::numberObj() {
+Object * Parser::numberObj() {
 	int _pCad = pCad; //checkpoint
 	Object *obj = nullptr;
 	skipSpaces();
@@ -600,8 +614,8 @@ Object* Parser::numberObj() {
 
 //todo
 /*bObject * Parser::objectObj() {
-	return nullptr;
-}*/
+ return nullptr;
+ }*/
 
 Object * Parser::nameObj() {
 	//Aca deberia hacer un recv del objeto contexto y pedirle el slot name.
