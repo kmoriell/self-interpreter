@@ -49,7 +49,7 @@ std::vector<Object*> Parser::script() {
 		if (((obj = expression()) != nullptr) and isString(PUNTO)) {
 			objects.push_back(obj);
 			pLastExpression = pCad;
-	} else {
+		} else {
 			pCad = pLastExpression;
 			//destruir objeto creado y vaciar el vector
 			break;
@@ -115,14 +115,27 @@ Object * Parser::keywordMessage() {
 		std::cout << "keywordMessage pos: " << pCad << std::endl;
 
 	int _pCad = pCad; //checkpoint
-	Object* obj = context;//receiver();
+	Object* obj = receiver();
+	Object* objMessage;
 	if (obj != nullptr) {
 		std::string strLowerKeyword;
 		if (lowerKeyword(strLowerKeyword) and isString(OP_ARG)) {
 			Object* obj2 = expressionCP();
 			if (obj2 != nullptr) {
-				if (flagExecute == 1)
-					obj->recvMessage(strLowerKeyword, std::vector<Object*> { obj2 });
+				if (flagExecute == 1) {
+					objMessage = obj->recvMessage(strLowerKeyword,
+							std::vector<Object*> { obj2 });
+					objMessage->addSlot("self", obj, true, true, false);
+					std::string code = objMessage->getCodeSegment();
+					if (code.size() > 0) {
+						Parser unParser;
+						unParser.setContext(obj);
+						std::vector<Object*> _vector = unParser.run(code);
+						obj = _vector[_vector.size() - 1];
+					}
+					// TODO: ver este return, si deberia retornar nil en el else
+					return obj;
+				}
 				//todo hay que capturar excepcion del recvMessage, no devuelve nullptr.
 				if (obj != nullptr)
 					return obj;
@@ -148,13 +161,26 @@ Object * Parser::binaryMessage() {
 
 	int _pCad = pCad; //checkpoint
 	Object* obj = receiver();
+	Object* objMessage;
 	if (obj != nullptr) {
 		std::string strOp;
 		if (operador(strOp)) {
 			Object* obj2 = expressionCP();
 			if (obj2 != nullptr) {
-				if (flagExecute == 1)
-					obj->recvMessage(strOp, std::vector<Object*> { obj2 });
+				if (flagExecute == 1) {
+					objMessage = obj->recvMessage(strOp, std::vector<Object*> {
+							obj2 });
+					objMessage->addSlot("self", obj, true, true, false);
+					std::string code = objMessage->getCodeSegment();
+					if (code.size() > 0) {
+						Parser unParser;
+						unParser.setContext(obj);
+						std::vector<Object*> _vector = unParser.run(code);
+						obj = _vector[_vector.size() - 1];
+					}
+					// TODO: ver este return, si deberia retornar nil en el else
+					return obj;
+				}
 				//todo hay que capturar excepcion del recvMessage, no devuelve nullptr.
 				if (obj != nullptr)
 					return obj;
@@ -180,14 +206,27 @@ Object * Parser::unaryMessage() {
 
 	int _pCad = pCad; //checkpoint
 	Object* obj = receiver();
+	Object* objMessage;
 	if (obj != nullptr) {
 		std::string strName;
 		if (name(strName)) {
 			/*std::cout << "objeto:" << obj << std::endl;
 			 std::cout << "enviando mensaje..." << std::endl;
 			 std::cout << "strName: " << strName << std::endl;*/
-			if (flagExecute == 1)
-				obj->recvMessage(strName, std::vector<Object*> { });
+			if (flagExecute == 1) {
+				objMessage = obj->recvMessage(strName,
+						std::vector<Object*> { });
+				objMessage->addSlot("self", obj, true, true, false);
+				std::string code = objMessage->getCodeSegment();
+				if (code.size() > 0) {
+					Parser unParser;
+					unParser.setContext(obj);
+					std::vector<Object*> _vector = unParser.run(code);
+					obj = _vector[_vector.size() - 1];
+				}
+				// TODO: ver este return, si deberia retornar nil en el else
+				return obj;
+			}
 			//Si recvMessage al fallar no devuelve nullptr tengo que hacerlo capturando una excepcion.
 			if (obj != nullptr)
 				return obj;
@@ -323,31 +362,31 @@ bool Parser::lowerKeyword(std::string &strLowerKeyword) {
 		pCad = _pCad;
 		return false;
 	} else
-		return false;
+		return true;
 }
 
 /*bool Parser::capKeyword(std::string &strCapKeyword) {
-	if (debug)
-		std::cout << "capKeyword pos: " << pCad << std::endl;
+ if (debug)
+ std::cout << "capKeyword pos: " << pCad << std::endl;
 
-	skipSpaces();
-	std::string strCapKeyword = "";
-	char cCad = (*cad)[pCad];
-	if ('A' <= cCad and cCad <= 'Z') {
-		pCad++;
-		strCapKeyword += cCad;
-		while (pCad < (*cad).size()) {
-			cCad = (*cad)[pCad];
-			if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
-					or ('0' <= cCad and cCad <= '9')) {
-				pCad++;
-				strCapKeyword += cCad;
-			} else
-				break;
-		}
-	}
-	return strCapKeyword;
-}*/
+ skipSpaces();
+ std::string strCapKeyword = "";
+ char cCad = (*cad)[pCad];
+ if ('A' <= cCad and cCad <= 'Z') {
+ pCad++;
+ strCapKeyword += cCad;
+ while (pCad < (*cad).size()) {
+ cCad = (*cad)[pCad];
+ if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
+ or ('0' <= cCad and cCad <= '9')) {
+ pCad++;
+ strCapKeyword += cCad;
+ } else
+ break;
+ }
+ }
+ return strCapKeyword;
+ }*/
 
 //todo se anulo el script de momento
 Object * Parser::objectObj() {
@@ -357,10 +396,12 @@ Object * Parser::objectObj() {
 	int _pCad = pCad; //checkpoint
 	Object* obj;
 	obj = new Object();
+	int inicioScript, finScript;
 
 	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj)
-			and isString(SLOT_LIST_SEP) and (script().size() >= 0)
-			and isString(P_RIGHT)) {
+			and isString(SLOT_LIST_SEP)	and (inicioScript = pCad) and (script().size()>=0) and (finScript = pCad) and isString(P_RIGHT)) {
+		obj->setCodeSegment(
+				(*cad).substr(inicioScript, finScript - inicioScript));
 		return obj;
 	} else {
 		//todo destruir objeto creado
@@ -403,8 +444,8 @@ bool Parser::slotList(Object* objContenedor) {
 								" se debería llegar a esta instancia en el slotList()"
 								" porque deberia devolver false.");
 
-			objContenedor->addSlot(strName, objSlot, esMutable,
-					esParent, esArgument);
+			objContenedor->addSlot(strName, objSlot, esMutable, esParent,
+					esArgument);
 			pLastSlot = pCad;
 		} else {
 			pCad = pLastSlot;
@@ -637,20 +678,23 @@ Object * Parser::numberObj() {
  }*/
 
 Object * Parser::nameObj() {
-  //int _pCad = pCad; //checkpoint
-    Object *obj = nullptr;
-  /*  skipSpaces();
-    std::string strName;
+	int _pCad = pCad; //checkpoint
+	Object *obj = nullptr;
+	skipSpaces();
+	std::string strName;
 
-    if (name(strName)) {
-      obj = context->recvMessage(strName,std::vector<Object*>{});
-      return obj;
-    }
+	if (name(strName)) {
+		if (flagExecute == 1) {
+			obj = context->recvMessage(strName, std::vector<Object*> { });
+		} else {
+			obj = new Object;
+		}
+	} else
+		pCad = _pCad;
 
-    pCad = _pCad;*/
-    return obj;
+	return obj;
 }
 
 void Parser::setContext(Object* context) {
-  this->context = context;
+	this->context = context;
 }

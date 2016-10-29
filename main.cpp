@@ -1,10 +1,25 @@
 #include <iostream>
+#include <fstream>
 #include "parser.h"
 
-int main() {
+int main(int argc, char **argv) {
+
+	if (argc != 2) {
+		std::cout << "Falta el archivo a procesar." << std::endl;
+		return 1;
+	}
+
+	std::ifstream filein(argv[1]);
+
+	std::string script, x;
+
+	while (filein >> x)
+		script += x + " ";
+
 	Parser parser;
 	std::string cad;
 	Object *lobby = new Object();
+	lobby->addSlot("lobby", lobby, true, false, false);
 	parser.setContext(lobby);
 
 	/*std::cout << "Testeando unaryMessage con printObj." << std::endl;
@@ -62,8 +77,11 @@ int main() {
 	std::cout << std::endl;*/
 
 	std::cout << "Testeando objetos." << std::endl;
-	cad = "(lobby _AddSlots: (|punto = (||).|). ) printObj.";
-	parser.run(cad);
+	//cad = "(lobby _AddSlots: (|punto = (||3.).|)). (punto + 1) printObj.";
+	//std::cout << "filein = " << script << std::endl;
+	//std::cout << "   cad = " << cad << std::endl;
+
+	parser.run(script);
 	/*cad = "(||) printObj.";
 	parser.run(cad);*/
 	//cad = "(|x=3.|) printObj.";

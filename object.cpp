@@ -305,9 +305,10 @@ Object* Object::printObj(const std::vector<Object*>& args) {
     slot_t slot = _it->second;
     Object* dirObj;
     dirObj = (Object*) std::get < 0 > (slot);
-    if (dirObj != nullptr)
+    // Es distinto de this para el caso de lobby
+    if (dirObj != nullptr && dirObj != this)
       dirObj->printObj(std::vector<Object*> { });
-    else
+    else if (dirObj == nullptr)
       std::cout << "ERROR: El Slot no apunta a ningun objeto." << std::endl;
   }
   return this;
