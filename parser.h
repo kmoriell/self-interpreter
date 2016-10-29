@@ -22,6 +22,7 @@ private:
 	Object* expressionP();
 	Object* keywordMessage();
 	Object* binaryMessage();
+	void pepito(std::string &strName, Object* &obj);
 	Object* unaryMessage();
 	Object* receiver();
 	//Object* object();

@@ -82,54 +82,102 @@ void Object::setCodeSegment(const std::string code) {
 	this->codeSegment = code;
 }
 
-void Object::findObject(std::string name, Object* scope, Object* &returnValue,
+/*
+ void Object::findObject(std::string name, Object* scope, Object* &returnValue,
+ delegate& function) {
+ if (name == "")
+ return;
+
+ function = nullptr;
+ slot_map slots = scope->slots;
+ auto it = slots.find(name);
+ if (it == slots.end()) {
+ //Busco en los metodos nativos
+ auto fpoint = scope->nativeMethods.find(name);
+ bool nativeMethodFound = true;
+ if (fpoint == scope->nativeMethods.end()) {
+ nativeMethodFound = false;
+ } else {
+ fpointTuple tuple = fpoint->second;
+ if (std::get<1>(tuple)) {
+ // llamo a la funcion apuntada
+ function = std::get<0>(tuple);
+ return;
+ }
+ }
+ // Entonces busco en los slots del parent slot
+ slot_map parentSlots = getParentSlots(this);
+ //std::vector<Object*> parentsFound;
+
+ auto _slot = parentSlots.find(name);
+
+ if (_slot != parentSlots.end())
+ returnValue = (Object*) std::get<0>(_slot->second);
+ else {
+ for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
+ Object* __parent = (Object*) std::get<0>(_slot->second);
+ __parent->findObject(name,__parent, returnValue, function);
+ }
+ std::string error = "No existe el mensaje ";
+ error += name;
+ throw std::runtime_error(error);
+ }
+
+ for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
+ Object *_temp = (Object*) std::get<0>(_it->second);
+ Object *parent = nullptr;
+ findObject(name, _temp, parent, function);
+ if (parent != nullptr)
+ parentsFound.push_back(parent);
+ }
+
+ // Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
+ if (parentsFound.size() != 1 && !nativeMethodFound) {
+
+ }
+ returnValue = parentsFound[0];
+ } else {
+ returnValue = (Object*) std::get<0>(it->second);
+ }
+ }*/
+
+bool Object::findObject(std::string name, Object* &returnValue,
 		delegate& function) {
-	if (name == "")
-		return;
 
-	function = nullptr;
-	slot_map slots = scope->slots;
+	// Primero me fijo en mis slots
 	auto it = slots.find(name);
-	if (it == slots.end()) {
-		//Busco en los metodos nativos
-		auto fpoint = scope->nativeMethods.find(name);
-		bool nativeMethodFound = true;
-		if (fpoint == scope->nativeMethods.end()) {
-			nativeMethodFound = false;
-		} else {
-			fpointTuple tuple = fpoint->second;
-			if (std::get<1>(tuple)) {
-				// llamo a la funcion apuntada
-				function = std::get<0>(tuple);
-				return;
-			} else {
-				std::string error = "No existe el mensaje ";
-				error += name;
-				throw std::runtime_error(error);
-			}
-		}
-		// Entonces busco en los slots del parent slot
-		slot_map parentSlots = getParentSlots();
-		std::vector<Object*> parentsFound;
-
-		for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
-			Object *_temp = (Object*) std::get<0>(_it->second);
-			Object *parent = nullptr;
-			findObject(name, _temp, parent, function);
-			if (parent != nullptr)
-				parentsFound.push_back(parent);
-		}
-
-		// Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
-		if (parentsFound.size() != 1 && !nativeMethodFound) {
-			std::string error = "No existe el mensaje ";
-			error += name;
-			throw std::runtime_error(error);
-		}
-		returnValue = parentsFound[0];
-	} else {
+	if (it != slots.end()) {
+		// Significa que lo encontre
 		returnValue = (Object*) std::get<0>(it->second);
+		return true;
 	}
+
+	// No lo encontro en sus slots. Busco en los metodos nativos
+	auto it_native = nativeMethods.find(name);
+	if (it_native != nativeMethods.end()) {
+		// Significa que lo encontre
+		fpointTuple tuple = it_native->second;
+
+		// Pregunto si esta habilitado
+		if (std::get<1>(tuple)) {
+			// llamo a la funcion apuntada
+			function = std::get<0>(tuple);
+			return true;
+		}
+	}
+
+	// No encontre el metodo nativo
+	// Entonces le pregunto a mis parents slots por el slot
+	// buscado.
+	slot_map parents = getParentSlots();
+	for (auto parentSlot_it = parents.begin(); parentSlot_it != parents.end();
+			++parentSlot_it) {
+		Object* pslot = (Object*) std::get<0>(parentSlot_it->second);
+		if (pslot->findObject(name, returnValue, function))
+			return true;
+	}
+
+	return false;
 }
 
 /*slot_t Object::findSlot(std::string name, slot_map slots) {
@@ -193,10 +241,14 @@ Object* Object::recvMessage(std::string messageName,
 	// Aca tengo mi puntero a objeto, lo que tendria que hacer es ejecutar el codigo
 	// del mensaje
 	//Object* foundObject = std::get < 0 > (it->second);
-	Object* message;
-	delegate fpointer;
+	Object* message = nullptr;
+	delegate fpointer = nullptr;
 
-	findObject(messageName, this, message, fpointer);
+	if (!findObject(messageName, message, fpointer)) {
+		std::string error = messageName + " no encontrado.";
+		throw std::runtime_error(error);
+	}
+
 	// es un puntero a funcion
 	if (fpointer != nullptr)
 		return (this->*fpointer)(args);
@@ -216,8 +268,9 @@ Object* Object::recvMessage(std::string messageName,
 
 		// Verifico que sea argumento y que el slot sea mutable para poder modificarlo
 		bool __isMutable = std::get<1>(object_slots_it->second);
-		std::string slotName = object_slots_it->first;
-		if (slotName[0] == ':' && __isMutable) {
+		bool __isArg = std::get<3>(object_slots_it->second);
+
+		if (__isArg && __isMutable) {
 			slot_t tupla = object_slots_it->second;
 
 			Object *__object = ((Object*) std::get<0>(tupla));
@@ -231,14 +284,29 @@ Object* Object::recvMessage(std::string messageName,
 		}
 	}
 
+	auto it = slots.find(messageName);
+	if (it != slots.end() && args.size() > 0) {
+		slot_t tuple = it->second;
+
+		if (std::get<1>(tuple)) {
+			std::get<0>(tuple) = args[0];
+			it->second = tuple;
+		} else {
+			std::string error = "El slot no es mutable";
+			throw std::runtime_error(error);
+		}
+	}
+
 	return message;
 }
 
 Object::slot_map Object::getParentSlots() const {
 	slot_map parentSlots;
 	for (auto it = slots.begin(); it != slots.end(); ++it) {
-		if (std::get<2>(it->second))
-			parentSlots.insert(std::make_pair(it->first, it->second));
+		if (std::get<2>(it->second)) {
+			if (std::get<0>(it->second) != this)
+				parentSlots.insert(std::make_pair(it->first, it->second));
+		}
 	}
 	return parentSlots;
 }
@@ -276,10 +344,18 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
 		std::string slotName = _it->first;
 		slot_t slot = _it->second;
-		std::cout << " " << slotName;
 
 		bool esMutable = std::get<1>(slot);
 		bool esParent = std::get<2>(slot);
+		bool esArgument = std::get<3>(slot);
+
+		if (esArgument)
+			std::cout << ":";
+
+		std::cout << " " << slotName;
+
+		if (esParent)
+			std::cout << "*";
 
 		if (esMutable)
 			std::cout << " <- ";

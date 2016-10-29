@@ -34,8 +34,9 @@ public:
   std::map<std::string, fpointTuple> nativeMethods;
 
   slot_map getParentSlots() const;
-  void findObject(std::string name, Object* scope, Object* &returnValue,
-                          delegate& function);
+  Object::slot_map getParentSlots(Object* pointer) const;
+  bool findObject(std::string name, Object* &returnValue,
+  		delegate& function);
 
   /*Object* recvMessage(Object* object, std::string messageName,
                               std::vector<opcode_t> args);*/

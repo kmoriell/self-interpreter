@@ -31,6 +31,7 @@ std::vector<Object*> Parser::run(std::string &cad) {
 	this->cad = &cad;
 	this->pCad = 0;
 	this->flagExecute = 0;
+	std::cout << "Contexto: " << this->context << "<<< " << std::endl;
 	std::cout << ">>> " << *this->cad << "<<< " << std::endl;
 	std::vector<Object*> objects = script();
 	return objects;
@@ -130,6 +131,17 @@ Object * Parser::keywordMessage() {
 					if (code.size() > 0) {
 						Parser unParser;
 						unParser.setContext(objMessage);
+
+						std::cout << "Contexto: " << context << std::endl;
+						std::cout << "Receiver: " << obj << std::endl;
+						//obj->printObj(std::vector<Object*> {});
+						std::cout << "Name: " << strLowerKeyword << std::endl;
+						std::cout << "Argumento: " << obj2 << std::endl;
+						//obj2->printObj(std::vector<Object*> {});
+						std::cout << "Resultado mensaje: " << objMessage << std::endl;
+						//objMessage->printObj(std::vector<Object*> {});
+						std::cout << "Self de : " << objMessage << " es " << obj << std::endl;
+
 						std::vector<Object*> _vector = unParser.run(code);
 						obj = _vector[_vector.size() - 1];
 					}
@@ -200,31 +212,95 @@ Object * Parser::binaryMessage() {
 	return obj;
 }
 
+/*void Parser::pepito(std::string &strName, Object* &obj) {
+ if (flagExecute == 1) {
+ Object* objMessage;
+ objMessage = obj->recvMessage(strName,
+ std::vector<Object*> { });
+ objMessage->addSlot("self", obj, true, true, false);
+ std::string code = objMessage->getCodeSegment();
+ if (code.size() > 0) {
+ Parser unParser;
+ unParser.setContext(objMessage);
+ std::vector<Object*> _vector = unParser.run(code);
+ obj = _vector[_vector.size() - 1];
+ }
+ }
+ }*/
+
+/*Object * Parser::unaryMessage() {
+ if (debug)
+ std::cout << "unaryMessage pos: " << pCad << std::endl;
+ int _pCad = pCad; //checkpoint
+ Object* obj = nullptr;
+ bool isUnaryMessage = false;
+ //Primero hacemos el "receiver name"
+ obj = receiver();
+ if (obj != nullptr) {
+ //Suponemos debe ser un "receiver name"
+ std::string strName;
+ //Probamos que sea un "name" lo que sigue.
+ if (name(strName)) {
+ isUnaryMessage = true;
+ if (flagExecute == 1) {
+ Object* objMessage;
+ objMessage = obj->recvMessage(strName,
+ std::vector<Object*> { });
+ objMessage->addSlot("self", obj, true, true, false);
+ std::string code = objMessage->getCodeSegment();
+ if (code.size() > 0) {
+ Parser unParser;
+ unParser.setContext(objMessage);
+ std::vector<Object*> _vector = unParser.run(code);
+ obj = _vector[_vector.size() - 1];
+ }
+ }
+ } else {
+ //Devuelvo el receiver solo. Ej de codigo: 3.
+ isUnaryMessage = true;
+ }
+ } else {
+ //Planteo la posibilidad de un <context-implicit> name
+ pCad = _pCad;
+ obj = context;
+ //Suponemos debe ser un "<implicit-context> name"
+ std::string strName;
+ //Probamos que sea un "name" lo que sigue.
+ if (name(strName)) {
+ isUnaryMessage = true;
+ if (flagExecute == 1) {
+ Object* objMessage;
+ objMessage = obj->recvMessage(strName, std::vector<Object*> { });
+ objMessage->addSlot("self", obj, true, true, false);
+ std::string code = objMessage->getCodeSegment();
+ if (code.size() > 0) {
+ Parser unParser;
+ unParser.setContext(objMessage);
+ std::vector<Object*> _vector = unParser.run(code);
+ obj = _vector[_vector.size() - 1];
+ }
+ }
+ }
+ }
+
+ if (!isUnaryMessage)
+ pCad = _pCad;
+ return obj;
+ }*/
+
 Object * Parser::unaryMessage() {
 	if (debug)
 		std::cout << "unaryMessage pos: " << pCad << std::endl;
 
 	int _pCad = pCad; //checkpoint
 	Object* obj = receiver();
-	Object* objMessage;
 	if (obj != nullptr) {
 		std::string strName;
 		if (name(strName)) {
-			/*std::cout << "objeto:" << obj << std::endl;
-			 std::cout << "enviando mensaje..." << std::endl;
-			 std::cout << "strName: " << strName << std::endl;*/
 			if (flagExecute == 1) {
-				// context = &lobby
-				// obj = &punto
-				// strName = qwe | print
-				// objMessage = &qwe | &print
-				objMessage = obj->recvMessage(strName,
+				Object* objMessage = obj->recvMessage(strName,
 						std::vector<Object*> { });
-				// agregamos slot self a &qwe que apunta a &punto
-				// agregamos slot self a &print que apunta a &punto
 				objMessage->addSlot("self", obj, true, true, false);
-				//Obtengo el codigo de &qwe que es "temp print."
-				//Obtengo el codigo de &print que es "x."
 				std::string code = objMessage->getCodeSegment();
 				if (code.size() > 0) {
 					Parser unParser;
