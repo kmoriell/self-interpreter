@@ -37,6 +37,7 @@ const std::string METHOD_PRINT = "print";
 std::vector<Object*> Parser::run(std::string &cad) {
 	this->cad = &cad;
 	this->pCad = 0;
+	this->flagExecute = 0;
 	std::cout << ">>> " << *this->cad << "<<< " << std::endl;
 	std::vector<Object*> objects = script();
 	return objects;
@@ -45,20 +46,23 @@ std::vector<Object*> Parser::run(std::string &cad) {
 std::vector<Object*> Parser::script() {
 	if (debug)
 		std::cout << "script pos: " << pCad << std::endl;
-
+	flagExecute++;
 	int _pCad = pCad; //checkpoint
 	Object* obj = nullptr;
 	std::vector<Object*> objects;
 
+	int pLastExpression = pCad;
 	while (pCad < (*cad).size()) {
-		if (((obj = expression()) != nullptr) and isString(PUNTO))
+		if (((obj = expression()) != nullptr) and isString(PUNTO)) {
 			objects.push_back(obj);
-		else {
-			pCad = _pCad;
+			pLastExpression = pCad;
+	} else {
+			pCad = pLastExpression;
 			//destruir objeto creado y vaciar el vector
 			break;
 		}
 	}
+	flagExecute--;
 	return objects;
 }
 
@@ -130,7 +134,8 @@ Object * Parser::binaryMessage() {
 		if (operador(strOp)) {
 			Object* obj2 = expressionCP();
 			if (obj2 != nullptr) {
-				obj->recvMessage(obj, strOp, std::vector<Object*> { obj2 });
+				if (flagExecute == 1)
+					obj->recvMessage(obj, strOp, std::vector<Object*> { obj2 });
 				//todo hay que capturar excepcion del recvMessage, no devuelve nullptr.
 				if (obj != nullptr)
 					return obj;
@@ -162,7 +167,8 @@ Object * Parser::unaryMessage() {
 			/*std::cout << "objeto:" << obj << std::endl;
 			 std::cout << "enviando mensaje..." << std::endl;
 			 std::cout << "strName: " << strName << std::endl;*/
-			obj->recvMessage(obj, strName, std::vector<Object*> { });
+			if (flagExecute == 1)
+				obj->recvMessage(obj, strName, std::vector<Object*> { });
 			//Si recvMessage al fallar no devuelve nullptr tengo que hacerlo capturando una excepcion.
 			if (obj != nullptr)
 				return obj;
@@ -349,18 +355,6 @@ bool Parser::slotList(Object* objContenedor) {
 	std::string strName;
 	std::string strOpSlot;
 	Object* objSlot;
-
-	/*
-	 while (pCad < (*cad).size()) {
-	 if (((obj = expression()) != nullptr) and isString(PUNTO))
-	 objects.push_back(obj);
-	 else {
-	 pCad = _pCad;
-	 //destruir objeto creado y vaciar el vector
-	 break;
-	 }
-	 }
-	 return objects;*/
 
 	//todo, quedo medio negro, hay que cambiar las definiciones de tipoSlot
 	int pLastSlot = pCad;

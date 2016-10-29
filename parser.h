@@ -9,6 +9,7 @@ public:
 	std::string *cad;
 	int pCad;
 	bool debug = false;
+	int flagExecute;
 
 public:
 	std::vector<Object*> run(std::string &cad);
