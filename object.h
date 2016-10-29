@@ -22,8 +22,9 @@ public:
    * booleano que indica si es mutable o no
    * booleano que indica si el objeto apuntado es un parent slot
    * booleano que indica si esta implementado nativamente
+   * booleano que indica si es un argumento (:)
    */
-  typedef std::tuple<Object*, bool, bool> slot_t;
+  typedef std::tuple<Object*, bool, bool, bool> slot_t;
   typedef std::map<std::string, slot_t> slot_map;
   typedef std::tuple<delegate, bool> fpointTuple;
  private:
@@ -49,14 +50,14 @@ public:
   std::string getName() const;
   void _AddSlots(std::string name, Object* obj, bool _mutable,
           bool isParentSlot);
-  Object* addSlot(std::string name, Object* obj, bool _mutable,	bool isParentSlot);
+  Object* addSlot(std::string name, Object* obj, bool _mutable,	bool isParentSlot, bool isArgument);
 
   void _RemoveSlots(std::string name);
 
   void setCodeSegment(const std::string code);
   std::string getCodeSegment() const;
 
-  Object* recvMessage(Object* object, std::string messageName,
+  Object* recvMessage(std::string messageName,
                               std::vector<Object*> args);
   Object* clone(const std::vector<Object*>& args);
   Object* collect();

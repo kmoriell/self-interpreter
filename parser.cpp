@@ -135,7 +135,7 @@ Object * Parser::binaryMessage() {
 			Object* obj2 = expressionCP();
 			if (obj2 != nullptr) {
 				if (flagExecute == 1)
-					obj->recvMessage(obj, strOp, std::vector<Object*> { obj2 });
+					obj->recvMessage(strOp, std::vector<Object*> { obj2 });
 				//todo hay que capturar excepcion del recvMessage, no devuelve nullptr.
 				if (obj != nullptr)
 					return obj;
@@ -168,7 +168,7 @@ Object * Parser::unaryMessage() {
 			 std::cout << "enviando mensaje..." << std::endl;
 			 std::cout << "strName: " << strName << std::endl;*/
 			if (flagExecute == 1)
-				obj->recvMessage(obj, strName, std::vector<Object*> { });
+				obj->recvMessage(strName, std::vector<Object*> { });
 			//Si recvMessage al fallar no devuelve nullptr tengo que hacerlo capturando una excepcion.
 			if (obj != nullptr)
 				return obj;
@@ -333,9 +333,8 @@ Object * Parser::objectObj() {
 	Object* obj;
 	obj = new Object();
 
-	uint32_t val = 0;
 	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj)
-			and isString(SLOT_LIST_SEP) and ((val = script().size()) >= 0)
+			and isString(SLOT_LIST_SEP) and (script().size() >= 0)
 			and isString(P_RIGHT)) {
 		return obj;
 	} else {
@@ -380,7 +379,7 @@ bool Parser::slotList(Object* objContenedor) {
 								" porque deberia devolver false.");
 
 			objContenedor->addSlot(strName, objSlot, esMutable,
-					esParent/*, esMutable*/);
+					esParent, esArgument);
 			pLastSlot = pCad;
 		} else {
 			pCad = pLastSlot;

@@ -42,14 +42,17 @@ std::string Object::getName() const {
 //y transpase los slots (y sus punteros) del objeto recibido por parametro al objeto propio
 void Object::_AddSlots(std::string name, Object* obj, bool _mutable,
                        bool isParentSlot) {
-  this->slots.insert(
-      std::make_pair(name, std::make_tuple(obj, _mutable, isParentSlot)));
+  //Recorro obj y agrego sus slots
+  for (auto it = obj->slots.begin(); it != obj->slots.end(); ++it) {
+    this->slots.insert(
+      std::make_pair(it->first, it->second));
+  }
 }
 
 Object* Object::addSlot(std::string name, Object* obj, bool _mutable,
-                        bool isParentSlot) {
+                        bool isParentSlot, bool isArgument) {
   this->slots.insert(
-      std::make_pair(name, std::make_tuple(obj, _mutable, isParentSlot)));
+      std::make_pair(name, std::make_tuple(obj, _mutable, isParentSlot, isArgument)));
   return this;
 }
 
@@ -156,7 +159,7 @@ void Object::findObject(std::string name, Object* scope, Object* &returnValue,
  return recvMessage(object, messageName, args);
  }*/
 
-Object* Object::recvMessage(Object* object, std::string messageName,
+Object* Object::recvMessage(std::string messageName,
                             std::vector<Object*> args) {
   /*// Reviso en los slots del objeto si existe el mensaje
    auto it = object->slots.find(message);
@@ -186,10 +189,10 @@ Object* Object::recvMessage(Object* object, std::string messageName,
   Object* message;
   delegate fpointer;
 
-  findObject(messageName, object, message, fpointer);
+  findObject(messageName, this, message, fpointer);
   // es un puntero a funcion
   if (fpointer != nullptr)
-    return (object->*fpointer)(args);
+    return (this->*fpointer)(args);
 
   //slot_t message = findSlot(messageName, object->slots);
 
