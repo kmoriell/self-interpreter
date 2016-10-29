@@ -261,7 +261,7 @@ void Object::disableNativeMethod(Object* object, std::string methodName) {
 
 // Funciones nativas
 
-Object* Object::printObj(const std::vector<Object*>&) {
+Object* Object::printObj(const std::vector<Object*>& args) {
   std::cout << this << ": ";
   std::cout << "(|";
 
@@ -309,7 +309,7 @@ Object* Object::printObj(const std::vector<Object*>&) {
   return this;
 }
 
-Object* Object::print(const std::vector<Object*>&) {
+Object* Object::print(const std::vector<Object*>& args) {
   //std::cout << codeSegment.substr(1, codeSegment.size() - 2) << std::endl;
   std::cout << codeSegment << std::endl;
   return this;
