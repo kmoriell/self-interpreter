@@ -129,7 +129,7 @@ Object * Parser::keywordMessage() {
 					std::string code = objMessage->getCodeSegment();
 					if (code.size() > 0) {
 						Parser unParser;
-						unParser.setContext(obj);
+						unParser.setContext(objMessage);
 						std::vector<Object*> _vector = unParser.run(code);
 						obj = _vector[_vector.size() - 1];
 					}
@@ -174,7 +174,7 @@ Object * Parser::binaryMessage() {
 					std::string code = objMessage->getCodeSegment();
 					if (code.size() > 0) {
 						Parser unParser;
-						unParser.setContext(obj);
+						unParser.setContext(objMessage);
 						std::vector<Object*> _vector = unParser.run(code);
 						obj = _vector[_vector.size() - 1];
 					}
@@ -214,13 +214,21 @@ Object * Parser::unaryMessage() {
 			 std::cout << "enviando mensaje..." << std::endl;
 			 std::cout << "strName: " << strName << std::endl;*/
 			if (flagExecute == 1) {
+				// context = &lobby
+				// obj = &punto
+				// strName = qwe | print
+				// objMessage = &qwe | &print
 				objMessage = obj->recvMessage(strName,
 						std::vector<Object*> { });
+				// agregamos slot self a &qwe que apunta a &punto
+				// agregamos slot self a &print que apunta a &punto
 				objMessage->addSlot("self", obj, true, true, false);
+				//Obtengo el codigo de &qwe que es "temp print."
+				//Obtengo el codigo de &print que es "x."
 				std::string code = objMessage->getCodeSegment();
 				if (code.size() > 0) {
 					Parser unParser;
-					unParser.setContext(obj);
+					unParser.setContext(objMessage);
 					std::vector<Object*> _vector = unParser.run(code);
 					obj = _vector[_vector.size() - 1];
 				}
@@ -399,7 +407,9 @@ Object * Parser::objectObj() {
 	int inicioScript, finScript;
 
 	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj)
-			and isString(SLOT_LIST_SEP)	and (inicioScript = pCad) and (script().size()>=0) and (finScript = pCad) and isString(P_RIGHT)) {
+			and isString(SLOT_LIST_SEP) and (inicioScript = pCad)
+			and (script().size() >= 0) and (finScript = pCad)
+			and isString(P_RIGHT)) {
 		obj->setCodeSegment(
 				(*cad).substr(inicioScript, finScript - inicioScript));
 		return obj;
@@ -426,7 +436,7 @@ bool Parser::slotList(Object* objContenedor) {
 	while (pCad < (*cad).size()) {
 		if (slotNameExtended(tipoSlot, strName) and (operadorSlot(strOpSlot))
 				and (objSlot = expression()) and isString(PUNTO)) {
-			bool esMutable = false;
+			bool esMutable = true;
 			bool esParent = false;
 			bool esArgument = false;
 			if (tipoSlot == 1)
@@ -438,18 +448,29 @@ bool Parser::slotList(Object* objContenedor) {
 				esMutable = false;
 			else if (strOpSlot == OP_SLOT_MUTABLE)
 				esMutable = true;
-			else
-				throw std::runtime_error(
-						"ERROR: si operadorSlot() no detectó un operador valido no"
-								" se debería llegar a esta instancia en el slotList()"
-								" porque deberia devolver false.");
 
 			objContenedor->addSlot(strName, objSlot, esMutable, esParent,
 					esArgument);
 			pLastSlot = pCad;
 		} else {
 			pCad = pLastSlot;
-			break;
+			if (slotNameExtended(tipoSlot, strName) and isString(PUNTO)) {
+				objSlot = new Object(); //todo: si se usa la expression() se pierde esta ref y se likea
+				bool esMutable = true;
+				bool esParent = false;
+				bool esArgument = false;
+				if (tipoSlot == 1)
+					esArgument = true;
+				else if (tipoSlot == 2)
+					esParent = true;
+
+				/*objContenedor->addSlot(strName, objSlot, esMutable, esParent,
+				 esArgument);*/
+				pLastSlot = pCad;
+			} else {
+				pCad = pLastSlot;
+				break;
+			}
 		}
 	}
 	//es equivalente a decir que el slotlist esta vacio
