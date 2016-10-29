@@ -60,7 +60,7 @@ int main() {
 	std::cout << std::endl;*/
 
 	std::cout << "Testeando objetos." << std::endl;
-	cad = "(|x<-3. y<-5.|) printObj.";
+	cad = "(|x*=3.|) printObj.";
 	parser.run(cad);
 	/*cad = "(||) printObj.";
 	parser.run(cad);*/
