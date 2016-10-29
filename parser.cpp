@@ -7,13 +7,6 @@
 #include <string>
 #include <iostream>
 
-const std::string REGEX_NIL = "'nil'";
-const std::string REGEX_NAME = "[a-z][[:alnum:]]*";
-const std::string REGEX_STRING = "'[^ \'\"]*'";
-const std::string REGEX_LOWER_KEYWORD = "'[^ \'\"]*'";
-const std::string REGEX_CAP_KEYWORD = "[_A-Z][[:alnum:]]*";
-const std::string REGEX_NUMBER = "((\\+|-)?[[:digit:]]+)(\\.(([[:digit:]]+)?))?";
-
 const std::string NIL = "nil";
 const std::string TRUE = "true";
 const std::string FALSE = "false";
@@ -120,7 +113,33 @@ Object * Parser::expressionP() {
 Object * Parser::keywordMessage() {
 	if (debug)
 		std::cout << "keywordMessage pos: " << pCad << std::endl;
-	return nullptr;
+
+	int _pCad = pCad; //checkpoint
+	Object* obj = receiver();
+	if (obj != nullptr) {
+		std::string strLowerKeyword;
+		if (lowerKeyword(strLowerKeyword) and isString(OP_ARG)) {
+			Object* obj2 = expressionCP();
+			if (obj2 != nullptr) {
+				if (flagExecute == 1)
+					obj->recvMessage(strLowerKeyword, std::vector<Object*> { obj2 });
+				//todo hay que capturar excepcion del recvMessage, no devuelve nullptr.
+				if (obj != nullptr)
+					return obj;
+			} else {
+				//todo destruir obj Receiver
+				obj = nullptr;
+			}
+		} else {
+			//hay que matar el objeto creado en el receiver();
+			//aca es donde cambiamos la def de unary_message := (receiver name | receiver)
+			obj = nullptr;
+			pCad = _pCad;
+			return obj;
+		}
+	}
+	pCad = _pCad;
+	return obj;
 }
 
 Object * Parser::binaryMessage() {
@@ -278,12 +297,13 @@ std::string Parser::number() {
 	return strNumber;
 }
 
-std::string Parser::lowerKeyword() {
+bool Parser::lowerKeyword(std::string &strLowerKeyword) {
 	if (debug)
 		std::cout << "lowerKeyword pos: " << pCad << std::endl;
 
+	int _pCad = pCad; //checkpoint
 	skipSpaces();
-	std::string strLowerKeyword = "";
+	strLowerKeyword = "";
 	char cCad = (*cad)[pCad];
 	if (('a' <= cCad and cCad <= 'z') or (cCad == '_')) {
 		pCad++;
@@ -298,10 +318,15 @@ std::string Parser::lowerKeyword() {
 				break;
 		}
 	}
-	return strLowerKeyword;
+
+	if (strLowerKeyword == "") {
+		pCad = _pCad;
+		return false;
+	} else
+		return false;
 }
 
-std::string Parser::capKeyword() {
+/*bool Parser::capKeyword(std::string &strCapKeyword) {
 	if (debug)
 		std::cout << "capKeyword pos: " << pCad << std::endl;
 
@@ -322,7 +347,7 @@ std::string Parser::capKeyword() {
 		}
 	}
 	return strCapKeyword;
-}
+}*/
 
 //todo se anulo el script de momento
 Object * Parser::objectObj() {
@@ -615,43 +640,3 @@ Object * Parser::nameObj() {
 	//Aca deberia hacer un recv del objeto contexto y pedirle el slot name.
 	return nullptr;
 }
-
-/*void Parser::trim(const std::string cad) {
- std::string newCad, x;
- std::istringstream iss(cad);
-
- while (iss >> std::skipws >> x) {
- newCad += " " + x;
- }
-
- if (newCad[0] == '\t' || newCad[0] == '\n' || newCad[0] == ' ') {
- cad = newCad.substr(1);
- }
- }*/
-
-/*bool Parser::isName(const std::string cad) {
- std::regex regExp("^" + REGEX_NAME + "$");
- return (std::regex_match(cad, regExp));
- }
-
- bool Parser::isString(const std::string cad) {
- if (isNil(cad))
- return false;
- std::regex regExp("^" + REGEX_STRING + "$");
- return (std::regex_match(cad, regExp));
- }
-
- bool Parser::isLowerKeyword(const std::string cad) {
- std::regex regExp("^" + REGEX_LOWER_KEYWORD + "$");
- return (std::regex_match(cad, regExp));
- }
-
- bool Parser::isCapKeyword(const std::string cad) {
- std::regex regExp("^" + REGEX_CAP_KEYWORD + "$");
- return (std::regex_match(cad, regExp));
- }
-
- bool Parser::isNumber(const std::string cad) {
- std::regex regExp("^" + REGEX_NUMBER + "$");
- return (std::regex_match(cad, regExp));
- }*/

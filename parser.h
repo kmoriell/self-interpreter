@@ -29,6 +29,8 @@ private:
 	Object* constant();
 	bool operador(std::string &strOperador);
 	bool operadorSlot(std::string &strOperadorSlot);
+	bool lowerKeyword(std::string &strLowerKeyword);
+	//bool capKeyword(std::string &strCapKeyword);
 
 	void skipSpaces();
 	bool isString(const std::string strMatch);
@@ -44,8 +46,6 @@ private:
 	bool isTrue();
 	bool isFalse();
 	bool name(std::string &strName);
-	std::string lowerKeyword();
-	std::string capKeyword();
 	std::string string();
 	std::string number();
 
