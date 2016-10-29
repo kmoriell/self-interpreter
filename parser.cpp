@@ -327,8 +327,9 @@ Object * Parser::objectObj() {
 	Object* obj;
 	obj = new Object();
 
+	uint32_t val = 0;
 	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj)
-			and isString(SLOT_LIST_SEP) /*and script(obj) */
+			and isString(SLOT_LIST_SEP) and ((val = script().size()) >= 0)
 			and isString(P_RIGHT)) {
 		return obj;
 	} else {
