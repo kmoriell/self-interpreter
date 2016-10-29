@@ -17,6 +17,8 @@ Object::Object() {
       std::make_pair("*", std::make_tuple(&Object::operator*, false)));
   this->nativeMethods.insert(
       std::make_pair("/", std::make_tuple(&Object::operator/, false)));
+  this->nativeMethods.insert(
+      std::make_pair("_AddSlots", std::make_tuple(&Object::_AddSlots, true)));
 }
 
 Object::Object(const Object& _lobby) {
@@ -40,13 +42,15 @@ std::string Object::getName() const {
 
 //todo hay que hacer que el addSlots reciba un unico objeto
 //y transpase los slots (y sus punteros) del objeto recibido por parametro al objeto propio
-void Object::_AddSlots(std::string name, Object* obj, bool _mutable,
-                       bool isParentSlot) {
+Object* Object::_AddSlots(const std::vector<Object*>& args) {
   //Recorro obj y agrego sus slots
+  Object *obj = args[0];
+
   for (auto it = obj->slots.begin(); it != obj->slots.end(); ++it) {
     this->slots.insert(
       std::make_pair(it->first, it->second));
   }
+  return this;
 }
 
 Object* Object::addSlot(std::string name, Object* obj, bool _mutable,

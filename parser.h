@@ -6,15 +6,16 @@
 
 class Parser {
 public:
-	std::string *cad;
-	int pCad;
-	bool debug = false;
-	int flagExecute;
-
-public:
 	std::vector<Object*> run(std::string &cad);
+	void setContext(Object* context);
 
 private:
+	Object* context;
+  std::string *cad;
+  int pCad;
+  bool debug = false;
+  int flagExecute;
+
 	std::vector<Object*> script();
 	Object* expression();
 	Object* expressionCP();

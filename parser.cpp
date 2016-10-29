@@ -115,7 +115,7 @@ Object * Parser::keywordMessage() {
 		std::cout << "keywordMessage pos: " << pCad << std::endl;
 
 	int _pCad = pCad; //checkpoint
-	Object* obj = receiver();
+	Object* obj = context;//receiver();
 	if (obj != nullptr) {
 		std::string strLowerKeyword;
 		if (lowerKeyword(strLowerKeyword) and isString(OP_ARG)) {
@@ -637,6 +637,20 @@ Object * Parser::numberObj() {
  }*/
 
 Object * Parser::nameObj() {
-	//Aca deberia hacer un recv del objeto contexto y pedirle el slot name.
-	return nullptr;
+  //int _pCad = pCad; //checkpoint
+    Object *obj = nullptr;
+  /*  skipSpaces();
+    std::string strName;
+
+    if (name(strName)) {
+      obj = context->recvMessage(strName,std::vector<Object*>{});
+      return obj;
+    }
+
+    pCad = _pCad;*/
+    return obj;
+}
+
+void Parser::setContext(Object* context) {
+  this->context = context;
 }

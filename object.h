@@ -48,8 +48,7 @@ public:
   Object(const Object& _lobby);
   void setName(const std::string newName);
   std::string getName() const;
-  void _AddSlots(std::string name, Object* obj, bool _mutable,
-          bool isParentSlot);
+  Object* _AddSlots(const std::vector<Object*>& args);
   Object* addSlot(std::string name, Object* obj, bool _mutable,	bool isParentSlot, bool isArgument);
 
   void _RemoveSlots(std::string name);

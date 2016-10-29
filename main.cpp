@@ -4,6 +4,8 @@
 int main() {
 	Parser parser;
 	std::string cad;
+	Object *lobby = new Object();
+	parser.setContext(lobby);
 
 	/*std::cout << "Testeando unaryMessage con printObj." << std::endl;
 	cad = "3 printObj.";
@@ -60,7 +62,7 @@ int main() {
 	std::cout << std::endl;*/
 
 	std::cout << "Testeando objetos." << std::endl;
-	cad = "(||4.) printObj.";
+	cad = "(lobby _AddSlots: (|punto = (||).|). ) printObj.";
 	parser.run(cad);
 	/*cad = "(||) printObj.";
 	parser.run(cad);*/
