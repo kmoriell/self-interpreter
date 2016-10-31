@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
 	parser.run(cad);
 	std::cout << std::endl;*/
 
-	std::cout << "Testeando objetos." << std::endl;
+	//std::cout << "Testeando objetos." << std::endl;
 	//cad = "(lobby _AddSlots: (|punto = (||3.).|)). (punto + 1) printObj.";
 	//std::cout << "filein = " << script << std::endl;
 	//std::cout << "   cad = " << cad << std::endl;
