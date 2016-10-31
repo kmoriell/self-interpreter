@@ -31,8 +31,8 @@ std::vector<Object*> Parser::run(std::string &cad) {
 	this->cad = &cad;
 	this->pCad = 0;
 	this->flagExecute = 0;
-	std::cout << "Contexto: " << this->context << "<<< " << std::endl;
-	std::cout << ">>> " << *this->cad << "<<< " << std::endl;
+	//std::cout << "Contexto: " << this->context << "<<< " << std::endl;
+	//std::cout << ">>> " << *this->cad << "<<< " << std::endl;
 	std::vector<Object*> objects = script();
 	return objects;
 }
@@ -126,13 +126,13 @@ Object * Parser::keywordMessage() {
 				if (flagExecute == 1) {
 					objMessage = obj->recvMessage(strLowerKeyword,
 							std::vector<Object*> { obj2 });
-					std::cout << "keywordMessage" << std::endl;
+					//std::cout << "keywordMessage" << std::endl;
 					std::string code = objMessage->getCodeSegment();
 					if (code.size() > 0) {
 						objMessage->addSlot("self", obj, true, true, false);
 						Parser unParser;
 						unParser.setContext(objMessage);
-						std::cout << "Contexto: " << context << std::endl;
+						/*std::cout << "Contexto: " << context << std::endl;
 						std::cout << "Receiver: " << obj << std::endl;
 						//obj->printObj(std::vector<Object*> {});
 						std::cout << "Name: " << strLowerKeyword << std::endl;
@@ -141,7 +141,7 @@ Object * Parser::keywordMessage() {
 						std::cout << "Resultado mensaje: " << objMessage << std::endl;
 						//objMessage->printObj(std::vector<Object*> {});
 						std::cout << "Self de : " << objMessage << " es " << obj << std::endl;
-
+*/
 						std::vector<Object*> _vector = unParser.run(code);
 						obj = _vector[_vector.size() - 1];
 					}
@@ -182,13 +182,13 @@ Object * Parser::binaryMessage() {
 				if (flagExecute == 1) {
 					objMessage = obj->recvMessage(strOp, std::vector<Object*> {
 							obj2 });
-					std::cout << "BinaryMessage" << std::endl;
+//					std::cout << "BinaryMessage" << std::endl;
 					objMessage->addSlot("self", obj, true, true, false);
 					std::string code = objMessage->getCodeSegment();
 					if (code.size() > 0) {
 						Parser unParser;
 						unParser.setContext(objMessage);
-
+/*
 						std::cout << "Contexto: " << context << std::endl;
 						std::cout << "Receiver: " << obj << std::endl;
 						//obj->printObj(std::vector<Object*> {});
@@ -198,7 +198,7 @@ Object * Parser::binaryMessage() {
 						std::cout << "Resultado mensaje: " << objMessage << std::endl;
 						//objMessage->printObj(std::vector<Object*> {});
 						std::cout << "Self de : " << objMessage << " es " << obj << std::endl;
-
+*/
 						std::vector<Object*> _vector = unParser.run(code);
 						obj = _vector[_vector.size() - 1];
 					}
@@ -312,12 +312,12 @@ Object * Parser::unaryMessage() {
 			if (flagExecute == 1) {
 				Object* objMessage = obj->recvMessage(strName,
 						std::vector<Object*> { });
-				std::cout << "unaryMessage" << std::endl;
+				//std::cout << "unaryMessage" << std::endl;
 				objMessage->addSlot("self", obj, true, true, false);
 				std::string code = objMessage->getCodeSegment();
 				if (code.size() > 0) {
 					Parser unParser;
-
+/*
 					std::cout << "Contexto: " << context << std::endl;
 					std::cout << "Receiver: " << obj << std::endl;
 					//obj->printObj(std::vector<Object*> {});
@@ -325,7 +325,7 @@ Object * Parser::unaryMessage() {
 					std::cout << "Resultado mensaje: " << objMessage << std::endl;
 					//objMessage->printObj(std::vector<Object*> {});
 					std::cout << "Self de : " << objMessage << " es " << obj << std::endl;
-
+*/
 					unParser.setContext(objMessage);
 					std::vector<Object*> _vector = unParser.run(code);
 					obj = _vector[_vector.size() - 1];
@@ -562,8 +562,8 @@ bool Parser::slotList(Object* objContenedor) {
 				else if (tipoSlot == 2)
 					esParent = true;
 
-				/*objContenedor->addSlot(strName, objSlot, esMutable, esParent,
-				 esArgument);*/
+				objContenedor->addSlot(strName, objSlot, esMutable, esParent,
+				 esArgument);
 				pLastSlot = pCad;
 			} else {
 				pCad = pLastSlot;
