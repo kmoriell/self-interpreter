@@ -291,6 +291,8 @@ Object* Object::recvMessage(std::string messageName,
 		if (std::get<1>(tuple)) {
 			std::get<0>(tuple) = args[0];
 			it->second = tuple;
+
+			return args[0];
 		} else {
 			std::string error = "El slot no es mutable";
 			throw std::runtime_error(error);
