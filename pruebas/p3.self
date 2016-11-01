@@ -8,7 +8,9 @@ lobby _AddSlots:(| punto =
 |).
 
 lobby printObj.
+'punto: ' print.
 punto print.
-punto squarenorm.
+'\n' print.
+'norma al cuadrado: ' print.
 (punto squarenorm) print.
-punto print.
+'\n' print.

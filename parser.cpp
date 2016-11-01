@@ -110,61 +110,34 @@ Object * Parser::expressionP() {
 	return obj;
 }
 
-//todo
 Object * Parser::keywordMessage() {
 	if (debug)
 		std::cout << "keywordMessage pos: " << pCad << std::endl;
 
 	int _pCad = pCad; //checkpoint
-	Object* obj = receiver();
-	Object* objMessage;
-	if (obj != nullptr) {
-		std::string strLowerKeyword;
-		if (lowerKeyword(strLowerKeyword) and isString(OP_ARG)) {
-			Object* obj2 = expressionCP();
-			if (obj2 != nullptr) {
-				if (flagExecute == 1) {
-					objMessage = obj->recvMessage(strLowerKeyword,
-							std::vector<Object*> { obj2 });
-					//std::cout << "keywordMessage" << std::endl;
-					std::string code = objMessage->getCodeSegment();
-					if (code.size() > 0) {
-						objMessage->addSlot("self", obj, true, true, false);
-						Parser unParser;
-						unParser.setContext(objMessage);
-						/*std::cout << "Contexto: " << context << std::endl;
-						std::cout << "Receiver: " << obj << std::endl;
-						//obj->printObj(std::vector<Object*> {});
-						std::cout << "Name: " << strLowerKeyword << std::endl;
-						std::cout << "Argumento: " << obj2 << std::endl;
-						//obj2->printObj(std::vector<Object*> {});
-						std::cout << "Resultado mensaje: " << objMessage << std::endl;
-						//objMessage->printObj(std::vector<Object*> {});
-						std::cout << "Self de : " << objMessage << " es " << obj << std::endl;
-*/
-						std::vector<Object*> _vector = unParser.run(code);
-						obj = _vector[_vector.size() - 1];
-					}
-					// TODO: ver este return, si deberia retornar nil en el else
-					return obj;
-				}
-				//todo hay que capturar excepcion del recvMessage, no devuelve nullptr.
-				if (obj != nullptr)
-					return obj;
-			} else {
-				//todo destruir obj Receiver
-				obj = nullptr;
-			}
-		} else {
-			//hay que matar el objeto creado en el receiver();
-			//aca es donde cambiamos la def de unary_message := (receiver name | receiver)
-			obj = nullptr;
-			pCad = _pCad;
+	Object* obj;
+	Object* arg;
+	std::string strLowerKeyword;
+
+	if ((obj = receiver()) != nullptr and lowerKeyword(strLowerKeyword) and isString(OP_ARG) and (arg = expressionCP()) != nullptr) {
+		//std::cout << "soy binaryMessage pos: " << pCad << std::endl;
+		std::vector<Object*> args = {arg};
+		obj = recibirMensaje(obj, strLowerKeyword, args);
+		if (obj != nullptr)
 			return obj;
-		}
 	}
 	pCad = _pCad;
-	return obj;
+
+	if (lowerKeyword(strLowerKeyword) and isString(OP_ARG) and (arg = expressionCP()) != nullptr) {
+		//std::cout << "soy binaryMessage pos: " << pCad << std::endl;
+		std::vector<Object*> args = {arg};
+		obj = recibirMensaje(context, strLowerKeyword, args);
+		if (obj != nullptr)
+			return obj;
+	}
+	pCad = _pCad;
+
+	return nullptr;
 }
 
 Object * Parser::binaryMessage() {
@@ -172,177 +145,67 @@ Object * Parser::binaryMessage() {
 		std::cout << "binaryMessage pos: " << pCad << std::endl;
 
 	int _pCad = pCad; //checkpoint
-	Object* obj = receiver();
-	Object* objMessage;
-	if (obj != nullptr) {
-		std::string strOp;
-		if (operador(strOp)) {
-			Object* obj2 = expressionCP();
-			if (obj2 != nullptr) {
-				if (flagExecute == 1) {
-					objMessage = obj->recvMessage(strOp, std::vector<Object*> {
-							obj2 });
-//					std::cout << "BinaryMessage" << std::endl;
-					objMessage->addSlot("self", obj, true, true, false);
-					std::string code = objMessage->getCodeSegment();
-					if (code.size() > 0) {
-						Parser unParser;
-						unParser.setContext(objMessage);
-/*
-						std::cout << "Contexto: " << context << std::endl;
-						std::cout << "Receiver: " << obj << std::endl;
-						//obj->printObj(std::vector<Object*> {});
-						std::cout << "Name: " << strOp << std::endl;
-						std::cout << "Argumento: " << obj2 << std::endl;
-						//obj2->printObj(std::vector<Object*> {});
-						std::cout << "Resultado mensaje: " << objMessage << std::endl;
-						//objMessage->printObj(std::vector<Object*> {});
-						std::cout << "Self de : " << objMessage << " es " << obj << std::endl;
-*/
-						std::vector<Object*> _vector = unParser.run(code);
-						obj = _vector[_vector.size() - 1];
-					}
-					// TODO: ver este return, si deberia retornar nil en el else
-					return obj;
-				}
-				//todo hay que capturar excepcion del recvMessage, no devuelve nullptr.
-				if (obj != nullptr)
-					return obj;
-			} else {
-				//todo destruir obj Receiver
-				obj = nullptr;
-			}
-		} else {
-			//hay que matar el objeto creado en el receiver();
-			//aca es donde cambiamos la def de unary_message := (receiver name | receiver)
-			obj = nullptr;
-			pCad = _pCad;
+	Object* obj;
+	Object* arg;
+	std::string strOp;
+
+	if ((obj = receiver()) != nullptr and operador(strOp) and (arg = expressionCP()) != nullptr) {
+		//std::cout << "soy binaryMessage pos: " << pCad << std::endl;
+		std::vector<Object*> args = {arg};
+		obj = recibirMensaje(obj, strOp, args);
+		if (obj != nullptr)
 			return obj;
-		}
 	}
 	pCad = _pCad;
-	return obj;
+
+
+	return nullptr;
 }
-
-/*void Parser::pepito(std::string &strName, Object* &obj) {
- if (flagExecute == 1) {
- Object* objMessage;
- objMessage = obj->recvMessage(strName,
- std::vector<Object*> { });
- objMessage->addSlot("self", obj, true, true, false);
- std::string code = objMessage->getCodeSegment();
- if (code.size() > 0) {
- Parser unParser;
- unParser.setContext(objMessage);
- std::vector<Object*> _vector = unParser.run(code);
- obj = _vector[_vector.size() - 1];
- }
- }
- }*/
-
-/*Object * Parser::unaryMessage() {
- if (debug)
- std::cout << "unaryMessage pos: " << pCad << std::endl;
- int _pCad = pCad; //checkpoint
- Object* obj = nullptr;
- bool isUnaryMessage = false;
- //Primero hacemos el "receiver name"
- obj = receiver();
- if (obj != nullptr) {
- //Suponemos debe ser un "receiver name"
- std::string strName;
- //Probamos que sea un "name" lo que sigue.
- if (name(strName)) {
- isUnaryMessage = true;
- if (flagExecute == 1) {
- Object* objMessage;
- objMessage = obj->recvMessage(strName,
- std::vector<Object*> { });
- objMessage->addSlot("self", obj, true, true, false);
- std::string code = objMessage->getCodeSegment();
- if (code.size() > 0) {
- Parser unParser;
- unParser.setContext(objMessage);
- std::vector<Object*> _vector = unParser.run(code);
- obj = _vector[_vector.size() - 1];
- }
- }
- } else {
- //Devuelvo el receiver solo. Ej de codigo: 3.
- isUnaryMessage = true;
- }
- } else {
- //Planteo la posibilidad de un <context-implicit> name
- pCad = _pCad;
- obj = context;
- //Suponemos debe ser un "<implicit-context> name"
- std::string strName;
- //Probamos que sea un "name" lo que sigue.
- if (name(strName)) {
- isUnaryMessage = true;
- if (flagExecute == 1) {
- Object* objMessage;
- objMessage = obj->recvMessage(strName, std::vector<Object*> { });
- objMessage->addSlot("self", obj, true, true, false);
- std::string code = objMessage->getCodeSegment();
- if (code.size() > 0) {
- Parser unParser;
- unParser.setContext(objMessage);
- std::vector<Object*> _vector = unParser.run(code);
- obj = _vector[_vector.size() - 1];
- }
- }
- }
- }
-
- if (!isUnaryMessage)
- pCad = _pCad;
- return obj;
- }*/
 
 Object * Parser::unaryMessage() {
 	if (debug)
 		std::cout << "unaryMessage pos: " << pCad << std::endl;
 
 	int _pCad = pCad; //checkpoint
-	Object* obj = receiver();
-	if (obj != nullptr) {
-		std::string strName;
-		if (name(strName)) {
-			if (flagExecute == 1) {
-				Object* objMessage = obj->recvMessage(strName,
-						std::vector<Object*> { });
-				//std::cout << "unaryMessage" << std::endl;
-				objMessage->addSlot("self", obj, true, true, false);
-				std::string code = objMessage->getCodeSegment();
-				if (code.size() > 0) {
-					Parser unParser;
-/*
-					std::cout << "Contexto: " << context << std::endl;
-					std::cout << "Receiver: " << obj << std::endl;
-					//obj->printObj(std::vector<Object*> {});
-					std::cout << "Name: " << strName << std::endl;
-					std::cout << "Resultado mensaje: " << objMessage << std::endl;
-					//objMessage->printObj(std::vector<Object*> {});
-					std::cout << "Self de : " << objMessage << " es " << obj << std::endl;
-*/
-					unParser.setContext(objMessage);
-					std::vector<Object*> _vector = unParser.run(code);
-					obj = _vector[_vector.size() - 1];
-				}
-				// TODO: ver este return, si deberia retornar nil en el else
-				return obj;
-			}
-			//Si recvMessage al fallar no devuelve nullptr tengo que hacerlo capturando una excepcion.
-			if (obj != nullptr)
-				return obj;
-		} else {
-			//aca es donde cambiamos la def de unary_message := (receiver name | receiver)
+	Object* obj;
+	std::string strName;
+
+	//Probamos "receiver name"
+	if ((obj = receiver()) != nullptr and name(strName)) {
+		std::vector<Object*> args = {};
+		obj = recibirMensaje(obj, strName, args);
+		if (obj != nullptr)
 			return obj;
-		}
+	}
+	pCad = _pCad;
+
+	//Probamos "receiver" (instancia el objeto y lo devuelve)
+	if ((obj = receiver()) != nullptr) {
+		return obj;
 	}
 
 	pCad = _pCad;
+	return nullptr;
+}
+
+Object * Parser::recibirMensaje(Object* obj, std::string strName, std::vector<Object*> &args) {
+	if (flagExecute == 1) {
+		Object* objMessage = obj->recvMessage(strName, args);
+		std::string code = objMessage->getCodeSegment();
+		if (code.size() > 0) {
+			//El objeto mensaje es un method object
+			Parser unParser;
+			unParser.setContext(objMessage);
+			objMessage->addSlot("self", obj, true, true, false);
+			std::vector<Object*> _vector = unParser.run(code);
+			obj = _vector[_vector.size() - 1];
+		} else {
+			//El objeto mensaje es un data object.
+			obj = objMessage;
+		}
+	}
+	// Si no pudo ejecutar el codigo del objeto mensaje devuelve el objeto mensaje.
+	//todo verificar si esto esta bien o si se deberia devolver un nilObjk()
 	return obj;
 }
 
@@ -563,7 +426,7 @@ bool Parser::slotList(Object* objContenedor) {
 					esParent = true;
 
 				objContenedor->addSlot(strName, objSlot, esMutable, esParent,
-				 esArgument);
+						esArgument);
 				pLastSlot = pCad;
 			} else {
 				pCad = pLastSlot;
@@ -617,7 +480,7 @@ Object * Parser::constant() {
 		return obj;
 	else if ((obj = objectObj()) != nullptr)
 		return obj;
-	else if ((obj = nameObj()) != nullptr)
+	else if ((obj = nameObj(context)) != nullptr)
 		return obj;
 	else {
 		pCad = _pCad;
@@ -796,17 +659,22 @@ Object * Parser::numberObj() {
  return nullptr;
  }*/
 
-Object * Parser::nameObj() {
+Object * Parser::nameObj(Object* &context) {
 	int _pCad = pCad; //checkpoint
 	Object *obj = nullptr;
 	skipSpaces();
 	std::string strName;
 
 	if (name(strName)) {
+		//std::cout << strName << " es name. pos: " << pCad << std::endl;
 		if (flagExecute == 1) {
-			obj = context->recvMessage(strName, std::vector<Object*> { });
+			std::vector<Object*> args = {};
+			obj = recibirMensaje(context, strName, args);
+			//obj = context->recvMessage(strName, std::vector<Object*> { });
 		} else {
-			obj = new Object;
+			//Se utiliza cuando no se debe ejecutar el codigo
+			//std::cout <<" no ejecutar: " << std::endl;
+			obj = new Object();
 		}
 	} else
 		pCad = _pCad;

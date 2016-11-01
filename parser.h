@@ -23,6 +23,7 @@ private:
 	Object* keywordMessage();
 	Object* binaryMessage();
 	void pepito(std::string &strName, Object* &obj);
+	Object * recibirMensaje(Object* obj, std::string strName, std::vector<Object*> &args);
 	Object* unaryMessage();
 	Object* receiver();
 	//Object* object();
@@ -42,7 +43,7 @@ private:
 	Object* stringObj();
 	Object* numberObj();
 	Object* objectObj();
-	Object* nameObj();
+	Object* nameObj(Object* &context);
 
 	bool nil();
 	bool isTrue();

@@ -5,13 +5,16 @@ lobby _AddSlots:(| punto =
 		squarenorm = ( || ((x*x)+(y*y)) print. ).
 		print = (|| x print. y print.).
 		qwe = (| temp <- 3. |
-			temp print.			
-			qwe temp: 1.
+			'temp: ' print.			
 			temp print.
+			'\n' print.
+			temp: (x*y).
+			'temp: ' print.	
+			temp print.
+			'\n' print.
 			).
 	|).
 |).
 
 lobby printObj.
-
 punto qwe.

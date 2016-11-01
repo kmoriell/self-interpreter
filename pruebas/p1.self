@@ -1,2 +1,3 @@
 3 printObj.
-'hola' printObj.
+'hola-mundo' print.
+'\n' print.
