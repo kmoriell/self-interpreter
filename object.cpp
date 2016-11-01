@@ -19,13 +19,32 @@ Object::Object() {
       std::make_pair("/", std::make_tuple(&Object::operator/, false)));
   this->nativeMethods.insert(
       std::make_pair("_AddSlots", std::make_tuple(&Object::_AddSlots, true)));
+  this->nativeMethods.insert(
+      std::make_pair("_RemoveSlots", std::make_tuple(&Object::_RemoveSlots, true)));
+  this->nativeMethods.insert(
+      std::make_pair("clone", std::make_tuple(&Object::clone, true)));
 }
 
-Object::Object(const Object& _lobby) {
-  /*  this->slots = _lobby.slots;
-   this->methods = _lobby.methods;
-   this->_mutable = _lobby._mutable;
-   this->name = "copy of " + _lobby.name;*/
+Object::Object(const Object& __object) {
+
+  // Recorro los slots de __object
+  for (auto it = __object.slots.begin(); it != __object.slots.end(); ++it) {
+    std::string name = it->first;
+    slot_t tuple = it->second;
+
+    if (name == "self")
+      continue;
+
+    Object tmpObj = *(Object*)std::get<0>(tuple);
+    Object* obj = new Object(tmpObj);
+
+    std::get<0>(tuple) = obj;
+
+    this->slots.insert(std::make_pair(name, tuple));
+  }
+
+  this->nativeMethods = __object.nativeMethods;
+  this->codeSegment = __object.codeSegment;
 }
 
 Object::~Object() {
@@ -60,12 +79,19 @@ Object* Object::addSlot(std::string name, Object* obj, bool _mutable,
   return this;
 }
 
-void Object::_RemoveSlots(std::string name) {
-  auto it = slots.find(name);
-  if (it != slots.end()) {
-    slots.erase(it);
-  } else
-    throw std::runtime_error("No existe el slot que se quiere borrar.");
+Object* Object::_RemoveSlots(const std::vector<Object*>& args) {
+  Object *obj = args[0];
+
+  for (auto it = obj->slots.begin(); it != obj->slots.end(); ++it) {
+    std::string name = it->first;
+    auto _it = slots.find(name);
+    if (_it != slots.end()) {
+      slots.erase(_it);
+    } else
+      throw std::runtime_error("No existe el slot que se quiere borrar.");
+  }
+
+  return this;
 }
 
 Object* Object::clone(const std::vector<Object *> &args) {
@@ -282,7 +308,7 @@ Object* Object::recvMessage(std::string messageName,
     }
   }
 
-  if ( i != 0) {
+  if (i != 0) {
     message->slots = object_slots;
     return message;
   }

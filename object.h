@@ -46,13 +46,13 @@ public:
   Object();
   ~Object();
   // Constructor copia
-  Object(const Object& _lobby);
+  Object(const Object& __object);
   void setName(const std::string newName);
   std::string getName() const;
   Object* _AddSlots(const std::vector<Object*>& args);
   Object* addSlot(std::string name, Object* obj, bool _mutable,	bool isParentSlot, bool isArgument);
 
-  void _RemoveSlots(std::string name);
+  Object* _RemoveSlots(const std::vector<Object*>& args);
 
   void setCodeSegment(const std::string code);
   std::string getCodeSegment() const;
