@@ -82,6 +82,7 @@ int main(int argc, char **argv) {
 	//std::cout << "   cad = " << cad << std::endl;
 
 	parser.run();
+	delete lobby;
 	/*cad = "(||) printObj.";
 	parser.run(cad);*/
 	//cad = "(|x=3.|) printObj.";

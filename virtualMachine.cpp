@@ -43,5 +43,10 @@ Object* VirtualMachine::createBoolean(){
 }
 
 VirtualMachine::~VirtualMachine(){
+  while (objects.size() > 0) {
+    Object *obj = objects.top();
+    delete obj;
 
+    objects.pop();
+  }
 }

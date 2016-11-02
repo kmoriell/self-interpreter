@@ -48,6 +48,7 @@ Object::Object(const Object& __object) {
 
 Object::~Object() {
   slots.clear();
+  nativeMethods.clear();
 }
 
 //todo hay que hacer que el addSlots reciba un unico objeto
