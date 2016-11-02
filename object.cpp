@@ -4,7 +4,6 @@
 #include <iostream>
 
 Object::Object() {
-  this->name = "object";
   this->nativeMethods.insert(
       std::make_pair("printObj", std::make_tuple(&Object::printObj, true)));
   this->nativeMethods.insert(
@@ -49,14 +48,6 @@ Object::Object(const Object& __object) {
 
 Object::~Object() {
   slots.clear();
-}
-
-void Object::setName(const std::string newName) {
-  this->name = newName;
-}
-
-std::string Object::getName() const {
-  return this->name;
 }
 
 //todo hay que hacer que el addSlots reciba un unico objeto
@@ -282,12 +273,12 @@ Object* Object::recvMessage(std::string messageName,
   // Una vez que tengo el objeto, necesito los argumentos, si es que tiene
   // y les cambio el valor con los argumentos que se pasaron como parametro
   slot_map object_slots = message->slots;
-  uint32_t i = 0;
+  uint32_t argsCount = 0;
   for (auto object_slots_it = object_slots.begin();
       object_slots_it != object_slots.end(); ++object_slots_it) {
     // Verifico que la cant de argumentos sean iguales que los pasados,
     // para ahorrar ciclos.
-    if (i == args.size())
+    if (argsCount == args.size())
       break;
 
     // Verifico que sea argumento y que el slot sea mutable para poder modificarlo
@@ -299,16 +290,16 @@ Object* Object::recvMessage(std::string messageName,
 
       Object *__object = ((Object*) std::get < 0 > (tupla));
       delete __object;
-      __object = args[i];
+      __object = args[argsCount];
       std::get < 0 > (tupla) = __object;
 
       // actualizo el valor del mapa
       object_slots_it->second = tupla;
-      i++;
+      argsCount++;
     }
   }
 
-  if (i != 0) {
+  if (argsCount != 0) {
     message->slots = object_slots;
     return message;
   }

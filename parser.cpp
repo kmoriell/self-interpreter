@@ -10,27 +10,23 @@
 const std::string NIL = "nil";
 const std::string TRUE = "true";
 const std::string FALSE = "false";
-const std::string OP_SUMA = "+";
-const std::string OP_RESTA = "-";
-const std::string OP_MULTIPLICACION = "*";
-const std::string OP_DISTINTO = "!=";
-const std::string OP_IGUAL = "==";
 const std::string OP_ASIGNACION = ":";
 const std::string OP_SLOT_INMUTABLE = "=";
 const std::string OP_SLOT_MUTABLE = "<-";
-const std::string OP_DIVISION = "/";
 const std::string PUNTO = ".";
 const std::string OP_ARG = ":";
 const std::string SLOT_LIST_SEP = "|";
 const std::string OP_PARENT = "*";
 const std::string P_LEFT = "(";
 const std::string P_RIGHT = ")";
-const std::string METHOD_PRINT = "print";
 
-std::vector<Object*> Parser::run(std::string &cad) {
-	this->cad = &cad;
-	this->pCad = 0;
-	this->flagExecute = 0;
+Parser::Parser(std::string &cad) : cad(cad) {
+  this->pCad = 0;
+  this->flagExecute = 0;
+  this->context = nullptr;
+}
+
+std::vector<Object*> Parser::run() {
 	//std::cout << "Contexto: " << this->context << "<<< " << std::endl;
 	//std::cout << ">>> " << *this->cad << "<<< " << std::endl;
 	std::vector<Object*> objects = script();
@@ -46,7 +42,7 @@ std::vector<Object*> Parser::script() {
 	std::vector<Object*> objects;
 
 	int pLastExpression = pCad;
-	while (pCad < (*cad).size()) {
+	while (pCad < cad.size()) {
 		if (((obj = expression()) != nullptr) and isString(PUNTO)) {
 			objects.push_back(obj);
 			pLastExpression = pCad;
@@ -194,10 +190,10 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName, std::vector<Ob
 		std::string code = objMessage->getCodeSegment();
 		if (code.size() > 0) {
 			//El objeto mensaje es un method object
-			Parser unParser;
+			Parser unParser(code);
 			unParser.setContext(objMessage);
 			objMessage->addSlot("self", obj, true, true, false);
-			std::vector<Object*> _vector = unParser.run(code);
+			std::vector<Object*> _vector = unParser.run();
 			obj = _vector[_vector.size() - 1];
 		} else {
 			//El objeto mensaje es un data object.
@@ -229,12 +225,12 @@ bool Parser::name(std::string &strName) {
 	int _pCad = pCad; //checkpoint
 	skipSpaces();
 	strName = "";
-	char cCad = (*cad)[pCad];
+	char cCad = cad[pCad];
 	if ('a' <= cCad and cCad <= 'z') {
 		pCad++;
 		strName += cCad;
-		while (pCad < (*cad).size()) {
-			cCad = (*cad)[pCad];
+		while (pCad < cad.size()) {
+			cCad = cad[pCad];
 			if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
 					or ('0' <= cCad and cCad <= '9')) {
 				pCad++;
@@ -260,12 +256,12 @@ std::string Parser::string() {
 	skipSpaces();
 	std::string strString = "";
 	bool esString = false;
-	char cCad = (*cad)[pCad];
+	char cCad = cad[pCad];
 	if ('\'' == cCad) {
 		pCad++;
 		strString += cCad;
-		while (pCad < (*cad).size() and !esString) {
-			cCad = (*cad)[pCad];
+		while (pCad < cad.size() and !esString) {
+			cCad = cad[pCad];
 			strString += cCad;
 			pCad++;
 			if ('\'' == cCad)
@@ -287,13 +283,13 @@ std::string Parser::number() {
 
 	skipSpaces();
 	std::string strNumber = "";
-	char cCad = (*cad)[pCad];
+	char cCad = cad[pCad];
 	if (cCad == '-' or cCad == '+' or ('0' <= cCad and cCad <= '9')) {
 		pCad++;
 		strNumber += cCad;
 
-		while (pCad < (*cad).size()) {
-			cCad = (*cad)[pCad];
+		while (pCad < cad.size()) {
+			cCad = cad[pCad];
 			if ('0' <= cCad and cCad <= '9') {
 				pCad++;
 				strNumber += cCad;
@@ -312,12 +308,12 @@ bool Parser::lowerKeyword(std::string &strLowerKeyword) {
 	int _pCad = pCad; //checkpoint
 	skipSpaces();
 	strLowerKeyword = "";
-	char cCad = (*cad)[pCad];
+	char cCad = cad[pCad];
 	if (('a' <= cCad and cCad <= 'z') or (cCad == '_')) {
 		pCad++;
 		strLowerKeyword += cCad;
-		while (pCad < (*cad).size()) {
-			cCad = (*cad)[pCad];
+		while (pCad < cad.size()) {
+			cCad = cad[pCad];
 			if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
 					or ('0' <= cCad and cCad <= '9')) {
 				pCad++;
@@ -340,12 +336,12 @@ bool Parser::lowerKeyword(std::string &strLowerKeyword) {
 
  skipSpaces();
  std::string strCapKeyword = "";
- char cCad = (*cad)[pCad];
+ char cCad = cad[pCad];
  if ('A' <= cCad and cCad <= 'Z') {
  pCad++;
  strCapKeyword += cCad;
- while (pCad < (*cad).size()) {
- cCad = (*cad)[pCad];
+ while (pCad < cad.size()) {
+ cCad = cad[pCad];
  if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
  or ('0' <= cCad and cCad <= '9')) {
  pCad++;
@@ -364,7 +360,7 @@ Object * Parser::objectObj() {
 
 	int _pCad = pCad; //checkpoint
 	Object* obj;
-	obj = new Object();
+	obj = vm.createNil();
 	int inicioScript, finScript;
 
 	if (isString(P_LEFT) and isString(SLOT_LIST_SEP) and slotList(obj)
@@ -372,7 +368,7 @@ Object * Parser::objectObj() {
 			and (script().size() >= 0) and (finScript = pCad)
 			and isString(P_RIGHT)) {
 		obj->setCodeSegment(
-				(*cad).substr(inicioScript, finScript - inicioScript));
+				cad.substr(inicioScript, finScript - inicioScript));
 		return obj;
 	} else {
 		//todo destruir objeto creado
@@ -394,7 +390,7 @@ bool Parser::slotList(Object* objContenedor) {
 
 	//todo, quedo medio negro, hay que cambiar las definiciones de tipoSlot
 	int pLastSlot = pCad;
-	while (pCad < (*cad).size()) {
+	while (pCad < cad.size()) {
 		if (slotNameExtended(tipoSlot, strName) and (operadorSlot(strOpSlot))
 				and (objSlot = expression()) and isString(PUNTO)) {
 			bool esMutable = true;
@@ -416,7 +412,7 @@ bool Parser::slotList(Object* objContenedor) {
 		} else {
 			pCad = pLastSlot;
 			if (slotNameExtended(tipoSlot, strName) and isString(PUNTO)) {
-				objSlot = new Object(); //todo: si se usa la expression() se pierde esta ref y se likea
+				objSlot = vm.createNil(); //todo: si se usa la expression() se pierde esta ref y se likea
 				bool esMutable = true;
 				bool esParent = false;
 				bool esArgument = false;
@@ -545,8 +541,8 @@ void Parser::skipSpaces() {
 
 	char cCad;
 	bool salir = false;
-	while (pCad < (*cad).size() and !salir) {
-		cCad = (*cad)[pCad];
+	while (pCad < cad.size() and !salir) {
+		cCad = cad[pCad];
 		if (cCad == ' ' or cCad == '\t' or cCad == '\n')
 			pCad++;
 		else
@@ -563,7 +559,7 @@ bool Parser::isString(const std::string strMatch) {
 	bool isMatch = true;
 
 	for (int i = 0; i < strMatch.size(); i++) {
-		if ((pCad < (*cad).size()) and (strMatch[i] == (*cad)[pCad]))
+		if ((pCad < cad.size()) and (strMatch[i] == cad[pCad]))
 			pCad++;
 		else
 			isMatch = false;
@@ -580,7 +576,7 @@ Object * Parser::nilObj() {
 	skipSpaces();
 
 	if (isString(NIL)) {
-		obj = new Object();
+		obj = vm.createNil();
 		obj->setCodeSegment(NIL + PUNTO);
 		return obj;
 	}
@@ -595,14 +591,12 @@ Object * Parser::boolObj() {
 	skipSpaces();
 
 	if (isString(TRUE)) {
-		obj = new Object();
+		obj = vm.createBoolean();
 		obj->setCodeSegment(TRUE + PUNTO);
-		obj->enableNativeMethod(obj, METHOD_PRINT);
 		return obj;
 	} else if (isString(FALSE)) {
-		obj = new Object();
+		obj = vm.createBoolean();
 		obj->setCodeSegment(FALSE + PUNTO);
-		obj->enableNativeMethod(obj, METHOD_PRINT);
 		return obj;
 	}
 
@@ -617,12 +611,8 @@ Object * Parser::stringObj() {
 	std::string strString = string();
 
 	if (strString != "") {
-		obj = new Object();
+		obj = vm.createString();
 		obj->setCodeSegment(strString + PUNTO);
-		obj->enableNativeMethod(obj, METHOD_PRINT);
-		//obj->enableNativeMethod(obj, OP_SUMA);
-		//obj->enableNativeMethod(obj, OP_IGUAL);
-		//obj->enableNativeMethod(obj, OP_DISTINTO);
 		return obj;
 	}
 
@@ -637,18 +627,11 @@ Object * Parser::numberObj() {
 	std::string strNumber = number();
 
 	if (strNumber != "") {
-		obj = new Object();
+		obj = vm.createNumber();
 		obj->setCodeSegment(strNumber + PUNTO);
-		obj->enableNativeMethod(obj, METHOD_PRINT);
-		obj->enableNativeMethod(obj, OP_SUMA);
-		obj->enableNativeMethod(obj, OP_RESTA);
-		obj->enableNativeMethod(obj, OP_MULTIPLICACION);
-		obj->enableNativeMethod(obj, OP_DIVISION);
-		//obj->enableNativeMethod(obj, OP_IGUAL");
-		//obj->enableNativeMethod(obj, OP_DISTINTO);
-
 		return obj;
 	}
+
 
 	pCad = _pCad;
 	return obj;
@@ -674,7 +657,7 @@ Object * Parser::nameObj(Object* &context) {
 		} else {
 			//Se utiliza cuando no se debe ejecutar el codigo
 			//std::cout <<" no ejecutar: " << std::endl;
-			obj = new Object();
+			obj = vm.createNil();
 		}
 	} else
 		pCad = _pCad;

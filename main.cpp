@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
 	while (filein >> x)
 		script += x + " ";
 
-	Parser parser;
+	Parser parser(script);
 	std::string cad;
 	Object *lobby = new Object();
 	lobby->addSlot("lobby", lobby, true, false, false);
@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
 	//std::cout << "filein = " << script << std::endl;
 	//std::cout << "   cad = " << cad << std::endl;
 
-	parser.run(script);
+	parser.run();
 	/*cad = "(||) printObj.";
 	parser.run(cad);*/
 	//cad = "(|x=3.|) printObj.";

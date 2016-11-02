@@ -28,7 +28,6 @@ public:
   typedef std::map<std::string, slot_t> slot_map;
   typedef std::tuple<delegate, bool> fpointTuple;
  private:
-  std::string name;
   slot_map slots;
   std::string codeSegment;
   std::map<std::string, fpointTuple> nativeMethods;
@@ -47,8 +46,6 @@ public:
   ~Object();
   // Constructor copia
   Object(const Object& __object);
-  void setName(const std::string newName);
-  std::string getName() const;
   Object* _AddSlots(const std::vector<Object*>& args);
   Object* addSlot(std::string name, Object* obj, bool _mutable,	bool isParentSlot, bool isArgument);
 
@@ -69,9 +66,6 @@ public:
   Object* operator+(const std::vector<Object*>& args);
   Object* operator-(const std::vector<Object*>& args);
   Object* operator/(const std::vector<Object*>& args);
-
- // void mostrar();
-  void mostrar();
 
   void enableNativeMethod(Object* object, std::string methodName);
   void disableNativeMethod(Object* object, std::string methodName);

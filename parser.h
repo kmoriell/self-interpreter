@@ -3,18 +3,21 @@
 
 #include <string>
 #include "object.h"
+#include "virtualMachine.h"
 
 class Parser {
 public:
-	std::vector<Object*> run(std::string &cad);
+  Parser(std::string &cad);
+	std::vector<Object*> run();
 	void setContext(Object* context);
 
 private:
 	Object* context;
-  std::string *cad;
+  std::string &cad;
   int pCad;
   bool debug = false;
   int flagExecute;
+  VirtualMachine vm;
 
 	std::vector<Object*> script();
 	Object* expression();
