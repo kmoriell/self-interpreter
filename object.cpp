@@ -372,10 +372,12 @@ Object* Object::printObj(const std::vector<Object*>& args) {
     bool esParent = std::get < 2 > (slot);
     bool esArgument = std::get < 3 > (slot);
 
+    std::cout << " ";
+
     if (esArgument)
       std::cout << ":";
 
-    std::cout << " " << slotName;
+    std::cout << slotName;
 
     if (esParent)
       std::cout << "*";
