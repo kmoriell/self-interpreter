@@ -5,9 +5,9 @@
 #include <string>
 #include <vector>
 
-class ProxyServer : public Thread {
+class ProxyClient : public Thread {
  public:
-  ProxyServer(Socket &socket, Server &server);
+  ProxyClient(Socket &socket, Server &server);
   Object* send();
   void receive(std::string code);
 
@@ -16,7 +16,13 @@ class ProxyServer : public Thread {
   void newWorkspace(std::string name);
   void closeWorkspace(std::string name);
   void deleteWorkspace(std::string name);
+
+  void run();
+
  private:
   Socket &serverSocket;
   Server &server;
+  Workspace *workspace = nullptr;
+  bool _interrupt;
+  bool finished;
 };

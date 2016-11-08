@@ -8,7 +8,7 @@
 
 class Parser {
 public:
-  Parser();
+  Parser(VirtualMachine &vm);
 	std::vector<Object*> run(std::string &cad);
 	void setContext(Object* context);
 
@@ -18,7 +18,7 @@ private:
   uint32_t pCad;
   bool debug = false;
   int flagExecute;
-  VirtualMachine vm;
+  VirtualMachine &vm;
 
 	std::vector<Object*> script();
 	Object* expression();

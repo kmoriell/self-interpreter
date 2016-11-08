@@ -3,15 +3,20 @@
 #include <string>
 #include <stdexcept>
 #include <fstream>
+#include <vector>
 #include "common_object.h"
+#include "common_thread.h"
 
 class Server {
 private:
   std::mutex m;
   std::map<std::string, uint32_t> workspaces;
   bool checkExistence(std::string name);
+
+  std::vector<Thread*> threads;
+
 public:
-  void loadWorkspace(std::string name);
+  std::string loadWorkspace(std::string name);
   std::vector<std::string> availableWorkspace();
   void newWorkspace(std::string name);
   void closeWorkspace(std::string name);

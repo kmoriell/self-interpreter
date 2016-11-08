@@ -21,7 +21,7 @@ const std::string OP_PARENT = "*";
 const std::string P_LEFT = "(";
 const std::string P_RIGHT = ")";
 
-Parser::Parser() {
+Parser::Parser(VirtualMachine &vm) : vm(vm) {
   this->pCad = 0;
   this->flagExecute = 0;
   this->context = nullptr;
@@ -192,7 +192,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName, std::vector<Ob
 		std::string code = objMessage->getCodeSegment();
 		if (code.size() > 0) {
 			//El objeto mensaje es un method object
-			Parser unParser;
+			Parser unParser(vm);
 			unParser.setContext(objMessage);
 			objMessage->addSlot("self", obj, true, true, false);
 			std::vector<Object*> _vector = unParser.run(code);

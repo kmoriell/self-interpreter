@@ -19,9 +19,6 @@ int main(int argc, char **argv) {
 
 	Parser parser;
 	std::string cad;
-	Object *lobby = new Object();
-	lobby->addSlot("lobby", lobby, true, false, false);
-	parser.setContext(lobby);
 
 	/*std::cout << "Testeando unaryMessage con printObj." << std::endl;
 	cad = "3 printObj.";
@@ -82,8 +79,6 @@ int main(int argc, char **argv) {
 	//std::cout << "filein = " << script << std::endl;
 	//std::cout << "   cad = " << cad << std::endl;
 
-	parser.run(script);
-	delete lobby;
 	/*cad = "(||) printObj.";
 	parser.run(cad);*/
 	//cad = "(|x=3.|) printObj.";
