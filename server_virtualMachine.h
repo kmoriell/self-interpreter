@@ -1,5 +1,6 @@
 #include <stack>
-#include "object.h"
+
+#include "common_object.h"
 
 const std::string OP_SUMA = "+";
 const std::string OP_RESTA = "-";

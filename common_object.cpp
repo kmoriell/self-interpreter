@@ -1,4 +1,4 @@
-#include "object.h"
+#include "common_object.h"
 
 #include <map>
 #include <iostream>
@@ -419,7 +419,7 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 Object* Object::print(const std::vector<Object*>& args) {
   std::string _codeSegment = codeSegment.substr(0, codeSegment.size() - 1);
 
-  for (char c : _codeSegment) {
+  for (uint32_t i = 0; i < _codeSegment.size(); i++) {
     size_t pos = _codeSegment.find('\'');
     if (pos != std::string::npos)
       _codeSegment.replace(pos, 1, "");

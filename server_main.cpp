@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "parser.h"
+
+#include "server_parser.h"
 
 int main(int argc, char **argv) {
 
@@ -16,7 +17,7 @@ int main(int argc, char **argv) {
 	while (filein >> x)
 		script += x + " ";
 
-	Parser parser(script);
+	Parser parser;
 	std::string cad;
 	Object *lobby = new Object();
 	lobby->addSlot("lobby", lobby, true, false, false);
@@ -81,7 +82,7 @@ int main(int argc, char **argv) {
 	//std::cout << "filein = " << script << std::endl;
 	//std::cout << "   cad = " << cad << std::endl;
 
-	parser.run();
+	parser.run(script);
 	delete lobby;
 	/*cad = "(||) printObj.";
 	parser.run(cad);*/

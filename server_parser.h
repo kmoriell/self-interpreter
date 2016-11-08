@@ -1,20 +1,21 @@
-#ifndef PARSER_H_
-#define PARSER_H_
+#ifndef SERVER_PARSER_H_
+#define SERVER_PARSER_H_
 
 #include <string>
-#include "object.h"
-#include "virtualMachine.h"
+
+#include "common_object.h"
+#include "server_virtualMachine.h"
 
 class Parser {
 public:
-  Parser(std::string &cad);
-	std::vector<Object*> run();
+  Parser();
+	std::vector<Object*> run(std::string &cad);
 	void setContext(Object* context);
 
 private:
 	Object* context;
-  std::string &cad;
-  int pCad;
+  std::string cad;
+  uint32_t pCad;
   bool debug = false;
   int flagExecute;
   VirtualMachine vm;
@@ -64,4 +65,4 @@ private:
 	bool isCapKeyword(const std::string cad);*/
 };
 
-#endif /* PARSER_H_ */
+#endif /* SERVER_PARSER_H_ */

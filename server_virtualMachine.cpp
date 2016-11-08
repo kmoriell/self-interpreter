@@ -1,4 +1,4 @@
-#include "virtualMachine.h"
+#include "server_virtualMachine.h"
 
 Object* VirtualMachine::createString(){
   Object *obj = new Object();
