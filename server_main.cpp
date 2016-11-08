@@ -17,8 +17,7 @@ int main(int argc, char **argv) {
 	while (filein >> x)
 		script += x + " ";
 
-	Parser parser;
-	std::string cad;
+std::string cad;
 
 	/*std::cout << "Testeando unaryMessage con printObj." << std::endl;
 	cad = "3 printObj.";

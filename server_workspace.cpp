@@ -17,7 +17,7 @@ Workspace::~Workspace() {
 }
 
 void Workspace::receive(std::string &code) {
-	Parser parser;
+	Parser parser(vm);
 	parser.setContext(lobby);
 	try {
 		parser.run(code);

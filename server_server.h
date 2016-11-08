@@ -1,3 +1,7 @@
+
+#ifndef SERVER_SERVER_H_
+#define SERVER_SERVER_H_
+
 #include <map>
 #include <mutex>
 #include <string>
@@ -22,3 +26,5 @@ public:
   void closeWorkspace(std::string name);
   void deleteWorkspace(std::string name);
 };
+
+#endif /* SERVER_SERVER_H_ */
