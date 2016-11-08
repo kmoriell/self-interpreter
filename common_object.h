@@ -5,8 +5,8 @@
  *      Author: kmoriell
  */
 
-#ifndef OBJECT_H_
-#define OBJECT_H_
+#ifndef COMMON_OBJECT_H_
+#define COMMON_OBJECT_H_
 
 #include <string>
 #include <stdexcept>
@@ -73,4 +73,4 @@ public:
 
 
 
-#endif /* OBJECT_H_ */
+#endif /* COMMON_OBJECT_H_ */

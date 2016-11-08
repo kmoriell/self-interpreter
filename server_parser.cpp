@@ -1,11 +1,12 @@
-#include "parser.h"
-#include "object.h"
+#include "server_parser.h"
+
 #include <vector>
 #include <tuple>
 #include <regex>
 #include <sstream>
 #include <string>
 #include <iostream>
+#include "common_object.h"
 
 const std::string NIL = "nil";
 const std::string TRUE = "true";
@@ -20,13 +21,14 @@ const std::string OP_PARENT = "*";
 const std::string P_LEFT = "(";
 const std::string P_RIGHT = ")";
 
-Parser::Parser(std::string &cad) : cad(cad) {
+Parser::Parser() {
   this->pCad = 0;
   this->flagExecute = 0;
   this->context = nullptr;
 }
 
-std::vector<Object*> Parser::run() {
+std::vector<Object*> Parser::run(std::string &cad) {
+  this->cad = cad;
 	//std::cout << "Contexto: " << this->context << "<<< " << std::endl;
 	//std::cout << ">>> " << *this->cad << "<<< " << std::endl;
 	std::vector<Object*> objects = script();
@@ -190,10 +192,10 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName, std::vector<Ob
 		std::string code = objMessage->getCodeSegment();
 		if (code.size() > 0) {
 			//El objeto mensaje es un method object
-			Parser unParser(code);
+			Parser unParser;
 			unParser.setContext(objMessage);
 			objMessage->addSlot("self", obj, true, true, false);
-			std::vector<Object*> _vector = unParser.run();
+			std::vector<Object*> _vector = unParser.run(code);
 			obj = _vector[_vector.size() - 1];
 		} else {
 			//El objeto mensaje es un data object.
@@ -558,7 +560,7 @@ bool Parser::isString(const std::string strMatch) {
 	skipSpaces();
 	bool isMatch = true;
 
-	for (int i = 0; i < strMatch.size(); i++) {
+	for (uint32_t i = 0; i < strMatch.size(); i++) {
 		if ((pCad < cad.size()) and (strMatch[i] == cad[pCad]))
 			pCad++;
 		else
