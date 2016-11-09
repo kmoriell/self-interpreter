@@ -1,5 +1,6 @@
 #include "server_server.h"
 
+/*
 std::string Server::loadWorkspace(std::string name) {
   m.lock();
   auto it = workspaces.find(name);
@@ -82,4 +83,12 @@ void Server::deleteWorkspace(std::string name) {
 
   workspaces.erase(name);
   m.unlock();
+} */
+std::string Server::receiveCode(std::string &code) {
+  std::string result;
+  m.lock();
+  result = workspace.receive(code);
+  m.unlock();
+
+  return result;
 }

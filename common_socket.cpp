@@ -8,6 +8,27 @@
 #include "common_socket.h"
 #include <string>
 
+Socket::Socket(Socket&& sck) {
+  *this = std::move(sck);
+}
+
+Socket& Socket::operator=(Socket&& sck) {
+  //hostname = sck.hostname;
+  hostname = std::move(sck.hostname);
+  port = sck.port;
+  socket_fd = sck.socket_fd;
+  hints = sck.hints;
+  addr = sck.addr;
+  ptr = sck.ptr;
+  _shutdown = sck._shutdown;
+
+  sck.socket_fd = -1;
+  sck.ptr = nullptr;
+
+  return *this;
+}
+
+
 Socket::Socket(std::string hostname, uint32_t port) {
   this->socket_fd = 0;
   this->ptr = nullptr;
@@ -18,7 +39,6 @@ Socket::Socket(std::string hostname, uint32_t port) {
 }
 
 Socket::Socket(uint32_t port) {
-  this->socket_fd = 0;
   this->ptr = nullptr;
   this->port = port;
   this->_shutdown = false;
@@ -54,7 +74,7 @@ void Socket::initialize(uint32_t flags) {
     this->socket_fd = ::socket(ptr->ai_family, ptr->ai_socktype,
                              ptr->ai_protocol);
 
-  if (this->socket_fd < 0) {
+  if (this->socket_fd == -1) {
     freeaddrinfo(ptr);
     throw std::runtime_error("No se pudo crear el socket.");
   }
@@ -71,17 +91,17 @@ void Socket::initialize(uint32_t flags) {
   }
 }
 
-Socket* Socket::accept() {
+Socket Socket::accept() {
   int accepted_socket_fd = ::accept(this->socket_fd, NULL, NULL);
-  if (accepted_socket_fd < 0) {
+  if (accepted_socket_fd == -1) {
     std::string error("Error en la llamada a accept().\nError: ");
     std::string error_description(::strerror(errno));
     error += error_description;
     throw std::runtime_error(error);
   }
 
-  Socket *sck = new Socket(hostname, port, accepted_socket_fd);
-  return sck;
+  Socket sck(hostname, port, accepted_socket_fd);
+  return std::move(sck);
 }
 
 int Socket::receive(char *buffer, uint32_t length) {
@@ -91,7 +111,7 @@ int Socket::receive(char *buffer, uint32_t length) {
   while (received < length && valid) {
     s = ::recv(this->socket_fd, &buffer[received], length - received,
     MSG_NOSIGNAL);
-    if (s < 0) {
+    if (s == -1) {
       std::string error("Error en la llamada a recv().\nError: ");
       std::string error_description(::strerror(errno));
       error += error_description;
@@ -132,7 +152,7 @@ void Socket::shutdown() {
     freeaddrinfo(ptr);
     ptr = nullptr;
   }
-  if (!_shutdown) {
+  if (!_shutdown && socket_fd != -1) {
     ::shutdown(this->socket_fd, SHUT_RDWR);
     ::close(this->socket_fd);
     _shutdown = true;
@@ -145,7 +165,7 @@ void Socket::send(char *buffer, uint32_t length) {
   int valid = true;
   while (sent < length && valid) {
     s = ::send(this->socket_fd, &buffer[sent], length - sent, MSG_NOSIGNAL);
-    if (s < 0) {  // error inesperado
+    if (s == -1) {  // error inesperado
       throw std::runtime_error("Error en la llamada a send().");
     } else if (s == 0) {
       valid = false;
@@ -158,7 +178,7 @@ void Socket::send(char *buffer, uint32_t length) {
 void Socket::bind_and_listen() {
   int s = ::bind(this->socket_fd, ptr->ai_addr, ptr->ai_addrlen);
 
-  if (s < 0) {
+  if (s == -1) {
     std::string error("Error en la llamada a bind().\nError: ");
     std::string error_description(::strerror(errno));
     error += error_description;
@@ -168,7 +188,7 @@ void Socket::bind_and_listen() {
   // Puedo mantener en espera 10 clientes antes de aceptarlos
   s = ::listen(this->socket_fd, 10);
 
-  if (s < 0) {
+  if (s == -1) {
     std::string error("Error en la llamada a listen().\nError: ");
     std::string error_description(::strerror(errno));
     error += error_description;

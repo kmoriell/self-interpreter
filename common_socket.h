@@ -38,6 +38,9 @@ class Socket {
   Socket(std::string hostname, uint32_t port);
   explicit Socket(uint32_t port);
 
+  Socket& operator=(Socket&& sck);
+  Socket(Socket&& sck);
+
   // Destructor
   ~Socket();
 
@@ -49,7 +52,7 @@ class Socket {
 
   // Metodo que sirve para aceptar un nuevo cliente. Devuelve un puntero
   // a Socket.
-  Socket* accept();
+  Socket accept();
 
   // Metodo que sirve para enviar un mensaje. Recibe un buffer y la longitud.
   void send(char *buffer, uint32_t length);

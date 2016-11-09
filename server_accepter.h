@@ -34,7 +34,7 @@ class Accepter : public Thread {
   void interrupt();
 
   // Metodo principal de la clase. Hace los procesamientos
-  virtual void process();
+  virtual void run();
 
   // Revisa si los clientes que tiene conectados termino su ejecucion.
   // Limpia los recursos utilizados.

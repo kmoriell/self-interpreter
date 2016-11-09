@@ -17,14 +17,14 @@ class Workspace {
 private:
 	Object *lobby;
 	std::string selfInstr;
-	std::string &name;
+	//std::string &name;
 	VirtualMachine vm;
 
 public:
-	Workspace(std::string &name);
+	Workspace();
 	~Workspace();
 
-	void receive(std::string &code);
+	std::string receive(std::string &code);
 
 };
 

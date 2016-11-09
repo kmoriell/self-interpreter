@@ -12,21 +12,11 @@ ProxyClient::ProxyClient(Socket &socket, Server &server) : serverSocket(socket),
   _interrupt = false;
 }
 
-Object* ProxyClient::send() {
-  // TODO: hacer este metodo
-  return nullptr;
+void ProxyClient::receiveCode(std::string code) {
+  sendOK(server.receiveCode(code));
 }
 
-void ProxyClient::receive(std::string code) {
-  if (!workspace)
-    // TODO: error
-    //sendError("");
-    ;
-  workspace->receive(code);
-  sendOK();
-
-}
-
+/*
 void ProxyClient::loadWorkspace(std::string name) {
   std::string code = server.loadWorkspace(name);
   workspace = new Workspace(name);
@@ -64,6 +54,7 @@ void ProxyClient::deleteWorkspace(std::string name) {
   server.deleteWorkspace(name);
   sendOK();
 }
+*/
 
 void ProxyClient::run() {
   while (!_interrupt) {
@@ -77,7 +68,7 @@ void ProxyClient::run() {
         case -1:
           // TODO: error
           break;
-        case LOADCOMMAND:
+        /*case LOADCOMMAND:
           loadWorkspace(clientMessage.getMessage());
           break;
         case AVAILABLECOMMAND:
@@ -91,7 +82,9 @@ void ProxyClient::run() {
           break;
         case CLOSECOMMAND:
           closeWorkspace(clientMessage.getMessage());
-          break;
+          break;*/
+        case SENDCOMMAND:
+          receiveCode(clientMessage.getMessage());
         default:
           sendError("Comando desconocido.");
       }
@@ -131,8 +124,17 @@ void ProxyClient::sendError(std::string msg) {
   send(response);
 }
 
-void ProxyClient::sendOK() {
-  command_t response(1, OKMESSAGE, std::string{});
+void ProxyClient::sendOK(std::string msg) {
+  command_t response(msg.size() + 1, OKMESSAGE, msg);
   send(response);
+}
+
+bool ProxyClient::is_finished() {
+  return this->finished;
+}
+
+void ProxyClient::interrupt() {
+  this->_interrupt = true;
+  serverSocket.shutdown();
 }
 

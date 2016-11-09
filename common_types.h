@@ -18,11 +18,13 @@
 #define AVAILABLEMESSAGE 0x01
 
 // Comandos de cliente
-#define LOADCOMMAND 0x02
-#define AVAILABLECOMMAND 0x03
-#define NEWCOMMAND 0x04
-#define DELETECOMMAND 0x05
-#define CLOSECOMMAND 0x06
+#define LOADCOMMAND 0x10
+#define AVAILABLECOMMAND 0x11
+#define NEWCOMMAND 0x12
+#define DELETECOMMAND 0x13
+#define CLOSECOMMAND 0x14
+
+#define SENDCOMMAND 0x15
 
 class command_t {
  private:
