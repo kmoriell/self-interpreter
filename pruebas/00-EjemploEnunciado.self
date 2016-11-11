@@ -31,11 +31,13 @@ lobby printObj. '\n' print.
 'Imprimimos punto1 * 2 con el metodo * re-implementado' print. '\n' print.
 '>>> (punto1 * 2) print.' print. '\n' print.
 'Salida esperada: (0;2)' print. '\n' print.
+(punto1 * 2) print. '\n' print.
 '\n' print.
 
 'Imprimimos punto1 y verificamos que no se haya persistido la modificacion de los valores x e y producto de la ejecucion anterior.' print. '\n' print.
 '>>> punto1 print.' print. '\n' print.
 'Salida esperada: (0;1)' print. '\n' print.
+punto1 print. '\n' print.
 '\n' print.
 
 'FIN TEST.' print. '\n' print.
