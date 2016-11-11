@@ -28,7 +28,7 @@ Parser::Parser(std::string &cad) : cad(cad) {
 
 std::vector<Object*> Parser::run() {
 	//std::cout << "Contexto: " << this->context << "<<< " << std::endl;
-	//std::cout << ">>> " << *this->cad << "<<< " << std::endl;
+	//std::cout << ">>> " << cad << "<<< " << std::endl;
 	std::vector<Object*> objects = script();
 	return objects;
 }
@@ -149,8 +149,9 @@ Object * Parser::binaryMessage() {
 		//std::cout << "soy binaryMessage pos: " << pCad << std::endl;
 		std::vector<Object*> args = {arg};
 		obj = recibirMensaje(obj, strOp, args);
-		if (obj != nullptr)
+		if (obj != nullptr) {
 			return obj;
+		}
 	}
 	pCad = _pCad;
 
@@ -185,6 +186,7 @@ Object * Parser::unaryMessage() {
 }
 
 Object * Parser::recibirMensaje(Object* obj, std::string strName, std::vector<Object*> &args) {
+	//std::cout << "recibirMensaje" << std::endl;
 	if (flagExecute == 1) {
 		Object* objMessage = obj->recvMessage(strName, args);
 		std::string code = objMessage->getCodeSegment();
@@ -194,14 +196,22 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName, std::vector<Ob
 			unParser.setContext(objMessage);
 			objMessage->addSlot("self", obj, true, true, false);
 			std::vector<Object*> _vector = unParser.run();
+			objMessage->removeSlot("self");
 			obj = _vector[_vector.size() - 1];
+			//std::cout << std::endl << "Objeto Recibido de la salida del codesegment: " << std::endl;
+			//obj->printObj(std::vector<Object*>{});
 		} else {
 			//El objeto mensaje es un data object.
 			obj = objMessage;
+			//std::cout << std::endl << "Objeto Recibido: " << std::endl;
+			//obj->printObj(std::vector<Object*>{});
 		}
+		//obj->printObj(std::vector<Object*>{});
 	}
 	// Si no pudo ejecutar el codigo del objeto mensaje devuelve el objeto mensaje.
 	//todo verificar si esto esta bien o si se deberia devolver un nilObjk()
+	//std::cout << std::endl << "Objeto que sale de Recibido: " << std::endl;
+	//obj->printObj(std::vector<Object*>{});
 	return obj;
 }
 
@@ -649,6 +659,10 @@ Object * Parser::nameObj(Object* &context) {
 	std::string strName;
 
 	if (name(strName)) {
+		std::vector<Object*> args = {};
+		//obj = recibirMensaje(context, strName, args);
+		//std::cout << std::endl << "objName: " << strName << std::endl;
+		//obj->printObj(std::vector<Object*>{});
 		//std::cout << strName << " es name. pos: " << pCad << std::endl;
 		if (flagExecute == 1) {
 			std::vector<Object*> args = {};

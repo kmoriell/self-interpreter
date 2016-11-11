@@ -50,6 +50,7 @@ public:
   Object* addSlot(std::string name, Object* obj, bool _mutable,	bool isParentSlot, bool isArgument);
 
   Object* _RemoveSlots(const std::vector<Object*>& args);
+  Object* removeSlot(std::string name);
 
   void setCodeSegment(const std::string code);
   std::string getCodeSegment() const;

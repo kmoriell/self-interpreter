@@ -17,6 +17,7 @@ class VirtualMachine {
   ~VirtualMachine();
 
   Object *createNil();
+  Object *createEmptyObject();
   Object *createString();
   Object *createNumber();
   Object *createBoolean();
