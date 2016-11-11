@@ -13,4 +13,6 @@ nil printObj. '\n' print.
 '>>> lobby _AddSlots: (|x<-5.|).' print. '\n' print. 
 '>>> x printObj.' print. '\n' print. 
 lobby _AddSlots: (|x<-5.|).
-x printObj.
+x printObj. '\n' print.
+
+'FIN TEST.' print. '\n' print.

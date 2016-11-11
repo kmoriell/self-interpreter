@@ -10,7 +10,7 @@ lobby _AddSlots:
 	(|
 		squarenorm = (|| ((x*x)+(y*y)). ).
 		print = (|| '(' print. x print. ';' print. y print. ')' print.).
-		multiplicar = (| :scalar. temp. |
+		* = (| :scalar. temp. |
 						temp: (self clone).
 						temp x: ((temp x) * scalar).
 						temp y: ((temp y) * scalar).
@@ -29,7 +29,7 @@ lobby _AddSlots:
 lobby printObj. '\n' print.
 
 'Imprimimos punto1 * 2 con el metodo multiplicar' print. '\n' print.
-'>>> (punto1 multiplicar: 2) print.' print. '\n' print.
+'>>> (punto1 * 2) print.' print. '\n' print.
 'Salida esperada: (0;2)' print. '\n' print.
 '\n' print.
 
