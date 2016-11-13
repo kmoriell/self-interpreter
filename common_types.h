@@ -29,11 +29,11 @@
 class command_t {
  private:
   size_t length;
-  char command;
+  char instr;
   std::string message;
 
  public:
-  command_t(size_t length, char command, std::string message) : length(length), command(command), message(message){}
+  command_t(size_t length, char command, std::string message) : length(length), instr(command), message(message){}
   command_t() {}
 
   /*
@@ -41,38 +41,46 @@ class command_t {
    * convertido a char* plano, para ser enviado por red.
    * Es responsabilidad de quien lo llama liberar la memoria.
    */
-  void toString(char *command) {
-    command = new char[length];
-    memcpy(command, &length, sizeof(size_t));
-    command[4] = this->command;
-    memcpy(command + 5, message.c_str(), message.size());
-  }
+  std::string toString() {
+    std::string command;
+    char *strLength = new char[sizeof(int) + 1];
+    size_t length = htons(this->length);
+    memcpy(strLength, &length, sizeof(int));
 
-  /*
-   * Este metodo carga el objeto con la cadena recibida.
-   * len cuenta la longitud del mensaje total, teniendo en cuenta
-   * el codigo de mensaje
-   */
-  void fromString(char *_message, size_t len) {
-    length = len;
-    command = _message[0];
+    //char *c_strLength = strLength.c_str();
 
-    for (size_t i = 1; i < len; i++) {
-      if (_message[i] != '\0')
-        message.push_back(_message[i]);
-    }
+    command += std::string(strLength);
+    command += this->instr;
+    command += message;
+    /* memcpy(command, strLength.c_str(), strLengthSize);
+    command[strLengthSize] = this->instr;
+    memcpy(command + strLengthSize + 1, message.c_str(), message.size());
+    */
+    return command;
   }
 
   size_t getLength() const{
     return length;
   }
 
+  void setLength(const size_t len) {
+    this->length = len;
+  }
+
   std::string getMessage() const {
     return message;
   }
 
+  void setMessage(const char* str) {
+    message = std::string(str);
+  }
+
+  void setCommand(const char cmd) {
+    this->instr = cmd;
+  }
+
   char getCommand() const {
-    return command;
+    return instr;
   }
 };
 

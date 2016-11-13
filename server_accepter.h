@@ -12,13 +12,13 @@
 #include <stdexcept>
 #include <vector>
 
-#include "common_thread.h"
 #include "server_proxyClient.h"
+#include "common_thread.h"
 #include "server_server.h"
 
 class Accepter : public Thread {
  private:
-  std::vector<ProxyClient *> program_threads;
+  std::vector<ProxyClient*> program_threads;
   Server &server;
   Socket socket;
   bool interrupt_task;

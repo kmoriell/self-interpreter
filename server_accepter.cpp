@@ -26,9 +26,9 @@ Accepter::~Accepter() {
 void Accepter::run() {
   try {
     while (!interrupt_task) {
-      Socket sck = socket.accept();
-      collect_closed_clients();
-      ProxyClient *newProxy = new ProxyClient(sck, server);
+      Socket *sck = socket.accept();
+      //collect_closed_clients();
+      ProxyClient *newProxy = new ProxyClient(*sck, server);
       program_threads.push_back(newProxy);
       newProxy->start();
     }
