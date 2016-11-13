@@ -16,11 +16,13 @@ Workspace::~Workspace() {
 	delete lobby;
 }
 
-std::string Workspace::receive(std::string &code) {
+Object* Workspace::receive(std::string &code) {
 	Parser parser(vm);
 	parser.setContext(lobby);
-	parser.run(code);
-	selfInstr += code;
+	std::vector<Object*> objs = parser.run(code);
+
+	return objs[objs.size() - 1];
+	//selfInstr += code;
 	// TODO: terminar de definir el string devuelto
-	return "";
+	//return "";
 }

@@ -24,7 +24,7 @@ class VirtualMachine {
   Object *createString();
   Object *createNumber();
   Object *createBoolean();
-
+  Object* createEmptyObject();
   void destroyObjects(uint32_t count);
 
 };

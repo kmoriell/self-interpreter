@@ -24,7 +24,7 @@ public:
 	Workspace();
 	~Workspace();
 
-	std::string receive(std::string &code);
+	Object* receive(std::string &code);
 
 };
 

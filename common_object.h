@@ -1,10 +1,3 @@
-/*
- * lobby.h
- *
- *  Created on: 14 de oct. de 2016
- *      Author: kmoriell
- */
-
 #ifndef COMMON_OBJECT_H_
 #define COMMON_OBJECT_H_
 
@@ -29,6 +22,7 @@ public:
   typedef std::tuple<delegate, bool> fpointTuple;
  private:
   slot_map slots;
+  std::string name;
   std::string codeSegment;
   std::map<std::string, fpointTuple> nativeMethods;
 
@@ -46,13 +40,18 @@ public:
   ~Object();
   // Constructor copia
   Object(const Object& __object);
+  slot_map getSlots() const;
   Object* _AddSlots(const std::vector<Object*>& args);
   Object* addSlot(std::string name, Object* obj, bool _mutable,	bool isParentSlot, bool isArgument);
 
   Object* _RemoveSlots(const std::vector<Object*>& args);
+  Object* removeSlot(std::string name);
 
   void setCodeSegment(const std::string code);
   std::string getCodeSegment() const;
+
+  void setName(const std::string name);
+  std::string getName() const;
 
   Object* recvMessage(std::string messageName,
                               std::vector<Object*> args);

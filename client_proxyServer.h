@@ -10,14 +10,19 @@
 
 #include "common_socket.h"
 #include "common_proxy.h"
+#include "client_morph.h"
+#include "client_parserProtocoloCliente.h"
 
 class ProxyServer : public Proxy {
  private:
   Socket socket;
+  Morph &morph;
 
  public:
-  ProxyServer(std::string hostname, uint32_t port)
-      : socket(hostname, port), Proxy(socket) {
+  ProxyServer(std::string hostname, uint32_t port, Morph& morph)
+      : socket(hostname, port),
+        Proxy(socket),
+        morph(morph) {
     this->serverSocket.connect();
   }
 
@@ -41,21 +46,21 @@ class ProxyServer : public Proxy {
           case OKMESSAGE:
             std::cout << "OK";
             break;
-          /*case LOADCOMMAND:
-            loadWorkspace(clientMessage.getMessage());
-            break;
-          case AVAILABLECOMMAND:
-            availableWorkspace();
-            break;
-          case NEWCOMMAND:
-            newWorkspace(clientMessage.getMessage());
-            break;
-          case DELETECOMMAND:
-            deleteWorkspace(clientMessage.getMessage());
-            break;
-          case CLOSECOMMAND:
-            closeWorkspace(clientMessage.getMessage());
-            break;*/
+            /*case LOADCOMMAND:
+             loadWorkspace(clientMessage.getMessage());
+             break;
+             case AVAILABLECOMMAND:
+             availableWorkspace();
+             break;
+             case NEWCOMMAND:
+             newWorkspace(clientMessage.getMessage());
+             break;
+             case DELETECOMMAND:
+             deleteWorkspace(clientMessage.getMessage());
+             break;
+             case CLOSECOMMAND:
+             closeWorkspace(clientMessage.getMessage());
+             break;*/
           case SENDCOMMAND:
             sendCode(clientMessage.getMessage());
             break;
@@ -68,8 +73,15 @@ class ProxyServer : public Proxy {
       }
     }
   }
+
+  int receive() {
+    int s = Proxy::receive();
+    std::string str = clientMessage.getMessage();
+    ParserProtocoloCliente parser(morph, str);
+
+   return s;
+  }
+
 };
-
-
 
 #endif /* CLIENT_PROXYSERVER_H_ */

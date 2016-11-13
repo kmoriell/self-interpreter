@@ -7,6 +7,7 @@
 #include "common_thread.h"
 #include "server_server.h"
 #include "common_types.h"
+#include "common_define.h"
 #include <string>
 #include <vector>
 
@@ -31,7 +32,7 @@ class Proxy : public Thread {
   void deleteWorkspace(std::string name);*/
   virtual void sendCode(std::string code) = 0;
   void send(command_t &message);
-  int receive();
+  virtual int receive();
 
   void sendError(std::string msg);
   void sendOK(std::string msg);

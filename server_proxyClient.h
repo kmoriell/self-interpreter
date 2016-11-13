@@ -9,6 +9,7 @@
 #define SERVER_PROXYCLIENT_H_
 
 #include "common_proxy.h"
+#include "server_parserProtocoloServidor.h"
 
 class ProxyClient : public Proxy {
  private:

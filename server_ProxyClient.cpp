@@ -8,7 +8,9 @@
 #include "server_proxyClient.h"
 
 void ProxyClient::sendCode(std::string code) {
-  sendOK(server.receiveCode(code));
+  Object* obj = server.receiveCode(code);
+  ParserProtocoloServidor parser(obj);
+  sendOK(parser.getString());
 }
 
 void ProxyClient::run() {

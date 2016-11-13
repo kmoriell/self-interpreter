@@ -84,8 +84,8 @@ void Server::deleteWorkspace(std::string name) {
   workspaces.erase(name);
   m.unlock();
 } */
-std::string Server::receiveCode(std::string &code) {
-  std::string result;
+Object* Server::receiveCode(std::string &code) {
+  Object *result;
   m.lock();
   result = workspace.receive(code);
   m.unlock();
