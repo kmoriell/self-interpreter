@@ -7,17 +7,17 @@
 
 class Parser {
 public:
-  Parser(std::string &cad);
+	Parser(std::string &cad);
 	std::vector<Object*> run();
 	void setContext(Object* context);
 
 private:
 	Object* context;
-  std::string &cad;
-  int pCad;
-  bool debug = false;
-  int flagExecute;
-  VirtualMachine vm;
+	std::string &cad;
+	int pCad;
+	bool debug = false;
+	int flagExecute;
+	VirtualMachine vm;
 
 	std::vector<Object*> script();
 	Object* expression();
@@ -27,6 +27,7 @@ private:
 	Object* binaryMessage();
 	void pepito(std::string &strName, Object* &obj);
 	Object * recibirMensaje(Object* obj, std::string strName, std::vector<Object*> &args);
+	Object * recibirMensaje2(Object* obj, std::string strName, std::vector<Object*> &args);
 	Object* unaryMessage();
 	Object* receiver();
 	//Object* object();
@@ -57,11 +58,11 @@ private:
 
 	/*void trim(std::string &cad);*/
 	/*bool isNil(const std::string &cad);
-	bool isName(const std::string cad);
-	bool isString(const std::string cad);
-	bool isNumber(const std::string cad);
-	bool isLowerKeyword(const std::string cad);
-	bool isCapKeyword(const std::string cad);*/
+	 bool isName(const std::string cad);
+	 bool isString(const std::string cad);
+	 bool isNumber(const std::string cad);
+	 bool isLowerKeyword(const std::string cad);
+	 bool isCapKeyword(const std::string cad);*/
 };
 
 #endif /* PARSER_H_ */

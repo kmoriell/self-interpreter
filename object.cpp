@@ -28,17 +28,23 @@ Object::Object() {
 }
 
 Object::Object(const Object& __object) {
-
+	//std::cout << "Clonacion... 2" << std::endl;
 	// Recorro los slots de __object
 	for (auto it = __object.slots.begin(); it != __object.slots.end(); ++it) {
 		std::string name = it->first;
 		slot_t tuple = it->second;
-
+		Object* obj;
 		if (name == "self")
 			continue;
 
-		Object tmpObj = *(Object*) std::get<0>(tuple);
-		Object* obj = new Object(tmpObj);
+		if (name == "lobby") { //En realidad si es parent slot.
+			obj = std::get<0>(tuple);
+		} else {
+			Object tmpObj = *(Object*) std::get<0>(tuple);
+			obj = new Object(tmpObj);
+		}
+
+
 
 		std::get<0>(tuple) = obj;
 
@@ -52,6 +58,10 @@ Object::Object(const Object& __object) {
 Object::~Object() {
 	slots.clear();
 	nativeMethods.clear();
+}
+
+Object::slot_map Object::getSlots() const {
+	return slots;
 }
 
 //todo hay que hacer que el addSlots reciba un unico objeto
@@ -99,6 +109,7 @@ Object* Object::removeSlot(std::string name) {
 }
 
 Object* Object::clone(const std::vector<Object *> &args) {
+	//std::cout << "Clonacion... 1" << std::endl;
 	return new Object(*this);
 }
 
@@ -108,6 +119,14 @@ std::string Object::getCodeSegment() const {
 
 void Object::setCodeSegment(const std::string code) {
 	this->codeSegment = code;
+}
+
+std::string Object::getName() const {
+	return this->name;
+}
+
+void Object::setName(const std::string name) {
+	this->name = name;
 }
 
 /*

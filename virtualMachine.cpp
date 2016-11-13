@@ -11,6 +11,7 @@ const std::string PUNTO = ".";
 Object* VirtualMachine::createString() {
 	//std::cout << "Creando objeto string" << std::endl; //todo nova
 	Object *obj = new Object();
+	obj->setName("string");
 	obj->enableNativeMethod(obj, METHOD_PRINT);
 	//obj->enableNativeMethod(obj, OP_SUMA);
 	//obj->enableNativeMethod(obj, OP_IGUAL);
@@ -23,6 +24,7 @@ Object* VirtualMachine::createString() {
 Object* VirtualMachine::createNumber() {
 	//std::cout << "Creando objeto number" << std::endl; //todo nova
 	Object *obj = new Object();
+	obj->setName("number");
 	obj->enableNativeMethod(obj, METHOD_PRINT);
 	obj->enableNativeMethod(obj, OP_SUMA);
 	obj->enableNativeMethod(obj, OP_RESTA);
@@ -38,6 +40,7 @@ Object* VirtualMachine::createNumber() {
 Object* VirtualMachine::createNil() {
 	//std::cout << "Creando objeto nil" << std::endl; //todo nova
 	Object *obj = new Object();
+	obj->setName("nil");
 	obj->setCodeSegment(NIL + PUNTO);
 	//obj->enableNativeMethod(obj, OP_IGUAL");
 	//obj->enableNativeMethod(obj, OP_DISTINTO);
@@ -49,6 +52,7 @@ Object* VirtualMachine::createNil() {
 Object* VirtualMachine::createEmptyObject() {
 	//std::cout << "Creando objeto vacio" << std::endl; //todo nova
 	Object *obj = new Object();
+	obj->setName("object");
 	//obj->enableNativeMethod(obj, OP_IGUAL");
 	//obj->enableNativeMethod(obj, OP_DISTINTO);
 	objects.push(obj);
@@ -59,6 +63,7 @@ Object* VirtualMachine::createEmptyObject() {
 Object* VirtualMachine::createBoolean() {
 	//std::cout << "Creando objeto booleano" << std::endl; //todo nova
 	Object *obj = new Object();
+	obj->setName("bool");
 	obj->enableNativeMethod(obj, METHOD_PRINT);
 	objects.push(obj);
 
