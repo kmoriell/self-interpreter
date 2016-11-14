@@ -1,6 +1,7 @@
 #include "server_object.h"
 
 #include <map>
+#include <tuple>
 #include <iostream>
 #include "common_define.h"
 
@@ -62,6 +63,10 @@ Object::~Object() {
 
 Object::slot_map Object::getSlots() const {
 	return slots;
+}
+
+std::map<std::string,Object::fpointTuple> Object::getNativeMethods() const {
+	return nativeMethods;
 }
 
 //todo hay que hacer que el addSlots reciba un unico objeto

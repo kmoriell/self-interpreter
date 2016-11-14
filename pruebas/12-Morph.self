@@ -15,4 +15,4 @@ lobby _AddSlots:
 	|).
 |).
 
-lobby.
+lobby punto.

@@ -12,7 +12,7 @@ const std::string PUNTO = ".";*/
 Object* VirtualMachine::createString(std::string &strString) {
 	//std::cout << "Creando objeto string" << std::endl; //todo nova
 	Object *obj = new Object();
-	obj->setName("string");
+	obj->setName(STRING_OBJ);
 	obj->setCodeSegment(strString + PUNTO);
 	obj->enableNativeMethod(obj, PRINT_METHOD);
 	//obj->enableNativeMethod(obj, OP_SUMA);
@@ -26,7 +26,7 @@ Object* VirtualMachine::createString(std::string &strString) {
 Object* VirtualMachine::createNumber(float number) {
 	//std::cout << "Creando objeto number" << std::endl; //todo nova
 	Object *obj = new Object();
-	obj->setName("number");
+	obj->setName(NUMBER_OBJ);
 	//todo Casteamos a int porque el parser aun no soporta floats
 	obj->setCodeSegment(std::to_string((int)number)+PUNTO);
 	obj->enableNativeMethod(obj, PRINT_METHOD);
@@ -44,7 +44,7 @@ Object* VirtualMachine::createNumber(float number) {
 Object* VirtualMachine::createNil() {
 	//std::cout << "Creando objeto nil" << std::endl; //todo nova
 	Object *obj = new Object();
-	obj->setName("nil");
+	obj->setName(NIL_OBJ);
 	obj->setCodeSegment(NIL + PUNTO);
 	obj->enableNativeMethod(obj, PRINT_METHOD);
 	//obj->enableNativeMethod(obj, OP_IGUAL");
@@ -57,7 +57,7 @@ Object* VirtualMachine::createNil() {
 Object* VirtualMachine::createEmptyObject() {
 	//std::cout << "Creando objeto vacio" << std::endl; //todo nova
 	Object *obj = new Object();
-	obj->setName("object");
+	obj->setName(COMPLEX_OBJ);
 	objects.push(obj);
 
 	return obj;
@@ -66,7 +66,7 @@ Object* VirtualMachine::createEmptyObject() {
 Object* VirtualMachine::createBoolean(bool value) {
 	//std::cout << "Creando objeto booleano" << std::endl; //todo nova
 	Object *obj = new Object();
-	obj->setName("bool");
+	obj->setName(BOOLEAN_OBJ);
 	obj->enableNativeMethod(obj, PRINT_METHOD);
 	if (value)
 		obj->setCodeSegment(TRUE+PUNTO);

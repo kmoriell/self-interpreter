@@ -42,9 +42,18 @@ const std::string OP_PARENT = "*";
 const std::string P_LEFT = "(";
 const std::string P_RIGHT = ")";
 
+//Nombres objetos
+const std::string NIL_OBJ = "nil";
+const std::string BOOLEAN_OBJ = "bool";
+const std::string STRING_OBJ = "string";
+const std::string NUMBER_OBJ = "number";
+const std::string NATIVE_METHOD = "native method";
+const std::string COMPLEX_OBJ = "object";
+
 //Otras Constantes
 const std::string LOBBY = "lobby";
 const std::string SELF = "self";
+const std::string COMPLEX_PREVIEW = "...";
 const std::string PRINT_METHOD = "print";
 const std::string PRINTOBJ_METHOD = "printObj";
 const std::string CLONE_METHOD = "clone";

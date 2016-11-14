@@ -59,32 +59,17 @@ int Proxy::receive() {
 	char command;
 	s = serverSocket.receive(&command, sizeof(char));
 
-	char *message = new char[len];
+	char *message = new char[len+1];
 	serverSocket.receive(message, len);
 	message[len] = '\0';
-	//message[0] = command;
-	/*char* letter;
-	s = 0;
-	while (s < len) {
-		s += serverSocket.receive(letter, sizeof(char));
-		message[s] = letter;
-	}*/
-
-
 
 	clientMessage.setLength(len);
 	clientMessage.setCommand(command);
 	clientMessage.setMessage(message);
-	/*
-	 char *message_str = new char[length];
-	 memset(message_str, 0, length);
-	 s += serverSocket.receive(message_str, length);
-
-	 clientMessage.fromString(message_str, length); */
 
 	std::cout << "receive()" << std::endl;
 	std::cout << "len = " << len << std::endl << " command = " << command
-			<< std::endl << " message = " << message << std::endl;
+			<< std::endl << " message = " << message << std::endl << std::endl;
 
 	delete message;
 	delete[] strLen;
@@ -102,7 +87,7 @@ void Proxy::send(command_t &response) {
 
 	std::cout << "send()" << std::endl;
 	std::cout << "len = " << len << std::endl << " command = " << command
-			<< std::endl << " message = " << response.getMessage() << std::endl;
+			<< std::endl << " message = " << response.getMessage() << std::endl << std::endl;
 
 	this->serverSocket.send(strLen, sizeof(int));
 	this->serverSocket.send(&command, sizeof(char));
