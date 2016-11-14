@@ -1,8 +1,9 @@
 #include "server_workspace.h"
+#include "common_define.h"
 
 Workspace::Workspace() {
 	lobby = new Object();
-	lobby->setName("lobby");
+	lobby->setName(LOBBY);
 }
 
 Workspace::~Workspace() {

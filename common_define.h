@@ -1,6 +1,5 @@
 #ifndef _COMMON_DEFINE_H_
 #define _COMMON_DEFINE_H_
-#define CHAR_SEPARADOR '@'
 
 // Mensajes de servidor
 #define ERRORMESSAGE -1
@@ -19,6 +18,15 @@
 //Protocolo
 const std::string FALSE_BIN = "0";
 const std::string TRUE_BIN = "1";
+#define CHAR_SEPARADOR '@'
+
+//Operadores
+const std::string OP_SUMA = "+";
+const std::string OP_RESTA = "-";
+const std::string OP_MULTIPLICACION = "*";
+const std::string OP_DIVISION = "/";
+const std::string OP_DISTINTO = "!=";
+const std::string OP_IGUAL = "==";
 
 //Parser
 const std::string NIL = "nil";
@@ -33,5 +41,14 @@ const std::string SLOT_LIST_SEP = "|";
 const std::string OP_PARENT = "*";
 const std::string P_LEFT = "(";
 const std::string P_RIGHT = ")";
+
+//Otras Constantes
+const std::string LOBBY = "lobby";
+const std::string SELF = "self";
+const std::string PRINT_METHOD = "print";
+const std::string PRINTOBJ_METHOD = "printObj";
+const std::string CLONE_METHOD = "clone";
+const std::string ADD_SLOTS_METHOD = "_AddSlots";
+const std::string REMOVE_SLOTS_METHOD = "_RemoveSlots";
 
 #endif /* _COMMON_DEFINE_H_ */

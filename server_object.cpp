@@ -2,29 +2,36 @@
 
 #include <map>
 #include <iostream>
+#include "common_define.h"
 
 Object::Object() {
 	this->nativeMethods.insert(
-			std::make_pair("printObj",
+			std::make_pair(PRINTOBJ_METHOD,
 					std::make_tuple(&Object::printObj, true)));
 	this->nativeMethods.insert(
-			std::make_pair("print", std::make_tuple(&Object::print, false)));
+			std::make_pair(PRINT_METHOD,
+					std::make_tuple(&Object::print, false)));
 	this->nativeMethods.insert(
-			std::make_pair("+", std::make_tuple(&Object::operator+, false)));
+			std::make_pair(OP_SUMA,
+					std::make_tuple(&Object::operator+, false)));
 	this->nativeMethods.insert(
-			std::make_pair("-", std::make_tuple(&Object::operator-, false)));
+			std::make_pair(OP_RESTA,
+					std::make_tuple(&Object::operator-, false)));
 	this->nativeMethods.insert(
-			std::make_pair("*", std::make_tuple(&Object::operator*, false)));
+			std::make_pair(OP_MULTIPLICACION,
+					std::make_tuple(&Object::operator*, false)));
 	this->nativeMethods.insert(
-			std::make_pair("/", std::make_tuple(&Object::operator/, false)));
+			std::make_pair(OP_DIVISION,
+					std::make_tuple(&Object::operator/, false)));
 	this->nativeMethods.insert(
-			std::make_pair("_AddSlots",
+			std::make_pair(ADD_SLOTS_METHOD,
 					std::make_tuple(&Object::_AddSlots, true)));
 	this->nativeMethods.insert(
-			std::make_pair("_RemoveSlots",
+			std::make_pair(REMOVE_SLOTS_METHOD,
 					std::make_tuple(&Object::_RemoveSlots, true)));
 	this->nativeMethods.insert(
-			std::make_pair("clone", std::make_tuple(&Object::clone, true)));
+			std::make_pair(CLONE_METHOD,
+					std::make_tuple(&Object::clone, true)));
 }
 
 Object::Object(const Object& __object) {
@@ -33,15 +40,11 @@ Object::Object(const Object& __object) {
 		std::string name = it->first;
 		slot_t tuple = it->second;
 		Object* obj;
-		if (name == "self")
+		if (name == SELF)
 			continue;
 
-		if (name == "lobby") { //En realidad si es parent slot.
-			obj = std::get<0>(tuple);
-		} else {
-			Object tmpObj = *(Object*) std::get<0>(tuple);
-			obj = new Object(tmpObj);
-		}
+		Object tmpObj = *(Object*) std::get<0>(tuple);
+		obj = new Object(tmpObj);
 
 		std::get<0>(tuple) = obj;
 
@@ -388,8 +391,8 @@ void Object::disableNativeMethod(Object* object, std::string methodName) {
 // Funciones nativas
 
 Object* Object::printObj(const std::vector<Object*>& args) {
-	std::cout << this << ": ";
-	std::cout << "(|";
+	std::cout << this << " " << name << ": ";
+	std::cout << P_LEFT << SLOT_LIST_SEP;
 
 	//Escribe los slots (metodos no nativos)
 	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
@@ -403,21 +406,21 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 		std::cout << " ";
 
 		if (esArgument)
-			std::cout << ":";
+			std::cout << OP_ARG;
 
 		std::cout << slotName;
 
 		if (esParent)
-			std::cout << "*";
+			std::cout << OP_PARENT;
 
 		if (esMutable)
-			std::cout << " <- ";
+			std::cout << " " << OP_SLOT_MUTABLE << " ";
 		else
-			std::cout << " = ";
+			std::cout << " " << OP_SLOT_INMUTABLE << " ";
 		Object* dirObj = (Object*) std::get<0>(slot);
 		std::cout << dirObj;
 		//std::cout << "Es parent? " << esParent << std::endl;
-		std::cout << ".";
+		std::cout << PUNTO;
 	}
 
 	//Escribe los slots nativos (metodos nativos)
@@ -425,11 +428,11 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 		std::string slotNameNative = _it->first;
 		fpointTuple tuple = _it->second;
 		if (std::get<1>(tuple))
-			std::cout << " <" << slotNameNative << ">.";
+			std::cout << " <" << slotNameNative << ">" << PUNTO;
 	}
 
-	std::cout << " | ";
-	std::cout << codeSegment << " )" << std::endl;
+	std::cout << " " << SLOT_LIST_SEP << " ";
+	std::cout << codeSegment << " " << P_RIGHT << std::endl;
 	//std::cout << std::endl;
 
 	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
@@ -478,10 +481,10 @@ Object* Object::operator*(const std::vector<Object*>& args) {
 	return result;
 
 	/*Object* first = (Object*) args[0];
-	float number = ::atof(this->codeSegment.c_str());
-	float operand = ::atof(first->codeSegment.c_str());
-	setCodeSegment(std::to_string(number+operand)+PUNTO);
-	return this;*/
+	 float number = ::atof(this->codeSegment.c_str());
+	 float operand = ::atof(first->codeSegment.c_str());
+	 setCodeSegment(std::to_string(number+operand)+PUNTO);
+	 return this;*/
 }
 
 Object* Object::operator+(const std::vector<Object*>& args) {
@@ -494,10 +497,10 @@ Object* Object::operator+(const std::vector<Object*>& args) {
 	return result;
 
 	/*Object* first = (Object*) args[0];
-	float number = ::atof(this->codeSegment.c_str());
-	float operand = ::atof(first->codeSegment.c_str());
-	setCodeSegment(std::to_string(number+operand)+PUNTO);
-	return this;*/
+	 float number = ::atof(this->codeSegment.c_str());
+	 float operand = ::atof(first->codeSegment.c_str());
+	 setCodeSegment(std::to_string(number+operand)+PUNTO);
+	 return this;*/
 }
 
 Object* Object::operator-(const std::vector<Object*>& args) {
@@ -510,10 +513,10 @@ Object* Object::operator-(const std::vector<Object*>& args) {
 	return result;
 
 	/*Object* first = (Object*) args[0];
-	float number = ::atof(this->codeSegment.c_str());
-	float operand = ::atof(first->codeSegment.c_str());
-	setCodeSegment(std::to_string(number-operand)+PUNTO);
-	return this;*/
+	 float number = ::atof(this->codeSegment.c_str());
+	 float operand = ::atof(first->codeSegment.c_str());
+	 setCodeSegment(std::to_string(number-operand)+PUNTO);
+	 return this;*/
 }
 
 Object* Object::operator/(const std::vector<Object*>& args) {
@@ -526,8 +529,8 @@ Object* Object::operator/(const std::vector<Object*>& args) {
 	return result;
 
 	/*Object* first = (Object*) args[0];
-	float number = ::atof(this->codeSegment.c_str());
-	float operand = ::atof(first->codeSegment.c_str());
-	setCodeSegment(std::to_string(number/operand)+PUNTO);
-	return this;*/
+	 float number = ::atof(this->codeSegment.c_str());
+	 float operand = ::atof(first->codeSegment.c_str());
+	 setCodeSegment(std::to_string(number/operand)+PUNTO);
+	 return this;*/
 }
