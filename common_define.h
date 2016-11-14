@@ -18,11 +18,13 @@
 #define SET_SLOT_NAME 0x13
 #define ADD_SLOT_NIL 0x14
 #define ADD_SLOT_BOOL 0x15
-#define ADD_SLOT_INT 0x16
+#define ADD_SLOT_NUMBER 0x16
 #define ADD_SLOT_STRING 0x17
-#define ADD_SLOT_OBJ 0x18
+#define ADD_SLOT_OBJECT 0x18
 #define REMOVE_SLOT 0x19
 #define SWAP_MUTABILITY 0x20
+#define ADD_ARGUMENT_SLOT 0x21
+#define ADD_PARENT_SLOT 0x22
 
 //Protocolo
 const std::string FALSE_BIN = "0";

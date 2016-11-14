@@ -21,6 +21,32 @@ void ProxyClient::run() {
 			case EXEC_LOBBY_CMD:
 				execLobbyCMD(clientMessage.getMessage());
 				break;
+			case SHOW_LOBBY:
+				break;
+			case EXEC_LOCAL_CMD:
+				break;
+			case SET_OBJ_NAME:
+				break;
+			case SET_SLOT_NAME:
+				break;
+			case ADD_SLOT_NIL:
+				break;
+			case ADD_SLOT_BOOL:
+				break;
+			case ADD_SLOT_NUMBER:
+				break;
+			case ADD_SLOT_STRING:
+				break;
+			case ADD_SLOT_OBJECT:
+				break;
+			case REMOVE_SLOT:
+				break;
+			case SWAP_MUTABILITY:
+				break;
+			case ADD_ARGUMENT_SLOT:
+				break;
+			case ADD_PARENT_SLOT:
+				break;
 			default:
 				sendError("Comando desconocido.");
 			}
