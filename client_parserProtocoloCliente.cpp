@@ -1,6 +1,7 @@
 #include "client_parserProtocoloCliente.h"
 
-ParserProtocoloCliente::ParserProtocoloCliente(Morph &morph, std::string &cad) : morph(morph), cad(cad) {
+ParserProtocoloCliente::ParserProtocoloCliente(Morph &morph, std::string &cad) :
+		morph(morph), cad(cad) {
 	std::string objName = getCampo();
 	morph.setObjName(objName);
 	pCad++; //Salimos del caracter separador
@@ -10,6 +11,8 @@ ParserProtocoloCliente::ParserProtocoloCliente(Morph &morph, std::string &cad) :
 	pCad++; //Salimos del caracter separador
 
 	std::string slotName;
+	std::string strNativeMethod;
+	bool isNativeMethod;
 	std::string strMutable;
 	bool isMutable;
 	std::string strArgument;
@@ -20,26 +23,33 @@ ParserProtocoloCliente::ParserProtocoloCliente(Morph &morph, std::string &cad) :
 	std::string objSlotPreview;
 
 	std::cout << "Cadena: " << cad << std::endl;
-	while(pCad<cad.size()) {
+	while (pCad < cad.size()) {
 		slotName = getCampo();
 		pCad++; //Salimos del caracter separador
 
+		strNativeMethod = getCampo();
+		if (strNativeMethod == FALSE_BIN)
+			isNativeMethod = false;
+		else
+			isNativeMethod = true;
+		pCad++; //Salimos del caracter separador
+
 		strMutable = getCampo();
-		if (strMutable == FALSE)
+		if (strMutable == FALSE_BIN)
 			isMutable = false;
 		else
 			isMutable = true;
 		pCad++; //Salimos del caracter separador
 
 		strParent = getCampo();
-		if (strParent == FALSE)
+		if (strParent == FALSE_BIN)
 			isParent = false;
 		else
 			isParent = true;
 		pCad++; //Salimos del caracter separador
 
 		strArgument = getCampo();
-		if (strArgument == FALSE)
+		if (strArgument == FALSE_BIN)
 			isArgument = false;
 		else
 			isArgument = true;
@@ -51,7 +61,8 @@ ParserProtocoloCliente::ParserProtocoloCliente(Morph &morph, std::string &cad) :
 		objSlotPreview = getCampo();
 		pCad++; //Salimos del caracter separador
 
-		morph.addSlot(slotName,isMutable,isArgument,isParent,objSlotName,objSlotPreview);
+		morph.addSlot(slotName, isNativeMethod, isMutable, isArgument, isParent,
+				objSlotName, objSlotPreview);
 	}
 
 	morph.mostrar();
@@ -59,7 +70,7 @@ ParserProtocoloCliente::ParserProtocoloCliente(Morph &morph, std::string &cad) :
 
 std::string ParserProtocoloCliente::getCampo() {
 	std::string campo;
-	while (cad[pCad] != CHAR_SEPARADOR and pCad<cad.size()) {
+	while (cad[pCad] != CHAR_SEPARADOR and pCad < cad.size()) {
 		campo += cad[pCad];
 		pCad++;
 	}

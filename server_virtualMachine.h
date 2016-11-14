@@ -13,7 +13,6 @@ const std::string OP_DISTINTO = "!=";
 const std::string OP_IGUAL = "==";
 const std::string METHOD_PRINT = "print";
 
-
 class VirtualMachine {
  private:
   std::stack<Object*> objects;
@@ -22,7 +21,7 @@ class VirtualMachine {
 
   Object *createNil();
   Object *createString(std::string &strString);
-  Object *createNumber(int number);
+  Object *createNumber(float number);
   Object *createBoolean(bool value);
   Object* createEmptyObject();
   void destroyObjects(uint32_t count);

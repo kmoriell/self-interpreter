@@ -9,7 +9,8 @@
 
 Workspace::Workspace() {
 	lobby = new Object();
-	lobby->addSlot("lobby", lobby, true, false, false);
+	lobby->setName("lobby");
+	//lobby->addSlot("lobby", lobby, true, false, false);
 }
 
 Workspace::~Workspace() {

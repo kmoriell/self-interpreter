@@ -1,12 +1,13 @@
 #include "server_virtualMachine.h"
 
-#include <string> //todo nova
-#include <iostream>//todo nova
+#include <string>
+#include <iostream>
+#include "common_define.h"
 
-const std::string NIL = "nil";
+/*const std::string NIL = "nil";
 const std::string TRUE = "true";
 const std::string FALSE = "false";
-const std::string PUNTO = ".";
+const std::string PUNTO = ".";*/
 
 Object* VirtualMachine::createString(std::string &strString) {
 	//std::cout << "Creando objeto string" << std::endl; //todo nova
@@ -22,11 +23,12 @@ Object* VirtualMachine::createString(std::string &strString) {
 	return obj;
 }
 
-Object* VirtualMachine::createNumber(int number) {
+Object* VirtualMachine::createNumber(float number) {
 	//std::cout << "Creando objeto number" << std::endl; //todo nova
 	Object *obj = new Object();
 	obj->setName("number");
-	obj->setCodeSegment(std::to_string(number)+PUNTO);
+	//todo Casteamos a int porque el parser aun no soporta floats
+	obj->setCodeSegment(std::to_string((int)number)+PUNTO);
 	obj->enableNativeMethod(obj, METHOD_PRINT);
 	obj->enableNativeMethod(obj, OP_SUMA);
 	obj->enableNativeMethod(obj, OP_RESTA);

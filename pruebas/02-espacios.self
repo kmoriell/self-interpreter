@@ -1,11 +1,11 @@
 '\n' print. 'INICIA TEST.' print. '\n' print.
 'Se prueba que se ejecute correctamente codigo con caracteres especiales:' print. '\n' print. '\n' print.
 
-'>>> (3) print." print.' print. '\n' print. 
+'>>> (3) print.' print. '\n' print. 
 (3) print. '\n' print. 
 '\n' print.
 
-'>>> ( ( 3 ) )\n print .  " print.' print. '\n' print. 
+'>>> ( ( 3 ) )\n print .  ' print. '\n' print. 
 ( ( 3 ) )
 print . '\n' print.
 '\n' print.

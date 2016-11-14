@@ -8,17 +8,17 @@
 
 class Parser {
 public:
-  Parser(VirtualMachine &vm);
+	Parser(VirtualMachine &vm);
 	std::vector<Object*> run(std::string &cad);
 	void setContext(Object* context);
 
 private:
 	Object* context;
-  std::string cad;
-  uint32_t pCad;
-  bool debug = false;
-  int flagExecute;
-  VirtualMachine &vm;
+	std::string cad;
+	uint32_t pCad;
+	bool debug = false;
+	int flagExecute;
+	VirtualMachine &vm;
 
 	std::vector<Object*> script();
 	Object* expression();
@@ -54,7 +54,7 @@ private:
 	bool isFalse();
 	bool name(std::string &strName);
 	std::string string();
-	bool number(int &number);
+	bool number(float &number);
 };
 
 #endif /* SERVER_PARSER_H_ */

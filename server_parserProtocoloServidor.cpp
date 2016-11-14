@@ -1,8 +1,8 @@
 #include "server_parserProtocoloServidor.h"
 
 #define CHAR_SEPARADOR '@'
-const std::string FALSE = "0";
-const std::string TRUE = "1";
+const std::string FALSE_BIN = "0";
+const std::string TRUE_BIN = "1";
 
 ParserProtocoloServidor::ParserProtocoloServidor(Object* obj) {
 	this->obj = obj;
@@ -29,22 +29,25 @@ std::string ParserProtocoloServidor::getString() {
 		cad += slotName;
 
 		cad += CHAR_SEPARADOR;
+		cad += FALSE_BIN;
+
+		cad += CHAR_SEPARADOR;
 		if (esMutable == false)
-			cad += FALSE;
+			cad += FALSE_BIN;
 		else
-			cad += TRUE;
+			cad += TRUE_BIN;
 
 		cad += CHAR_SEPARADOR;
 		if (esParent == false)
-			cad += FALSE;
+			cad += FALSE_BIN;
 		else
-			cad += TRUE;
+			cad += TRUE_BIN;
 
 		cad += CHAR_SEPARADOR;
 		if (esArgument == false)
-			cad += FALSE;
+			cad += FALSE_BIN;
 		else
-			cad += TRUE;
+			cad += TRUE_BIN;
 
 		cad += CHAR_SEPARADOR;
 		Object* objSlot = (Object*) std::get<0>(slot);
