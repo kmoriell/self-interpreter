@@ -18,7 +18,7 @@ public:
 	~Workspace();
 
 	Object* receive(std::string &code);
-
+	VirtualMachine* getVirtualMachine();
 };
 
 #endif /* SERVER_WORKSPACE_H_ */

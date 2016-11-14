@@ -69,9 +69,9 @@ Object* VirtualMachine::createBoolean(bool value) {
 	obj->setName(BOOLEAN_OBJ);
 	obj->enableNativeMethod(obj, PRINT_METHOD);
 	if (value)
-		obj->setCodeSegment(TRUE + PUNTO);
+		obj->setCodeSegment(TRUE_STR + PUNTO);
 	else
-		obj->setCodeSegment(FALSE + PUNTO);
+		obj->setCodeSegment(FALSE_STR + PUNTO);
 	objects.push(obj);
 
 	return obj;

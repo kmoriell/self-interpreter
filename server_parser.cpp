@@ -660,10 +660,10 @@ Object * Parser::boolObj() {
 	Object *obj = nullptr;
 	skipSpaces();
 
-	if (isString(TRUE)) {
+	if (isString(TRUE_STR)) {
 		obj = vm.createBoolean(true);
 		return obj;
-	} else if (isString(FALSE)) {
+	} else if (isString(FALSE_STR)) {
 		obj = vm.createBoolean(false);
 		return obj;
 	}

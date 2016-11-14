@@ -66,7 +66,6 @@ public:
 						std::cout << "Se recibio un mensaje OK" << std::endl;
 						mensajeRecibido = clientMessage.getMessage();
 						ParserProtocoloCliente parser(morph, mensajeRecibido);
-						morph.mostrar();
 						break;
 					}
 

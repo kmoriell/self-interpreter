@@ -22,3 +22,7 @@ Object* Workspace::receive(std::string &code) {
 	// TODO: terminar de definir el string devuelto
 	//return "";
 }
+
+VirtualMachine* Workspace::getVirtualMachine() {
+	return &vm;
+}

@@ -42,8 +42,8 @@ const std::string OP_IGUAL = "==";
 
 //Parser
 const std::string NIL = "nil";
-const std::string TRUE = "true";
-const std::string FALSE = "false";
+const std::string TRUE_STR = "true";
+const std::string FALSE_STR = "false";
 const std::string OP_ASIGNACION = ":";
 const std::string OP_SLOT_INMUTABLE = "=";
 const std::string OP_SLOT_MUTABLE = "<-";
@@ -71,5 +71,11 @@ const std::string PRINTOBJ_METHOD = "printObj";
 const std::string CLONE_METHOD = "clone";
 const std::string ADD_SLOTS_METHOD = "_AddSlots";
 const std::string REMOVE_SLOTS_METHOD = "_RemoveSlots";
+
+//Valores defaults para cuando se crean slots con objetos tipados
+const bool BOOLEAN_OBJ_DEFAULT = false;
+const float NUMBER_OBJ_DEFAULT = 0;
+const std::string STRING_OBJ_DEFAULT = "'insertar Cadena'";
+
 
 #endif /* _COMMON_DEFINE_H_ */

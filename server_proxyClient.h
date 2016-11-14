@@ -17,6 +17,11 @@ public:
 	void execLobbyCMD(std::string &cad);
 	void setObjName(const std::string &cad);
 	void setCodeSegment(const std::string &cad);
+	void addSlotNil(const std::string &cad);
+	void addSlotBoolean(const std::string &cad);
+	void addSlotNumber(const std::string &cad);
+	void addSlotString(const std::string &cad);
+	void addSlotObject(const std::string &cad);
 	virtual void run();
 };
 
