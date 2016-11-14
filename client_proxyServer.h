@@ -39,9 +39,8 @@ public:
 		}
 	}
 
-	virtual void execLobbyCMD(std::string code) {
-		command_t command(code.size(), EXEC_LOBBY_CMD, code);
-		this->send(command);
+	virtual void sendCMDMessage() {
+		this->send(clientMessage);
 	}
 
 	void run() {
@@ -49,16 +48,7 @@ public:
 			if (flag) {
 				try {
 					//Envio el mensaje al servidor
-					switch (clientMessage.getCommand()) {
-						/*case ERRORMESSAGE:
-						 // TODO: error
-						 break;*/
-						case EXEC_LOBBY_CMD:
-						execLobbyCMD(clientMessage.getMessage());
-						break;
-						default:
-						sendError("Comando desconocido.");
-					}
+					sendCMDMessage();
 
 					//Recibo el resultado del mensaje enviado
 					int s = receive();
@@ -71,13 +61,13 @@ public:
 
 					switch (clientMessage.getCommand()) {
 						case ERRORMESSAGE:
-							std::cout << "El servidor devolvio error." << std::endl;
+						std::cout << "El servidor devolvio error." << std::endl;
 						break;
 						case OKMESSAGE:
-							std::cout << "Se recibio un mensaje OK" << std::endl;
-							mensajeRecibido = clientMessage.getMessage();
-							ParserProtocoloCliente parser(morph, mensajeRecibido);
-							morph.mostrar();
+						std::cout << "Se recibio un mensaje OK" << std::endl;
+						mensajeRecibido = clientMessage.getMessage();
+						ParserProtocoloCliente parser(morph, mensajeRecibido);
+						morph.mostrar();
 						break;
 					}
 

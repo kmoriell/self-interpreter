@@ -29,7 +29,7 @@ protected:
 	 void newWorkspace(std::string name);
 	 void closeWorkspace(std::string name);
 	 void deleteWorkspace(std::string name);*/
-	virtual void execLobbyCMD(std::string code) = 0;
+	//virtual void sendCMDMessage() = 0;
 	void send(command_t &message);
 	virtual int receive();
 

@@ -14,10 +14,8 @@ void ProxyClient::run() {
 				finished = true;
 				break;
 			}
+
 			switch (this->clientMessage.getCommand()) {
-			case -1:
-				// TODO: error
-				break;
 			case EXEC_LOBBY_CMD:
 				execLobbyCMD(clientMessage.getMessage());
 				break;

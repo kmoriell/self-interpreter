@@ -9,7 +9,7 @@ private:
 	Server &server;
 public:
 	ProxyClient(Socket &socket, Server &server) : Proxy(socket), server(server) {}
-	virtual void execLobbyCMD(std::string code);
+	void execLobbyCMD(std::string code);
 	virtual void run();
 };
 
