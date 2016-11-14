@@ -1,10 +1,3 @@
-/*
- * server_proxyClient.cpp
- *
- *  Created on: 8 nov. 2016
- *      Author: kmoriell
- */
-
 #include "common_proxy.h"
 #include <iostream>
 

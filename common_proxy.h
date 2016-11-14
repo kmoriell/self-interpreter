@@ -1,13 +1,12 @@
-
 #ifndef COMMON_PROXY_H_
 #define COMMON_PROXY_H_
 
 #include "common_socket.h"
-#include "common_object.h"
 #include "common_thread.h"
-#include "server_server.h"
 #include "common_types.h"
 #include "common_define.h"
+#include "server_server.h"
+#include "server_object.h"
 #include <string>
 #include <vector>
 

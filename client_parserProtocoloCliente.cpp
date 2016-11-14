@@ -1,5 +1,10 @@
 #include "client_parserProtocoloCliente.h"
 
+#include <iostream>
+#include <string>
+#include "common_define.h"
+#include "client_morph.h"
+
 ParserProtocoloCliente::ParserProtocoloCliente(Morph &morph, std::string &cad) :
 		morph(morph), cad(cad) {
 	std::string objName = getCampo();

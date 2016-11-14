@@ -2,22 +2,21 @@
 #define CLIENT_MORPH_H_
 
 #include <string>
-#include <iostream>
 #include <tuple>
 #include <vector>
 
 class Morph {
 public:
 	/*
-	Elementos de slot_t
-	pos	tipo		variable
-	0	std::string	nombreSlot
-	1	bool		esMetodoNativo
-	2	bool		esMutable
-	3	bool		esArgument
-	4	bool		esParent
-	5	std::string	nombreObjSlot
-	6	std::string	previewObjSlot
+	 Elementos de slot_t
+	 pos	tipo		variable
+	 0	std::string	nombreSlot
+	 1	bool		esMetodoNativo
+	 2	bool		esMutable
+	 3	bool		esArgument
+	 4	bool		esParent
+	 5	std::string	nombreObjSlot
+	 6	std::string	previewObjSlot
 	 * */
 	typedef std::tuple<std::string, bool, bool, bool, bool, std::string, std::string> slot_morph;
 	Morph();

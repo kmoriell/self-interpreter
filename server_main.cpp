@@ -12,7 +12,7 @@ void exit_routine(Accepter* connections_accepter) {
 
 int main(int argc, char **argv) {
 	//Bipaseamos el server-client para testear el parser localmente
-	/*std::string cad;
+	std::string cad;
 	if (argc != 2) {
 		std::cerr << "Forma de uso: >>> ./server <numeroPuerto>" << std::endl;
 		return 1;
@@ -37,10 +37,10 @@ int main(int argc, char **argv) {
 		std::cout << "Error. " << std::endl << e.what() << std::endl;
 	} catch (...) {
 		std::cout << "Error desconocido." << std::endl << std::endl;
-	}*/
+	}
 
 	// >>> .\tp server pruebas/*.self
-	if (argc != 2) {
+	/*if (argc != 2) {
 	 std::cout << "Falta el archivo a procesar." << std::endl;
 	 return 1;
 	 }
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 	 ;
 	 obj = _vector[_vector.size() - 1];
 	 std::cout << std::endl << "Objeto Salida para dibujar: " << std::endl;
-	 obj->printObj(std::vector<Object*> { });
+	 obj->printObj(std::vector<Object*> { });*/
 
 	/*std::cout << std::endl << "Dibujando.. " << std::endl;
 	 Morph unMorph;

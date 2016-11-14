@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "common_object.h"
+#include "server_object.h"
 #include "server_virtualMachine.h"
 
 class Parser {

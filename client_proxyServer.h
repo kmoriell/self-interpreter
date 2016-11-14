@@ -1,10 +1,3 @@
-/*
- * client_proxyServer.h
- *
- *  Created on: 9 de nov. de 2016
- *      Author: kmoriell
- */
-
 #ifndef CLIENT_PROXYSERVER_H_
 #define CLIENT_PROXYSERVER_H_
 

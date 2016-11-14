@@ -34,5 +34,4 @@ const std::string OP_PARENT = "*";
 const std::string P_LEFT = "(";
 const std::string P_RIGHT = ")";
 
-
 #endif /* _COMMON_DEFINE_H_ */

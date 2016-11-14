@@ -3,7 +3,7 @@
 #define SERVER_VIRTUALMACHINE_H_
 
 #include <stack>
-#include "common_object.h"
+#include "server_object.h"
 
 const std::string OP_SUMA = "+";
 const std::string OP_RESTA = "-";

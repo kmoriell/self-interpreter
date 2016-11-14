@@ -1,16 +1,8 @@
-/*
- * server_workspace.cpp
- *
- *  Created on: 8 nov. 2016
- *      Author: kmoriell
- */
-
 #include "server_workspace.h"
 
 Workspace::Workspace() {
 	lobby = new Object();
 	lobby->setName("lobby");
-	//lobby->addSlot("lobby", lobby, true, false, false);
 }
 
 Workspace::~Workspace() {

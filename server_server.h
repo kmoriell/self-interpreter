@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <vector>
-#include "common_object.h"
+#include "server_object.h"
 #include "common_thread.h"
 #include "server_workspace.h"
 

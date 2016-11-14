@@ -1,14 +1,19 @@
 #include "client_morph.h"
 
+#include <string>
+#include <iostream>
+#include <tuple>
+#include <vector>
+
 Morph::Morph() {
 	clear();
 }
 
-void Morph::clear(){
+void Morph::clear() {
 	objName = std::string("ObjectName");
 	codeSegment = std::string("codeSegment..");
 	//Hay que verificar que no queden cosas colgadas al hacer el clear del vector
-	slots = std::vector<slot_morph> {};
+	slots = std::vector<slot_morph> { };
 }
 
 std::string Morph::getObjName() const {
@@ -51,16 +56,19 @@ std::string Morph::getSlotObjPreview(int nSlot) const {
 	return std::get<6>(slots.at(nSlot));
 }
 
-void Morph::setObjName(std::string &cad){
+void Morph::setObjName(std::string &cad) {
 	objName = cad;
 }
 
-void Morph::setCodeSegment(std::string &cad){
+void Morph::setCodeSegment(std::string &cad) {
 	codeSegment = cad;
 }
 
-void Morph::addSlot(std::string &slotName, bool isNativeMethod, bool isMutable, bool isArgument, bool isParent, std::string &objSlotName, std::string &objSlotPreview){
-	slot_morph slot = std::make_tuple(slotName, isNativeMethod, isMutable, isArgument, isParent, objSlotName, objSlotPreview);
+void Morph::addSlot(std::string &slotName, bool isNativeMethod, bool isMutable,
+		bool isArgument, bool isParent, std::string &objSlotName,
+		std::string &objSlotPreview) {
+	slot_morph slot = std::make_tuple(slotName, isNativeMethod, isMutable,
+			isArgument, isParent, objSlotName, objSlotPreview);
 	slots.push_back(slot);
 }
 
@@ -70,7 +78,7 @@ void Morph::mostrar() {
 	std::cout << "CodeSegment: " << codeSegment << std::endl;
 
 	int i;
-	for (i=0; i<getSlotsSize(); i++) {
+	for (i = 0; i < getSlotsSize(); i++) {
 		std::cout << std::endl;
 		std::cout << "N Slot: " << std::to_string(i) << std::endl;
 		std::cout << "SlotName: " << getSlotName(i) << std::endl;

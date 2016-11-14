@@ -1,10 +1,3 @@
-/*
- * server_proxyClient.h
- *
- *  Created on: 9 de nov. de 2016
- *      Author: kmoriell
- */
-
 #ifndef SERVER_PROXYCLIENT_H_
 #define SERVER_PROXYCLIENT_H_
 

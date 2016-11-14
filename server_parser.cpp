@@ -6,7 +6,7 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include "common_object.h"
+#include "server_object.h"
 #include "common_define.h"
 
 Parser::Parser(VirtualMachine &vm) :

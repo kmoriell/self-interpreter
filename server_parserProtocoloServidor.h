@@ -2,8 +2,7 @@
 #define PARSER_PROTOCOLO_SERVIDOR_H_
 
 #include <string>
-#include "common_object.h"
-//#include "common_define.h"
+#include "server_object.h"
 
 class ParserProtocoloServidor {
 private:
