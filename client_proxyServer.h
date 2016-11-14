@@ -7,7 +7,7 @@
 #include "client_parserProtocoloCliente.h"
 #include "common_define.h"
 
-class ProxyServer : public Proxy {
+class ProxyServer: public Proxy {
 private:
 	Socket socket;
 	Morph &morph;
@@ -15,10 +15,8 @@ private:
 	bool flag;
 
 public:
-	ProxyServer(std::string hostname, uint32_t port, Morph& morph)
-	: socket(hostname, port),
-	Proxy(socket),
-	morph(morph) {
+	ProxyServer(std::string hostname, uint32_t port, Morph& morph) :
+			socket(hostname, port), Proxy(socket), morph(morph) {
 		this->serverSocket.connect();
 		this->flag = false;
 		//this->command = ERRORMESSAGE;
@@ -27,8 +25,9 @@ public:
 
 	bool sendCmdMessage(char command, std::string &message) {
 		if (flag)
-		return false;
+			return false;
 		else {
+			morph.clear();
 			std::cout << "comando a enviar: " << command << std::endl;
 			std::cout << "mensaje a enviar: " << message << std::endl;
 			clientMessage.setCommand(command);
@@ -60,10 +59,10 @@ public:
 					std::string mensajeRecibido;
 
 					switch (clientMessage.getCommand()) {
-						case ERRORMESSAGE:
+					case ERRORMESSAGE:
 						std::cout << "El servidor devolvio error." << std::endl;
 						break;
-						case OKMESSAGE:
+					case OKMESSAGE:
 						std::cout << "Se recibio un mensaje OK" << std::endl;
 						mensajeRecibido = clientMessage.getMessage();
 						ParserProtocoloCliente parser(morph, mensajeRecibido);
@@ -73,7 +72,7 @@ public:
 
 				} catch (const std::runtime_error &e) {
 					if (!_interrupt)
-					throw e;
+						throw e;
 				}
 				flag = false;
 			}

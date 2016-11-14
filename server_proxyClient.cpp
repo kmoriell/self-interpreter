@@ -4,8 +4,20 @@ ProxyClient::ProxyClient(Socket &socket, Server &server, Workspace* workspace) :
 	this->workspace = workspace;
 }
 
-void ProxyClient::execLobbyCMD(std::string code) {
-	objClientView = server.receiveCode(code);
+void ProxyClient::execLobbyCMD(std::string &cad) {
+	objClientView = server.receiveCode(cad);
+	ParserProtocoloServidor parser(objClientView);
+	sendOK(parser.getString());
+}
+
+void ProxyClient::setObjName(const std::string &cad) {
+	objClientView->setName(cad);
+	ParserProtocoloServidor parser(objClientView);
+	sendOK(parser.getString());
+}
+
+void ProxyClient::setCodeSegment(const std::string &cad) {
+	objClientView->setCodeSegment(cad);
 	ParserProtocoloServidor parser(objClientView);
 	sendOK(parser.getString());
 }
@@ -19,15 +31,19 @@ void ProxyClient::run() {
 				break;
 			}
 
+			std::string cad = "";
 			switch (this->clientMessage.getCommand()) {
 			case EXEC_LOBBY_CMD:
-				execLobbyCMD(clientMessage.getMessage());
+				cad = clientMessage.getMessage();
+				execLobbyCMD(cad);
 				break;
 			case SHOW_LOBBY:
 				break;
 			case EXEC_LOCAL_CMD:
 				break;
 			case SET_OBJ_NAME:
+				cad = clientMessage.getMessage();
+				setObjName(cad);
 				break;
 			case SET_SLOT_NAME:
 				break;
@@ -48,6 +64,10 @@ void ProxyClient::run() {
 			case ADD_ARGUMENT_SLOT:
 				break;
 			case ADD_PARENT_SLOT:
+				break;
+			case SET_CODESEGMENT:
+				cad = clientMessage.getMessage();
+				setCodeSegment(cad);
 				break;
 			default:
 				sendError("Comando desconocido.");

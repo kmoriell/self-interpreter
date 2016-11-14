@@ -25,6 +25,7 @@
 #define SWAP_MUTABILITY 0x20
 #define ADD_ARGUMENT_SLOT 0x21
 #define ADD_PARENT_SLOT 0x22
+#define SET_CODESEGMENT 0x23
 
 //Protocolo
 const std::string FALSE_BIN = "0";

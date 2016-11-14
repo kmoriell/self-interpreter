@@ -14,7 +14,9 @@ private:
 	Object* objClientView = nullptr;
 public:
 	ProxyClient(Socket &socket, Server &server, Workspace* workspace);
-	void execLobbyCMD(std::string code);
+	void execLobbyCMD(std::string &cad);
+	void setObjName(const std::string &cad);
+	void setCodeSegment(const std::string &cad);
 	virtual void run();
 };
 

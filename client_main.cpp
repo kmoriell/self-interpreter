@@ -28,11 +28,12 @@ int main(int argc, char **argv) {
 	proxyServer.start();
 	std::cout << "Se abre un hilo para el proxyServer." << std::endl;
 
-	//proxyServer.run();
-
 	sleep(2);
 	std::cout << "Seteamos el flag." << std::endl;
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, script);
+	sleep(2);
+	std::string name = "lobbyRealoded";
+	proxyServer.sendCmdMessage(SET_OBJ_NAME, name);
 
 	sleep(2);
 	proxyServer.interrupt();
