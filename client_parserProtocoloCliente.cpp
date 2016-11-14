@@ -28,7 +28,7 @@ ParserProtocoloCliente::ParserProtocoloCliente(Morph &morph, std::string &cad) :
 	std::string objSlotPreview;
 
 	std::cout << "Cadena: " << cad << std::endl;
-	while (pCad < (int)cad.size()) {
+	while (pCad < (int) cad.size()) {
 		slotName = getCampo();
 		pCad++; //Salimos del caracter separador
 
@@ -69,13 +69,11 @@ ParserProtocoloCliente::ParserProtocoloCliente(Morph &morph, std::string &cad) :
 		morph.addSlot(slotName, isNativeMethod, isMutable, isArgument, isParent,
 				objSlotName, objSlotPreview);
 	}
-
-	morph.mostrar();
 }
 
 std::string ParserProtocoloCliente::getCampo() {
 	std::string campo;
-	while (cad[pCad] != CHAR_SEPARADOR and pCad < (int)cad.size()) {
+	while (cad[pCad] != CHAR_SEPARADOR and pCad < (int) cad.size()) {
 		campo += cad[pCad];
 		pCad++;
 	}

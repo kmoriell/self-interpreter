@@ -13,7 +13,8 @@ std::string ParserProtocoloServidor::getString() {
 	cad += obj->getCodeSegment(); //todo agregar nombre real
 
 	Object::slot_map slots = obj->getSlots();
-	std::map<std::string,Object::fpointTuple> nativeMethods = obj->getNativeMethods();
+	std::map<std::string, Object::fpointTuple> nativeMethods =
+			obj->getNativeMethods();
 	//Leemos los slots que apuntan a metodos nativos
 
 	for (auto _it = nativeMethods.begin(); _it != nativeMethods.end(); ++_it) {
@@ -95,8 +96,6 @@ std::string ParserProtocoloServidor::getString() {
 			cad += CHAR_SEPARADOR;
 			cad += "";
 		}
-
-
 
 		objSlot->getName();
 		//std::cout << dirObj;

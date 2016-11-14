@@ -21,5 +21,4 @@ public:
 
 };
 
-
 #endif /* SERVER_WORKSPACE_H_ */

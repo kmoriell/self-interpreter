@@ -17,30 +17,28 @@
 #include "server_server.h"
 
 class Accepter : public Thread {
- private:
-  std::vector<ProxyClient*> program_threads;
-  Server &server;
-  Socket socket;
-  bool interrupt_task;
+private:
+	std::vector<ProxyClient*> program_threads;
+	Server &server;
+	Socket socket;
+	bool interrupt_task;
 
- public:
-  // Constructor. Recibe el puerto donde escuchar y una referencia al modelo
-  Accepter(uint32_t port, Server &server);
+public:
+	// Constructor. Recibe el puerto donde escuchar y una referencia al modelo
+	Accepter(uint32_t port, Server &server);
 
-  // Destructor
-  ~Accepter();
+	// Destructor
+	~Accepter();
 
-  // Metodo que sirve para la interrupcion del proceso.
-  void interrupt();
+	// Metodo que sirve para la interrupcion del proceso.
+	void interrupt();
 
-  // Metodo principal de la clase. Hace los procesamientos
-  virtual void run();
+	// Metodo principal de la clase. Hace los procesamientos
+	virtual void run();
 
-  // Revisa si los clientes que tiene conectados termino su ejecucion.
-  // Limpia los recursos utilizados.
-  void collect_closed_clients();
+	// Revisa si los clientes que tiene conectados termino su ejecucion.
+	// Limpia los recursos utilizados.
+	void collect_closed_clients();
 };
-
-
 
 #endif /* SERVER_ACCEPTER_H_ */

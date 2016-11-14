@@ -2,18 +2,27 @@
 #define _COMMON_DEFINE_H_
 
 // Mensajes de servidor
-#define ERRORMESSAGE -1
+#define ERRORMESSAGE 0x50
 #define OKMESSAGE 0x00
 #define AVAILABLEMESSAGE 0x01
 
-// Comandos de cliente
-#define LOADCOMMAND 0x10
-#define AVAILABLECOMMAND 0x11
-#define NEWCOMMAND 0x12
-#define DELETECOMMAND 0x13
-#define CLOSECOMMAND 0x14
+// Comandos que envia cliente y recibe servidor
 
-#define SENDCOMMAND 0x15
+//Los comandos 0x0<x> se ejecutan en el contexto lobby
+#define EXEC_LOBBY_CMD 0x01
+#define SHOW_LOBBY 0x02
+
+//Los comandos 0x[1,2]<x> se ejecutan en el contexto local del cliente
+#define EXEC_LOCAL_CMD 0x11
+#define SET_OBJ_NAME 0x12
+#define SET_SLOT_NAME 0x13
+#define ADD_SLOT_NIL 0x14
+#define ADD_SLOT_BOOL 0x15
+#define ADD_SLOT_INT 0x16
+#define ADD_SLOT_STRING 0x17
+#define ADD_SLOT_OBJ 0x18
+#define REMOVE_SLOT 0x19
+#define SWAP_MUTABILITY 0x20
 
 //Protocolo
 const std::string FALSE_BIN = "0";

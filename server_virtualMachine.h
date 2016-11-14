@@ -1,4 +1,3 @@
-
 #ifndef SERVER_VIRTUALMACHINE_H_
 #define SERVER_VIRTUALMACHINE_H_
 
@@ -6,17 +5,17 @@
 #include "server_object.h"
 
 class VirtualMachine {
- private:
-  std::stack<Object*> objects;
- public:
-  ~VirtualMachine();
+private:
+	std::stack<Object*> objects;
+public:
+	~VirtualMachine();
 
-  Object *createNil();
-  Object *createString(std::string &strString);
-  Object *createNumber(float number);
-  Object *createBoolean(bool value);
-  Object* createEmptyObject();
-  void destroyObjects(uint32_t count);
+	Object *createNil();
+	Object *createString(std::string &strString);
+	Object *createNumber(float number);
+	Object *createBoolean(bool value);
+	Object* createEmptyObject();
+	void destroyObjects(uint32_t count);
 
 };
 
