@@ -1,12 +1,12 @@
 #include <iostream>
 #include <fstream>
+#include "client_mainWindow.h"
 #include "client_proxyServer.h"
-#include "client_morph.h"
-#include <unistd.h>
+#include "common_define.h"
 
-int main(int argc, char **argv) {
-
-	if (argc != 4) {
+int main (int argc, char **argv)
+{
+ 	if (argc != 4) {
 		std::cout << "Argumentos: >>> .\\client <serverIP> <puerto> <archivo>." << std::endl;
 		return 1;
 	}
@@ -16,10 +16,10 @@ int main(int argc, char **argv) {
 	uint32_t port = stoi(_port);
 	std::ifstream filein(argv[3]);
 
-	std::string message, x;
+	std::string script, x;
 
 	while (filein >> x)
-		message += x + " ";
+		script += x + " ";
 
 	Morph morph;
 	ProxyServer proxyServer(server, port, morph);
@@ -28,36 +28,20 @@ int main(int argc, char **argv) {
 	proxyServer.start();
 	std::cout << "Se abre un hilo para el proxyServer." << std::endl;
 
+	//proxyServer.run();
+
 	sleep(2);
-	//std::cout << "Seteamos el flag." << std::endl;
+	std::cout << "Seteamos el flag." << std::endl;
+        std::string message = LOBBY + PUNTO;
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
-	sleep(2);
-	message = "lobbyRealoded";
-	proxyServer.sendCmdMessage(SET_OBJ_NAME, message);
-	sleep(2);
-	message = "'soy el codeSegment de lobby'.";
-	proxyServer.sendCmdMessage(SET_CODESEGMENT, message);
-	sleep(2);
-	message = "nilSlot";
-	proxyServer.sendCmdMessage(ADD_SLOT_NIL, message);
-	sleep(2);
-	message = "booleanSlot";
-	proxyServer.sendCmdMessage(ADD_SLOT_BOOL, message);
-	sleep(2);
-	message = "numberSlot";
-	proxyServer.sendCmdMessage(ADD_SLOT_NUMBER, message);
-	sleep(2);
-	message = "stringSlot";
-	proxyServer.sendCmdMessage(ADD_SLOT_STRING, message);
-	sleep(2);
-	message = "objSlot";
-	proxyServer.sendCmdMessage(ADD_SLOT_OBJECT, message);
-	sleep(2);
+   	auto app = Gtk::Application::create();
+    	MainWindow window(morph, proxyServer);
+    	app->run(*window.getWindow());
+
+    	sleep(2);
 	proxyServer.interrupt();
 	proxyServer.join();
 	std::cout << "JOIN." << std::endl;
-	std::cout << "MUESTRO MORPH: ." << std::endl;
-	morph.mostrar();
 	std::cout << "SALIMOS." << std::endl;
 	return 0;
 }
