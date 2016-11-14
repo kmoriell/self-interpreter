@@ -92,3 +92,7 @@ Object* Server::receiveCode(std::string &code) {
 
 	return result;
 }
+
+Workspace* Server::getWorkspace() {
+	return &workspace;
+}

@@ -15,17 +15,19 @@
 #include "server_proxyClient.h"
 #include "common_thread.h"
 #include "server_server.h"
+#include "server_workspace.h"
 
 class Accepter : public Thread {
 private:
 	std::vector<ProxyClient*> program_threads;
 	Server &server;
+	Workspace* workspace;
 	Socket socket;
 	bool interrupt_task;
 
 public:
 	// Constructor. Recibe el puerto donde escuchar y una referencia al modelo
-	Accepter(uint32_t port, Server &server);
+	Accepter(uint32_t port, Server &server, Workspace *workspace);
 
 	// Destructor
 	~Accepter();

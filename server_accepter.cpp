@@ -11,8 +11,9 @@
 #include <iostream>
 #include <vector>
 
-Accepter::Accepter(uint32_t port, Server &server) :
+Accepter::Accepter(uint32_t port, Server &server, Workspace* workspace) :
 		program_threads(), server(server), socket(port) {
+	this->workspace = workspace;
 	interrupt_task = false;
 	socket.bind_and_listen();
 }
@@ -26,7 +27,7 @@ void Accepter::run() {
 		while (!interrupt_task) {
 			Socket *sck = socket.accept();
 			//collect_closed_clients();
-			ProxyClient *newProxy = new ProxyClient(*sck, server);
+			ProxyClient *newProxy = new ProxyClient(*sck, server, workspace);
 			program_threads.push_back(newProxy);
 			newProxy->start();
 		}

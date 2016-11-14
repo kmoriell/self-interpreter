@@ -25,6 +25,7 @@ public:
 	 void closeWorkspace(std::string name);
 	 void deleteWorkspace(std::string name);*/
 	Object* receiveCode(std::string &code);
+	Workspace* getWorkspace();
 };
 
 #endif /* SERVER_SERVER_H_ */

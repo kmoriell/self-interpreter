@@ -1,8 +1,12 @@
 #include "server_proxyClient.h"
 
+ProxyClient::ProxyClient(Socket &socket, Server &server, Workspace* workspace) : Proxy(socket), server(server) {
+	this->workspace = workspace;
+}
+
 void ProxyClient::execLobbyCMD(std::string code) {
-	Object* obj = server.receiveCode(code);
-	ParserProtocoloServidor parser(obj);
+	objClientView = server.receiveCode(code);
+	ParserProtocoloServidor parser(objClientView);
 	sendOK(parser.getString());
 }
 
