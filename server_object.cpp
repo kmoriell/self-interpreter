@@ -473,64 +473,64 @@ Object* Object::print(const std::vector<Object*>& args) {
 
 Object* Object::operator*(const std::vector<Object*>& args) {
 	Object *first = (Object*) args[0];
-	Object *result = new Object(*this);
+	 Object *result = new Object(*this);
 
-	float number = ::atof(this->codeSegment.c_str());
-	float operand = ::atof(first->codeSegment.c_str());
-	result->codeSegment = std::to_string(number * operand);
-	return result;
-
-	/*Object* first = (Object*) args[0];
 	 float number = ::atof(this->codeSegment.c_str());
 	 float operand = ::atof(first->codeSegment.c_str());
-	 setCodeSegment(std::to_string(number+operand)+PUNTO);
-	 return this;*/
+	 result->codeSegment = std::to_string(number * operand);
+	 return result;
+
+	/*Object* first = (Object*) args[0];
+	float number = ::atof(this->codeSegment.c_str());
+	float operand = ::atof(first->codeSegment.c_str());
+	setCodeSegment(std::to_string(number + operand) + PUNTO);*/
+	return this;
 }
 
 Object* Object::operator+(const std::vector<Object*>& args) {
 	Object *first = (Object*) args[0];
-	Object *result = new Object(*this);
+	 Object *result = new Object(*this);
 
-	float number = ::atof(this->codeSegment.c_str());
-	float operand = ::atof(first->codeSegment.c_str());
-	result->codeSegment = std::to_string(number + operand);
-	return result;
-
-	/*Object* first = (Object*) args[0];
 	 float number = ::atof(this->codeSegment.c_str());
 	 float operand = ::atof(first->codeSegment.c_str());
-	 setCodeSegment(std::to_string(number+operand)+PUNTO);
-	 return this;*/
+	 result->codeSegment = std::to_string(number + operand);
+	 return result;
+
+	/*Object* first = (Object*) args[0];
+	float number = ::atof(this->codeSegment.c_str());
+	float operand = ::atof(first->codeSegment.c_str());
+	setCodeSegment(std::to_string(number + operand) + PUNTO);*/
+	return this;
 }
 
 Object* Object::operator-(const std::vector<Object*>& args) {
 	Object* first = (Object*) args[0];
-	Object *result = new Object(*this);
+	 Object *result = new Object(*this);
 
-	float number = ::atof(this->codeSegment.c_str());
-	float operand = ::atof(first->codeSegment.c_str());
-	result->codeSegment = std::to_string(number - operand);
-	return result;
-
-	/*Object* first = (Object*) args[0];
 	 float number = ::atof(this->codeSegment.c_str());
 	 float operand = ::atof(first->codeSegment.c_str());
-	 setCodeSegment(std::to_string(number-operand)+PUNTO);
-	 return this;*/
+	 result->codeSegment = std::to_string(number - operand);
+	 return result;
+
+	/*Object* first = (Object*) args[0];
+	float number = ::atof(this->codeSegment.c_str());
+	float operand = ::atof(first->codeSegment.c_str());
+	setCodeSegment(std::to_string(number - operand) + PUNTO);*/
+	return this;
 }
 
 Object* Object::operator/(const std::vector<Object*>& args) {
 	Object* first = (Object*) args[0];
-	Object *result = new Object(*this);
+	 Object *result = new Object(*this);
 
-	float number = ::atof(this->codeSegment.c_str());
-	float operand = ::atof(first->codeSegment.c_str());
-	result->codeSegment = std::to_string(number / operand);
-	return result;
-
-	/*Object* first = (Object*) args[0];
 	 float number = ::atof(this->codeSegment.c_str());
 	 float operand = ::atof(first->codeSegment.c_str());
-	 setCodeSegment(std::to_string(number/operand)+PUNTO);
-	 return this;*/
+	 result->codeSegment = std::to_string(number / operand);
+	 return result;
+
+	/*Object* first = (Object*) args[0];
+	float number = ::atof(this->codeSegment.c_str());
+	float operand = ::atof(first->codeSegment.c_str());
+	setCodeSegment(std::to_string(number / operand) + PUNTO);*/
+	return this;
 }
