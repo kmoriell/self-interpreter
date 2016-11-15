@@ -114,7 +114,6 @@ Object* Object::removeSlot(std::string name) {
 }
 
 Object* Object::clone(const std::vector<Object *> &args) {
-	//std::cout << "Clonacion... 1" << std::endl;
 	return new Object(*this);
 }
 
@@ -133,65 +132,6 @@ std::string Object::getName() const {
 void Object::setName(const std::string name) {
 	this->name = name;
 }
-
-/*
- void Object::findObject(std::string name, Object* scope, Object* &returnValue,
- delegate& function) {
- if (name == "")
- return;
-
- function = nullptr;
- slot_map slots = scope->slots;
- auto it = slots.find(name);
- if (it == slots.end()) {
- //Busco en los metodos nativos
- auto fpoint = scope->nativeMethods.find(name);
- bool nativeMethodFound = true;
- if (fpoint == scope->nativeMethods.end()) {
- nativeMethodFound = false;
- } else {
- fpointTuple tuple = fpoint->second;
- if (std::get<1>(tuple)) {
- // llamo a la funcion apuntada
- function = std::get<0>(tuple);
- return;
- }
- }
- // Entonces busco en los slots del parent slot
- slot_map parentSlots = getParentSlots(this);
- //std::vector<Object*> parentsFound;
-
- auto _slot = parentSlots.find(name);
-
- if (_slot != parentSlots.end())
- returnValue = (Object*) std::get<0>(_slot->second);
- else {
- for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
- Object* __parent = (Object*) std::get<0>(_slot->second);
- __parent->findObject(name,__parent, returnValue, function);
- }
- std::string error = "No existe el mensaje ";
- error += name;
- throw std::runtime_error(error);
- }
-
- for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
- Object *_temp = (Object*) std::get<0>(_it->second);
- Object *parent = nullptr;
- findObject(name, _temp, parent, function);
- if (parent != nullptr)
- parentsFound.push_back(parent);
- }
-
- // Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
- if (parentsFound.size() != 1 && !nativeMethodFound) {
-
- }
- returnValue = parentsFound[0];
- } else {
- returnValue = (Object*) std::get<0>(it->second);
- }
- }*/
 
 bool Object::findObject(std::string name, Object* &returnValue,
 		delegate& function) {
@@ -232,63 +172,8 @@ bool Object::findObject(std::string name, Object* &returnValue,
 	return false;
 }
 
-/*slot_t Object::findSlot(std::string name, slot_map slots) {
- auto it = slots.find(name);
- if (it == slots.end()) {
- // Entonces busco en los slots del parent slot
- slot_map parentSlots = getParentSlots();
- std::vector<slot_t> parentsFound;
-
- for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
- slot_t parent = findSlot(name, _it->second);
- parentsFound.push_back(parent);
- }
-
- // Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
- if (parentsFound.size() != 1) {
- std::string error = "Slot ";
- error += this->name + " no encontrado.";
- throw std::runtime_error(error);
- }
- return parentsFound[0];
- } else {
- return it->second;
- }
- }*/
-
-/*Object* Object::recvMessage(std::string objectName, std::string messageName,
- std::vector<opcode_t> args) {
- Object* object = findObject(objectName, this);
-
- if (messageName == "")
- return object;
-
- return recvMessage(object, messageName, args);
- }*/
-
 Object* Object::recvMessage(std::string messageName,
 		std::vector<Object*> args) {
-	/*// Reviso en los slots del objeto si existe el mensaje
-	 auto it = object->slots.find(message);
-	 if (it == object->slots.end()) {
-	 // Entonces busco en los slots del parent slot
-	 auto parentSlots = getParentSlots();
-	 std::vector<Object*> parentsFound;
-
-	 for (auto _it = parentSlots.begin(); _it != parentSlots.end(); ++_it) {
-	 Object *parent = std::get < 0 > (_it->second);
-	 parentsFound.push_back(parent);
-	 }
-
-	 // Tiene que tener unicamente 1 parent slot, si no falla (algo de lookup)
-	 if (parentsFound.size() != 1) {
-	 std::string error = message;
-	 error += " no reconocido por " + this->name;
-	 throw std::runtime_error(error);
-	 }
-	 return recvMessage(parentsFound[0], message, args);
-
-	 } else {*/
 
 	// Aca tengo mi puntero a objeto, lo que tendria que hacer es ejecutar el codigo
 	// del mensaje
@@ -304,8 +189,6 @@ Object* Object::recvMessage(std::string messageName,
 	// es un puntero a funcion
 	if (fpointer != nullptr)
 		return (this->*fpointer)(args);
-
-	//slot_t message = findSlot(messageName, object->slots);
 
 	// Una vez que tengo el objeto, necesito los argumentos, si es que tiene
 	// y les cambio el valor con los argumentos que se pasaron como parametro
@@ -438,7 +321,6 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 
 	std::cout << " " << SLOT_LIST_SEP << " ";
 	std::cout << codeSegment << " " << P_RIGHT << std::endl;
-	//std::cout << std::endl;
 
 	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
 		std::string slotName = _it->first;
@@ -484,12 +366,6 @@ Object* Object::operator*(const std::vector<Object*>& args) {
 	float operand = ::atof(first->codeSegment.c_str());
 	result->codeSegment = std::to_string(number * operand);
 	return result;
-
-	/*Object* first = (Object*) args[0];
-	 float number = ::atof(this->codeSegment.c_str());
-	 float operand = ::atof(first->codeSegment.c_str());
-	 setCodeSegment(std::to_string(number + operand) + PUNTO);*/
-	return this;
 }
 
 Object* Object::operator+(const std::vector<Object*>& args) {
@@ -500,12 +376,6 @@ Object* Object::operator+(const std::vector<Object*>& args) {
 	float operand = ::atof(first->codeSegment.c_str());
 	result->codeSegment = std::to_string(number + operand);
 	return result;
-
-	/*Object* first = (Object*) args[0];
-	 float number = ::atof(this->codeSegment.c_str());
-	 float operand = ::atof(first->codeSegment.c_str());
-	 setCodeSegment(std::to_string(number + operand) + PUNTO);*/
-	return this;
 }
 
 Object* Object::operator-(const std::vector<Object*>& args) {
@@ -516,12 +386,6 @@ Object* Object::operator-(const std::vector<Object*>& args) {
 	float operand = ::atof(first->codeSegment.c_str());
 	result->codeSegment = std::to_string(number - operand);
 	return result;
-
-	/*Object* first = (Object*) args[0];
-	 float number = ::atof(this->codeSegment.c_str());
-	 float operand = ::atof(first->codeSegment.c_str());
-	 setCodeSegment(std::to_string(number - operand) + PUNTO);*/
-	return this;
 }
 
 Object* Object::operator/(const std::vector<Object*>& args) {
@@ -532,10 +396,4 @@ Object* Object::operator/(const std::vector<Object*>& args) {
 	float operand = ::atof(first->codeSegment.c_str());
 	result->codeSegment = std::to_string(number / operand);
 	return result;
-
-	/*Object* first = (Object*) args[0];
-	 float number = ::atof(this->codeSegment.c_str());
-	 float operand = ::atof(first->codeSegment.c_str());
-	 setCodeSegment(std::to_string(number / operand) + PUNTO);*/
-	return this;
 }

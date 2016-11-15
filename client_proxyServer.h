@@ -15,86 +15,44 @@ private:
 	bool flag;
 	std::string errorMsg;
 public:
-	ProxyServer(std::string hostname, uint32_t port, Morph& morph) :
-			socket(hostname, port), Proxy(socket), morph(morph) {
-		this->serverSocket.connect();
-		this->flag = false;
-		//this->command = ERRORMESSAGE;
-		//this->message = "";
-	}
+	/** Constructor
+	 * @param hostname std::string con el nombre del host a conectarse
+	 * @papram port uint32_t con el puerto a conectarse
+	 * @param morph, Morph que procesa los datos para luego mostrarlos por pantalla
+	 */
+	ProxyServer(std::string hostname, uint32_t port, Morph& morph);
 
-	bool sendCmdMessage(char command, std::string &message) {
-		if (flag)
-			return false;
-		else {
-			morph.clear();
-			std::cout << "comando a enviar: " << command << std::endl;
-			std::cout << "mensaje a enviar: " << message << std::endl;
-			clientMessage.setCommand(command);
-			clientMessage.setMessage(message.c_str());
-			clientMessage.setLength(message.size());
-			this->flag = true;
-			return true;
-		}
-	}
+	/** Envia un mensaje para ejecutar codigo self
+	 * @command, char con el comando a ejecutar
+	 * @message std::string con el mensaje a ejecutar
+	 */
+	bool sendCmdMessage(char command, std::string &message);
 
-	virtual void sendCMDMessage() {
-		this->send(clientMessage);
-	}
 
-	void run() {
-		while (!_interrupt) {
-			if (flag) {
-				try {
-					//Envio el mensaje al servidor
-					sendCMDMessage();
-					//Recibo el resultado del mensaje enviado
-					int s = receive();
-					if (s == 0) {
-						finished = true;
-						break;
-					}
+	virtual void sendCMDMessage();
 
-					std::string mensajeRecibido;
+	/** Metodo que sirve para
+	 *
+	 */
+	void run();
 
-					switch (clientMessage.getCommand()) {
-					case ERRORMESSAGE:
-							{
-						std::cout << "El servidor devolvio error." << std::endl;
-						errorMsg = clientMessage.getMessage();
-						break;
-							}
-					case OKMESSAGE:
-							{
-						std::cout << "Se recibio un mensaje OK" << std::endl;
-						mensajeRecibido = clientMessage.getMessage();
-						ParserProtocoloCliente parser(morph, mensajeRecibido);
-						break;
-							}
-					default:
-						std::cout << "no se que mandaste" << std::endl;
-						break;
-					}
+	/** Obtiene el flag que determina que envio el comando y
+	 * recibio la respuesta por parte del servidor. Indica
+	 * que ya se concretaron las operaciones y que se puede
+	 * volver a enviar nuevamente.
+	 */
+	bool getFlag() const;
 
-				} catch (const std::runtime_error &e) {
-					if (!_interrupt)
-						throw e;
-				}
-				flag = false;
-			}
-		}
-	}
-	bool getFlag() const {
-		return flag;
-	}
-	bool areThereErrors() const {
-		return (errorMsg.size() > 0);
-	}
-	std::string getErrors() {
-		std::string copy = errorMsg;
-		errorMsg.clear();
-		return copy;
-	}
+	/** Indica si hubo errores o no informados por el servidor.
+	 *
+	 */
+	bool areThereErrors() const;
+
+	/** Obtiene los errores. Si no hubo ninguno devuelve una cadena vacio, si
+	 * hay devuelve el error.
+	 *
+	 */
+	std::string getErrors();
 };
 
 #endif /* CLIENT_PROXYSERVER_H_ */

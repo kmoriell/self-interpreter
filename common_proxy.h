@@ -12,9 +12,19 @@
 
 class Proxy : public Thread {
 public:
+	/** Constructor.
+	 * @param socket socket sobre el cual trabajar
+	 */
 	Proxy(Socket &socket);
-	virtual void run() = 0;
+
+	/** Indica si la conexion finalizo.
+	 *
+	 */
 	bool is_finished();
+
+	/** Interrumpida la ejecucion del proxy.
+	 *
+	 */
 	void interrupt();
 
 protected:
@@ -30,10 +40,27 @@ protected:
 	 void closeWorkspace(std::string name);
 	 void deleteWorkspace(std::string name);*/
 	//virtual void sendCMDMessage() = 0;
+
+	/** Envia un mensaje
+	 * @message del tipo command_t con el mensaje
+	 */
 	void send(command_t &message);
+
+	/** Recibe datos. Una vez que recibe los datos los guarda
+	 * internamente.
+	 *
+	 */
 	virtual int receive();
 
+	/** Envia un mensaje de error
+	 * @param msg std::string con el mensaje a enviar con la descripcion
+	 * del error
+	 */
 	void sendError(std::string msg);
+
+	/** Envia un mensaje de OK
+	 * @param msg con el resultado de la operacion.
+	 */
 	void sendOK(std::string msg);
 };
 

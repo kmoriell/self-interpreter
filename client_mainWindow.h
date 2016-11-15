@@ -33,7 +33,7 @@ private:
 
 	void addWidgets();
 	void configureTreeView();
-	void populateTreeView();
+	void drawMorph();
 	void generatePopup();
         void on_button_clicked();
 	void on_menu_file_popup_generic();

@@ -31,42 +31,133 @@ private:
 	bool findObject(std::string name, Object* &returnValue,
 			delegate& function);
 
-	/*Object* recvMessage(Object* object, std::string messageName,
-	 std::vector<opcode_t> args);*/
-	//slot_t findSlot(std::string name, slot_map slots);
 public:
+	/// Constructor
 	Object();
+
+	/// Destructor
 	~Object();
-	// Constructor copia
+
+	/// Constructor copia
 	Object(const Object& __object);
+
+	/** Devuelve todos los slots que tiene el objeto.
+	 *
+	 */
 	slot_map getSlots() const;
+
+	/** Devuelve todo los metodos nativos que tiene el objeto
+	 *
+	 */
 	std::map<std::string,fpointTuple> getNativeMethods() const;
+
+	/** Funcion nativa para agregar un slot.
+	 * @param args vector con Object* con los objetos
+	 * a agregar al slot.
+	 */
 	Object* _AddSlots(const std::vector<Object*>& args);
+
+	/** Agrega el slot con los datos pasados como parametros.
+	 * @param name nombre del slot.
+	 * @param objm puntero a Object* para guardar en el slot.
+	 * @_mutable booleano que indica si es mutable o no.
+	 * @isParentSlot booleano que indica si es parent slot o no.
+	 * @isArgument booleano que indica si es argumento o no.
+	 *
+	 */
 	Object* addSlot(std::string name, Object* obj, bool _mutable, bool isParentSlot, bool isArgument);
 
+	/** Funcion nativa para borrar un slot.
+	 * @param args vector con Object* con los objetos para borrar.
+	 */
 	Object* _RemoveSlots(const std::vector<Object*>& args);
+
+	/** Borra el slot especificado
+	 * @param name indica el nombre del slot a borrar.
+	 */
 	Object* removeSlot(std::string name);
 
+	/** Agrega como code segment del objeto la cadena que se la pasa
+	 * @param code std::string pasado con el codigo para reemplazar en el code segment.
+	 */
 	void setCodeSegment(const std::string code);
+
+	/** Devuelve el code segment del objeto.
+	 *
+	 */
 	std::string getCodeSegment() const;
 
+	/** Setea el nombre del objeto
+	 * @param name std::string con el nombre del objeto para cambiar.
+	 */
 	void setName(const std::string name);
+
+	/** Devuelve un std::string con el nombre del objeto.
+	 *
+	 */
 	std::string getName() const;
 
+	/** Metodo principal que sirve para recibir mensajes. Devuelve un Object*
+	 * @param messageName nombre del slot que va a recibir el mensaje
+	 * @param args vector con Object* con los argumentos para pasar.
+	 *
+	 */
 	Object* recvMessage(std::string messageName,
 			std::vector<Object*> args);
+
+	/** Metodo nativo para clonar el objeto.
+	 * @param args vector de Object* vacio.
+	 */
 	Object* clone(const std::vector<Object*>& args);
-	Object* collect();
+
+	/** Metodo nativo para invocar el garbage collector.
+	 * @param args vector de Object* vacio.
+	 */
+	Object* collect(const std::vector<Object*>& args);
 
 	// funciones Nativas
+	/** Metodo nativo para imprimir por pantalla.
+	 * @param args vector de Object* vacio.
+	 */
 	Object* print(const std::vector<Object*>& args);
+
+	/** Metodo nativo para imprimir por pantalla datos de debugging.
+	 * @param args vector de Object* vacio.
+	 */
 	Object* printObj(const std::vector<Object*>& args);
+
+	/** Metodo nativo para efectuar la multiplicacion
+	 * @param args vector de Object* vacio.
+	 */
 	Object* operator*(const std::vector<Object*>& args);
+
+	/** Metodo nativo para efectuar la suma
+	 * @param args vector de Object* vacio.
+	 */
 	Object* operator+(const std::vector<Object*>& args);
+
+	/** Metodo nativo para efectuar la resta
+	 * @param args vector de Object* vacio.
+	 */
 	Object* operator-(const std::vector<Object*>& args);
+
+	/** Metodo nativo para efectuar la division
+	 * @param args vector de Object* vacio.
+	 */
 	Object* operator/(const std::vector<Object*>& args);
 
+	/** Habilita el metodo nativo.
+	 * @param object Object* que va a ser modificado y donde esta el metodo
+	 * @param methodName nombre del metodo a habilitar.
+	 *
+	 */
 	void enableNativeMethod(Object* object, std::string methodName);
+
+	/** Deshabilita el metodo nativo.
+	 * @param object Object* que va a ser modificado y donde esta el metodo
+	 * @param methodName nombre del metodo a habilitar.
+	 *
+	 */
 	void disableNativeMethod(Object* object, std::string methodName);
 };
 

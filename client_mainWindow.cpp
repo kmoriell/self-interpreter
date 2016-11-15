@@ -11,7 +11,7 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer) : morph(morph), p
   refBuilder->get_widget("window", pWindow);
   addWidgets();
   configureTreeView();
-  populateTreeView();
+  drawMorph();
   show_all_children();
 }
 
@@ -65,7 +65,7 @@ void MainWindow::configureTreeView() {
   pTreeView->set_model(m_refTreeModel);
 }
 
-void MainWindow::populateTreeView() {
+void MainWindow::drawMorph() {
   pLabel->set_text(morph.getObjName());
   m_refTreeModel->clear();
   Gtk::TreeModel::Row row;
@@ -133,7 +133,7 @@ void MainWindow::on_button_clicked() {
         dialog.set_secondary_text(proxyServer.getErrors());
         dialog.run();
     }
-    populateTreeView();
+    drawMorph();
   }
 }
 
