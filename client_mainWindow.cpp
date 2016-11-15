@@ -23,6 +23,7 @@ void MainWindow::addWidgets() {
   refBuilder->get_widget("btnEnviar", pButton);
   refBuilder->get_widget("txtEntrada", pText);
   refBuilder->get_widget("treeView", pTreeView);
+  refBuilder->get_widget("txtCodeSegment", pTextView);
   if(pButton) {
     pButton->signal_clicked().connect( sigc::mem_fun(*this,
               &MainWindow::on_button_clicked) );
@@ -30,9 +31,9 @@ void MainWindow::addWidgets() {
 }
 
 void MainWindow::configureTreeView() {
-  colSlotName.set_title("Nombre de Slot");
+  colSlotName.set_title("Slot");
   colMutable.set_title("Mutable");
-  colObjName.set_title("Nombre de objeto");
+  colObjName.set_title("Objeto");
   colPreview.set_title("Previsualizacion");
 
   colMutableCell.set_activatable(true);
@@ -82,13 +83,20 @@ void MainWindow::populateTreeView() {
     row[m_Columns.m_col_objType] = morph.getSlotObjName(i);
     row[m_Columns.m_col_preview] = morph.getSlotObjPreview(i);
   }  
+  auto pTextBuffer = Glib::RefPtr<Gtk::TextBuffer>::cast_dynamic(
+    refBuilder->get_object("textbuffer1"));
+  pTextBuffer->set_text(morph.getCodeSegment());
 }
 
 void MainWindow::on_button_clicked() {
   if(pWindow && pText) {
     std::string text = pText->get_text();
     proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, text);
-    sleep(2);
+    std::cout << "antes while" << std::endl;
+    while(proxyServer.getFlag()) {
+	std::cout << "flag = " << proxyServer.getFlag() << std::endl;
+    }
+    std::cout << "despues while" << std::endl;
     populateTreeView();
   }
 }

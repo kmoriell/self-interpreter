@@ -77,6 +77,9 @@ public:
 			}
 		}
 	}
+	bool getFlag() const {
+		return flag;
+	}
 };
 
 #endif /* CLIENT_PROXYSERVER_H_ */

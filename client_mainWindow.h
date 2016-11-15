@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H_
 #define MAINWINDOW_H_
 
-#include <gtkmm.h>
+#include <gtkmm-3.0/gtkmm.h>
 #include <gdkmm/color.h>
 #include <iostream>
 #include <unistd.h>
@@ -16,6 +16,7 @@ private:
 	Gtk::Entry *pText = nullptr;
 	Gtk::Button *pButton = nullptr;
   	Gtk::TreeView *pTreeView = nullptr;
+	Gtk::TextView *pTextView = nullptr;
 	Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
 	ColumnRecord m_Columns;
 
