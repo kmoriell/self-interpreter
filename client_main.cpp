@@ -22,7 +22,8 @@ int main (int argc, char **argv)
 		script += x + " ";
 
 	Morph morph;
-	ProxyServer proxyServer(server, port, morph);
+	Socket socket(server, port);
+	ProxyServer proxyServer(socket, morph);
 
 	//Aca se abrio un hilo nuevo que es del proxy
 	proxyServer.start();

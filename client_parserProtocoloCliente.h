@@ -6,9 +6,9 @@
 
 class ParserProtocoloCliente {
 private:
+	Morph &morph;
 	std::string &cad;
 	int pCad = 0;
-	Morph &morph;
 
 public:
 	ParserProtocoloCliente(Morph &morph, std::string &cad);

@@ -33,7 +33,7 @@ void MainWindow::addWidgets() {
   if(pTreeView) {
     pTreeView->signal_row_activated().connect(sigc::mem_fun(*this,
               &MainWindow::on_row_activated));
-    pTreeView->signal_clicked
+    //pTreeView->signal_clicked
   }
 }
 

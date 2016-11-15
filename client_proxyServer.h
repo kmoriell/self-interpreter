@@ -6,10 +6,10 @@
 #include "client_morph.h"
 #include "client_parserProtocoloCliente.h"
 #include "common_define.h"
+#include <iostream>
 
 class ProxyServer: public Proxy {
 private:
-	Socket socket;
 	Morph &morph;
 	//Este flag le indica al proxy que debe ejecutar un comando.
 	bool flag;
@@ -20,7 +20,7 @@ public:
 	 * @papram port uint32_t con el puerto a conectarse
 	 * @param morph, Morph que procesa los datos para luego mostrarlos por pantalla
 	 */
-	ProxyServer(std::string hostname, uint32_t port, Morph& morph);
+	ProxyServer(Socket &socket, Morph& morph);
 
 	/** Envia un mensaje para ejecutar codigo self
 	 * @command, char con el comando a ejecutar

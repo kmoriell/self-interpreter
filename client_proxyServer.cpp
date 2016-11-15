@@ -7,8 +7,8 @@
 
 #include "client_proxyServer.h"
 
-ProxyServer::ProxyServer(std::string hostname, uint32_t port, Morph& morph) :
-		socket(hostname, port), Proxy(socket), morph(morph) {
+ProxyServer::ProxyServer(Socket &socket, Morph& morph) :
+		Proxy(socket), morph(morph) {
 	this->serverSocket.connect();
 	this->flag = false;
 	//this->command = ERRORMESSAGE;
