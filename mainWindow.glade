@@ -84,6 +84,7 @@
               <object class="GtkTextView" id="txtCodeSegment">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="buffer">textbuffer1</property>
               </object>
               <packing>
                 <property name="expand">False</property>
