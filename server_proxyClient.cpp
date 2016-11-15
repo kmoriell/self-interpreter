@@ -7,9 +7,15 @@ ProxyClient::ProxyClient(Socket &socket, Server &server, Workspace* workspace) :
 }
 
 void ProxyClient::execLobbyCMD(std::string &cad) {
-	objClientView = server.receiveCode(cad);
-	ParserProtocoloServidor parser(objClientView);
-	sendOK(parser.getString());
+    try {
+	    objClientView = server.receiveCode(cad);
+	    ParserProtocoloServidor parser(objClientView);
+	    sendOK(parser.getString());
+	} catch(const std::runtime_error &e) {
+	    sendError(e.what());
+	} catch(...) {
+	    sendError("Error desconocido.");
+	}
 }
 
 void ProxyClient::setObjName(const std::string &cad) {
@@ -72,23 +78,29 @@ void ProxyClient::run() {
 			std::string cad = "";
 			switch (this->clientMessage.getCommand()) {
 			case EXEC_LOBBY_CMD:
+			{
 				cad = clientMessage.getMessage();
 				execLobbyCMD(cad);
 				break;
+			}
 			case SHOW_LOBBY:
 				break;
 			case EXEC_LOCAL_CMD:
 				break;
 			case SET_OBJ_NAME:
+			{
 				cad = clientMessage.getMessage();
 				setObjName(cad);
 				break;
+			}
 			case SET_SLOT_NAME:
 				break;
 			case ADD_SLOT_NIL:
+			{
 				cad = clientMessage.getMessage();
 				addSlotNil(cad);
 				break;
+			}
 			case ADD_SLOT_BOOL:
 				cad = clientMessage.getMessage();
 				addSlotBoolean(cad);

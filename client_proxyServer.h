@@ -13,7 +13,7 @@ private:
 	Morph &morph;
 	//Este flag le indica al proxy que debe ejecutar un comando.
 	bool flag;
-
+	std::string errorMsg;
 public:
 	ProxyServer(std::string hostname, uint32_t port, Morph& morph) :
 			socket(hostname, port), Proxy(socket), morph(morph) {
@@ -48,7 +48,6 @@ public:
 				try {
 					//Envio el mensaje al servidor
 					sendCMDMessage();
-
 					//Recibo el resultado del mensaje enviado
 					int s = receive();
 					if (s == 0) {
@@ -60,12 +59,20 @@ public:
 
 					switch (clientMessage.getCommand()) {
 					case ERRORMESSAGE:
+							{
 						std::cout << "El servidor devolvio error." << std::endl;
+						errorMsg = clientMessage.getMessage();
 						break;
+							}
 					case OKMESSAGE:
+							{
 						std::cout << "Se recibio un mensaje OK" << std::endl;
 						mensajeRecibido = clientMessage.getMessage();
 						ParserProtocoloCliente parser(morph, mensajeRecibido);
+						break;
+							}
+					default:
+						std::cout << "no se que mandaste" << std::endl;
 						break;
 					}
 
@@ -79,6 +86,14 @@ public:
 	}
 	bool getFlag() const {
 		return flag;
+	}
+	bool areThereErrors() const {
+		return (errorMsg.size() > 0);
+	}
+	std::string getErrors() {
+		std::string copy = errorMsg;
+		errorMsg.clear();
+		return copy;
 	}
 };
 

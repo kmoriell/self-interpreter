@@ -86,9 +86,14 @@
  } */
 Object* Server::receiveCode(std::string &code) {
 	Object *result;
-	m.lock();
-	result = workspace.receive(code);
-	m.unlock();
+	try {
+	    m.lock();
+	    result = workspace.receive(code);
+	    m.unlock();
+	} catch(...) {
+	    m.unlock();
+	    throw;
+	}
 
 	return result;
 }

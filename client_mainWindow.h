@@ -17,6 +17,7 @@ private:
 	Gtk::Button *pButton = nullptr;
   	Gtk::TreeView *pTreeView = nullptr;
 	Gtk::TextView *pTextView = nullptr;
+	Gtk::Label *pLabel = nullptr;
 	Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
 	ColumnRecord m_Columns;
 
@@ -35,6 +36,7 @@ private:
 	void configureTreeView();
 	void populateTreeView();
         void on_button_clicked();
+	void on_row_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
 	Morph &morph;
 	ProxyServer &proxyServer;
 public:

@@ -24,9 +24,15 @@ void MainWindow::addWidgets() {
   refBuilder->get_widget("txtEntrada", pText);
   refBuilder->get_widget("treeView", pTreeView);
   refBuilder->get_widget("txtCodeSegment", pTextView);
+  refBuilder->get_widget("lblObjectName", pLabel);
   if(pButton) {
-    pButton->signal_clicked().connect( sigc::mem_fun(*this,
-              &MainWindow::on_button_clicked) );
+    pButton->signal_clicked().connect(sigc::mem_fun(*this,
+              &MainWindow::on_button_clicked));
+  }
+
+  if(pTreeView) {
+    pTreeView->signal_row_activated().connect(sigc::mem_fun(*this,
+              &MainWindow::on_row_activated));
   }
 }
 
@@ -59,6 +65,7 @@ void MainWindow::configureTreeView() {
 }
 
 void MainWindow::populateTreeView() {
+  pLabel->set_text(morph.getObjName());
   m_refTreeModel->clear();
   Gtk::TreeModel::Row row;
   //colMutableCell.set_active(false);
@@ -82,7 +89,7 @@ void MainWindow::populateTreeView() {
     row[m_Columns.m_col_mutable] = morph.isMutableSlot(i);
     row[m_Columns.m_col_objType] = morph.getSlotObjName(i);
     row[m_Columns.m_col_preview] = morph.getSlotObjPreview(i);
-  }  
+  }
   auto pTextBuffer = Glib::RefPtr<Gtk::TextBuffer>::cast_dynamic(
     refBuilder->get_object("textbuffer1"));
   pTextBuffer->set_text(morph.getCodeSegment());
@@ -92,12 +99,26 @@ void MainWindow::on_button_clicked() {
   if(pWindow && pText) {
     std::string text = pText->get_text();
     proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, text);
-    std::cout << "antes while" << std::endl;
     while(proxyServer.getFlag()) {
-	std::cout << "flag = " << proxyServer.getFlag() << std::endl;
     }
-    std::cout << "despues while" << std::endl;
+    if (proxyServer.areThereErrors()) {
+        Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+            Gtk::MESSAGE_ERROR,  Gtk::BUTTONS_OK);
+        dialog.set_secondary_text(proxyServer.getErrors());
+        dialog.run();
+    }
     populateTreeView();
+  }
+}
+
+void MainWindow::on_row_activated(const Gtk::TreeModel::Path& path,
+        Gtk::TreeViewColumn* column) {
+  Gtk::TreeModel::iterator iter = m_refTreeModel->get_iter(path);
+  if(iter) {
+    Gtk::TreeModel::Row row = *iter;
+    std::cout << "Row activated: Slot name=" << row[m_Columns.m_col_slotName] <<
+    //", Name="
+      /*  << row[m_Columns.m_col_name] << */ std::endl;
   }
 }
 

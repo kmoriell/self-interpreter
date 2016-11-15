@@ -97,7 +97,7 @@ void Proxy::send(command_t &response) {
 }
 
 void Proxy::sendError(std::string msg) {
-	command_t response(msg.size() + 1, ERRORMESSAGE, msg);
+	command_t response(msg.size(), ERRORMESSAGE, msg);
 	send(response);
 }
 
