@@ -2,9 +2,7 @@
 #define MAINWINDOW_H_
 
 #include <gtkmm-3.0/gtkmm.h>
-#include <gdkmm/color.h>
 #include <iostream>
-#include <unistd.h>
 #include "client_columnRecord.h"
 #include "client_morph.h"
 #include "client_proxyServer.h"
@@ -20,6 +18,7 @@ private:
 	Gtk::Label *pLabel = nullptr;
 	Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
 	ColumnRecord m_Columns;
+	Gtk::Menu m_Menu_Popup;
 
 	// Columnas y celdas
 	Gtk::TreeViewColumn colSlotName;
@@ -35,7 +34,10 @@ private:
 	void addWidgets();
 	void configureTreeView();
 	void populateTreeView();
+	void generatePopup();
         void on_button_clicked();
+	void on_menu_file_popup_generic();
+	bool on_button_press_event(GdkEventButton* button_event);
 	void on_row_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
 	Morph &morph;
 	ProxyServer &proxyServer;

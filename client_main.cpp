@@ -28,9 +28,6 @@ int main (int argc, char **argv)
 	proxyServer.start();
 	std::cout << "Se abre un hilo para el proxyServer." << std::endl;
 
-	//proxyServer.run();
-
-	sleep(2);
 	std::cout << "Seteamos el flag." << std::endl;
         std::string message = LOBBY + PUNTO;
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
@@ -38,7 +35,6 @@ int main (int argc, char **argv)
     	MainWindow window(morph, proxyServer);
     	app->run(*window.getWindow());
 
-    	sleep(2);
 	proxyServer.interrupt();
 	proxyServer.join();
 	std::cout << "JOIN." << std::endl;
