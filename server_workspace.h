@@ -10,14 +10,25 @@ class Workspace {
 private:
 	Object *lobby;
 	std::string selfInstr;
-	//std::string &name;
 	VirtualMachine vm;
 
 public:
+	/// Constructor
 	Workspace();
+
+	/// Destructor
 	~Workspace();
 
+	/** Recibe codigo self y lo ejecuta.
+	 * @param code [std::string] codigo que recibe
+	 * @return Devuelve un Object* con el resultado de la ejecucion
+	 *
+	 */
 	Object* receive(std::string &code);
+
+	/** Devuelve la maquina virtual que tiene dentro
+	 *
+	 */
 	VirtualMachine* getVirtualMachine();
 };
 

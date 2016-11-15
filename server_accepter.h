@@ -26,20 +26,31 @@ private:
 	bool interrupt_task;
 
 public:
-	// Constructor. Recibe el puerto donde escuchar y una referencia al modelo
+	/// Constructor
+	/**
+	 * @param port puerto donde escuchar
+	 * @param server referencia al Server
+	 * @param workspace  puntero a Workspace.
+	 */
 	Accepter(uint32_t port, Server &server, Workspace *workspace);
 
-	// Destructor
+	/// Destructor
 	~Accepter();
 
-	// Metodo que sirve para la interrupcion del proceso.
+	/** Metodo que sirve para la interrupcion del proceso.
+	 *
+	 */
 	void interrupt();
 
-	// Metodo principal de la clase. Hace los procesamientos
+	/** Metodo principal de la clase. Hace los procesamientos
+	 *
+	 */
 	virtual void run();
 
-	// Revisa si los clientes que tiene conectados termino su ejecucion.
-	// Limpia los recursos utilizados.
+	/** Revisa si los clientes que tiene conectados terminaron su ejecucion,
+	 * luego limpia los recursos utilizados
+	 *
+	 */
 	void collect_closed_clients();
 };
 

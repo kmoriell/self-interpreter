@@ -58,10 +58,10 @@ public:
 
 	/** Agrega el slot con los datos pasados como parametros.
 	 * @param name nombre del slot.
-	 * @param objm puntero a Object* para guardar en el slot.
-	 * @_mutable booleano que indica si es mutable o no.
-	 * @isParentSlot booleano que indica si es parent slot o no.
-	 * @isArgument booleano que indica si es argumento o no.
+	 * @param obj puntero a Object* para guardar en el slot.
+	 * @param _mutable booleano que indica si es mutable o no.
+	 * @param isParentSlot booleano que indica si es parent slot o no.
+	 * @param isArgument booleano que indica si es argumento o no.
 	 *
 	 */
 	Object* addSlot(std::string name, Object* obj, bool _mutable,
