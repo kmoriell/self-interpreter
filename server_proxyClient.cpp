@@ -2,19 +2,20 @@
 #include <string>
 #include <iostream>
 
-ProxyClient::ProxyClient(Socket &socket, Server &server, Workspace* workspace) : Proxy(socket), server(server) {
+ProxyClient::ProxyClient(Socket &socket, Server &server, Workspace* workspace) :
+		Proxy(socket), server(server) {
 	this->workspace = workspace;
 }
 
 void ProxyClient::execLobbyCMD(std::string &cad) {
-    try {
-	    objClientView = server.receiveCode(cad);
-	    ParserProtocoloServidor parser(objClientView);
-	    sendOK(parser.getString());
-	} catch(const std::runtime_error &e) {
-	    sendError(e.what());
-	} catch(...) {
-	    sendError("Error desconocido.");
+	try {
+		objClientView = server.receiveCode(cad);
+		ParserProtocoloServidor parser(objClientView);
+		sendOK(parser.getString());
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
 	}
 }
 
@@ -32,14 +33,16 @@ void ProxyClient::addSlotNil(const std::string &cad) {
 }
 
 void ProxyClient::addSlotBoolean(const std::string &cad) {
-	Object* _obj = workspace->getVirtualMachine()->createBoolean(BOOLEAN_OBJ_DEFAULT);
+	Object* _obj = workspace->getVirtualMachine()->createBoolean(
+			BOOLEAN_OBJ_DEFAULT);
 	objClientView->addSlot(cad, _obj, true, false, false);
 	ParserProtocoloServidor parser(objClientView);
 	sendOK(parser.getString());
 }
 
 void ProxyClient::addSlotNumber(const std::string &cad) {
-	Object* _obj = workspace->getVirtualMachine()->createNumber(NUMBER_OBJ_DEFAULT);
+	Object* _obj = workspace->getVirtualMachine()->createNumber(
+			NUMBER_OBJ_DEFAULT);
 	objClientView->addSlot(cad, _obj, true, false, false);
 	ParserProtocoloServidor parser(objClientView);
 	sendOK(parser.getString());
@@ -77,8 +80,7 @@ void ProxyClient::run() {
 
 			std::string cad = "";
 			switch (this->clientMessage.getCommand()) {
-			case EXEC_LOBBY_CMD:
-			{
+			case EXEC_LOBBY_CMD: {
 				cad = clientMessage.getMessage();
 				execLobbyCMD(cad);
 				break;
@@ -87,16 +89,14 @@ void ProxyClient::run() {
 				break;
 			case EXEC_LOCAL_CMD:
 				break;
-			case SET_OBJ_NAME:
-			{
+			case SET_OBJ_NAME: {
 				cad = clientMessage.getMessage();
 				setObjName(cad);
 				break;
 			}
 			case SET_SLOT_NAME:
 				break;
-			case ADD_SLOT_NIL:
-			{
+			case ADD_SLOT_NIL: {
 				cad = clientMessage.getMessage();
 				addSlotNil(cad);
 				break;

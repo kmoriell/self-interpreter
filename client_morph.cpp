@@ -29,31 +29,31 @@ int Morph::getSlotsSize() const {
 }
 
 std::string Morph::getSlotName(int nSlot) const {
-	return std::get<0>(slots.at(nSlot));
+	return std::get < 0 > (slots.at(nSlot));
 }
 
 bool Morph::isNativeMethodSlot(int nSlot) const {
-	return std::get<1>(slots.at(nSlot));
+	return std::get < 1 > (slots.at(nSlot));
 }
 
 bool Morph::isMutableSlot(int nSlot) const {
-	return std::get<2>(slots.at(nSlot));
+	return std::get < 2 > (slots.at(nSlot));
 }
 
 bool Morph::isArgumentSlot(int nSlot) const {
-	return std::get<3>(slots.at(nSlot));
+	return std::get < 3 > (slots.at(nSlot));
 }
 
 bool Morph::isParentSlot(int nSlot) const {
-	return std::get<4>(slots.at(nSlot));
+	return std::get < 4 > (slots.at(nSlot));
 }
 
 std::string Morph::getSlotObjName(int nSlot) const {
-	return std::get<5>(slots.at(nSlot));
+	return std::get < 5 > (slots.at(nSlot));
 }
 
 std::string Morph::getSlotObjPreview(int nSlot) const {
-	return std::get<6>(slots.at(nSlot));
+	return std::get < 6 > (slots.at(nSlot));
 }
 
 void Morph::setObjName(std::string &cad) {

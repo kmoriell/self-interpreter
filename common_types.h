@@ -17,8 +17,11 @@ private:
 	std::string message;
 
 public:
-	command_t(size_t length, char command, std::string message) : length(length), instr(command), message(message) {}
-	command_t() {} //todo verificar esto
+	command_t(size_t length, char command, std::string message) :
+			length(length), instr(command), message(message) {
+	}
+	command_t() {
+	} //todo verificar esto
 
 	/*
 	 * Este metodo devuelve en el parametro pasado el contenido

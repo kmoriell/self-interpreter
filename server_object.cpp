@@ -44,10 +44,10 @@ Object::Object(const Object& __object) {
 		if (name == SELF)
 			continue;
 
-		Object tmpObj = *(Object*) std::get<0>(tuple);
+		Object tmpObj = *(Object*) std::get < 0 > (tuple);
 		obj = new Object(tmpObj);
 
-		std::get<0>(tuple) = obj;
+		std::get < 0 > (tuple) = obj;
 
 		this->slots.insert(std::make_pair(name, tuple));
 	}
@@ -140,7 +140,7 @@ bool Object::findObject(std::string name, Object* &returnValue,
 	auto it = slots.find(name);
 	if (it != slots.end()) {
 		// Significa que lo encontre
-		returnValue = (Object*) std::get<0>(it->second);
+		returnValue = (Object*) std::get < 0 > (it->second);
 		return true;
 	}
 
@@ -151,9 +151,9 @@ bool Object::findObject(std::string name, Object* &returnValue,
 		fpointTuple tuple = it_native->second;
 
 		// Pregunto si esta habilitado
-		if (std::get<1>(tuple)) {
+		if (std::get < 1 > (tuple)) {
 			// llamo a la funcion apuntada
-			function = std::get<0>(tuple);
+			function = std::get < 0 > (tuple);
 			return true;
 		}
 	}
@@ -164,7 +164,7 @@ bool Object::findObject(std::string name, Object* &returnValue,
 	slot_map parents = getParentSlots();
 	for (auto parentSlot_it = parents.begin(); parentSlot_it != parents.end();
 			++parentSlot_it) {
-		Object* pslot = (Object*) std::get<0>(parentSlot_it->second);
+		Object* pslot = (Object*) std::get < 0 > (parentSlot_it->second);
 		if (pslot->findObject(name, returnValue, function))
 			return true;
 	}
@@ -202,16 +202,16 @@ Object* Object::recvMessage(std::string messageName,
 			break;
 
 		// Verifico que sea argumento y que el slot sea mutable para poder modificarlo
-		bool __isMutable = std::get<1>(object_slots_it->second);
-		bool __isArg = std::get<3>(object_slots_it->second);
+		bool __isMutable = std::get < 1 > (object_slots_it->second);
+		bool __isArg = std::get < 3 > (object_slots_it->second);
 
 		if (__isArg && __isMutable) {
 			slot_t tupla = object_slots_it->second;
 
-			Object *__object = ((Object*) std::get<0>(tupla));
+			Object *__object = ((Object*) std::get < 0 > (tupla));
 			delete __object;
 			__object = args[argsCount];
-			std::get<0>(tupla) = __object;
+			std::get < 0 > (tupla) = __object;
 
 			// actualizo el valor del mapa
 			object_slots_it->second = tupla;
@@ -228,8 +228,8 @@ Object* Object::recvMessage(std::string messageName,
 	if (it != slots.end() && args.size() > 0) {
 		slot_t tuple = it->second;
 
-		if (std::get<1>(tuple)) {
-			std::get<0>(tuple) = args[0];
+		if (std::get < 1 > (tuple)) {
+			std::get < 0 > (tuple) = args[0];
 			it->second = tuple;
 
 			return args[0];
@@ -245,8 +245,8 @@ Object* Object::recvMessage(std::string messageName,
 Object::slot_map Object::getParentSlots() const {
 	slot_map parentSlots;
 	for (auto it = slots.begin(); it != slots.end(); ++it) {
-		if (std::get<2>(it->second)) {
-			if (std::get<0>(it->second) != this)
+		if (std::get < 2 > (it->second)) {
+			if (std::get < 0 > (it->second) != this)
 				parentSlots.insert(std::make_pair(it->first, it->second));
 		}
 	}
@@ -261,7 +261,7 @@ void Object::enableNativeMethod(Object* object, std::string methodName) {
 		throw std::runtime_error(error);
 	}
 	fpointTuple tuple = fpoint->second;
-	std::get<1>(tuple) = true;
+	std::get < 1 > (tuple) = true;
 	fpoint->second = tuple;
 }
 void Object::disableNativeMethod(Object* object, std::string methodName) {
@@ -272,7 +272,7 @@ void Object::disableNativeMethod(Object* object, std::string methodName) {
 		throw std::runtime_error(error);
 	}
 	fpointTuple tuple = fpoint->second;
-	std::get<1>(tuple) = false;
+	std::get < 1 > (tuple) = false;
 	fpoint->second = tuple;
 }
 
@@ -287,9 +287,9 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 		std::string slotName = _it->first;
 		slot_t slot = _it->second;
 
-		bool esMutable = std::get<1>(slot);
-		bool esParent = std::get<2>(slot);
-		bool esArgument = std::get<3>(slot);
+		bool esMutable = std::get < 1 > (slot);
+		bool esParent = std::get < 2 > (slot);
+		bool esArgument = std::get < 3 > (slot);
 
 		std::cout << " ";
 
@@ -305,7 +305,7 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 			std::cout << " " << OP_SLOT_MUTABLE << " ";
 		else
 			std::cout << " " << OP_SLOT_INMUTABLE << " ";
-		Object* dirObj = (Object*) std::get<0>(slot);
+		Object* dirObj = (Object*) std::get < 0 > (slot);
 		std::cout << dirObj;
 		//std::cout << "Es parent? " << esParent << std::endl;
 		std::cout << PUNTO;
@@ -315,7 +315,7 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 	for (auto _it = nativeMethods.begin(); _it != nativeMethods.end(); ++_it) {
 		std::string slotNameNative = _it->first;
 		fpointTuple tuple = _it->second;
-		if (std::get<1>(tuple))
+		if (std::get < 1 > (tuple))
 			std::cout << " <" << slotNameNative << ">" << PUNTO;
 	}
 
@@ -326,9 +326,9 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 		std::string slotName = _it->first;
 		slot_t slot = _it->second;
 		Object* dirObj;
-		dirObj = (Object*) std::get<0>(slot);
+		dirObj = (Object*) std::get < 0 > (slot);
 		// Es distinto de this para el caso de lobby
-		bool esParent = std::get<2>(slot);
+		bool esParent = std::get < 2 > (slot);
 		if (dirObj != nullptr && dirObj != this && !esParent)
 			dirObj->printObj(std::vector<Object*> { });
 		else if (dirObj == nullptr)

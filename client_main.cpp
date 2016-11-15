@@ -4,10 +4,10 @@
 #include "client_proxyServer.h"
 #include "common_define.h"
 
-int main (int argc, char **argv)
-{
- 	if (argc != 4) {
-		std::cout << "Argumentos: >>> .\\client <serverIP> <puerto> <archivo>." << std::endl;
+int main(int argc, char **argv) {
+	if (argc != 4) {
+		std::cout << "Argumentos: >>> .\\client <serverIP> <puerto> <archivo>."
+				<< std::endl;
 		return 1;
 	}
 
@@ -30,11 +30,11 @@ int main (int argc, char **argv)
 	std::cout << "Se abre un hilo para el proxyServer." << std::endl;
 
 	std::cout << "Seteamos el flag." << std::endl;
-        std::string message = LOBBY + PUNTO;
+	std::string message = LOBBY + PUNTO;
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
-   	auto app = Gtk::Application::create();
-    	MainWindow window(morph, proxyServer);
-    	app->run(*window.getWindow());
+	auto app = Gtk::Application::create();
+	MainWindow window(morph, proxyServer);
+	app->run(*window.getWindow());
 
 	proxyServer.interrupt();
 	proxyServer.join();

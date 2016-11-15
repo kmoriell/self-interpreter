@@ -21,7 +21,7 @@ std::string ParserProtocoloServidor::getString() {
 		std::string slotNameNative = _it->first;
 		Object::fpointTuple tuple = _it->second;
 		//Verificamos que el metodo nativo este activo para el objeto
-		if (std::get<1>(tuple)) {
+		if (std::get < 1 > (tuple)) {
 			cad += CHAR_SEPARADOR;
 			cad += slotNameNative;
 
@@ -55,9 +55,9 @@ std::string ParserProtocoloServidor::getString() {
 	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
 		std::string slotName = _it->first;
 		Object::slot_t slot = _it->second;
-		bool esMutable = std::get<1>(slot);
-		bool esParent = std::get<2>(slot);
-		bool esArgument = std::get<3>(slot);
+		bool esMutable = std::get < 1 > (slot);
+		bool esParent = std::get < 2 > (slot);
+		bool esArgument = std::get < 3 > (slot);
 
 		cad += CHAR_SEPARADOR;
 		cad += slotName;
@@ -84,7 +84,7 @@ std::string ParserProtocoloServidor::getString() {
 		else
 			cad += TRUE_BIN;
 
-		Object* objSlot = (Object*) std::get<0>(slot);
+		Object* objSlot = (Object*) std::get < 0 > (slot);
 		if (objSlot != nullptr) {
 			cad += CHAR_SEPARADOR;
 			cad += objSlot->getName(); //todo agregar nombre real

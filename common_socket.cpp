@@ -76,7 +76,7 @@ Socket* Socket::accept() {
 	accepted_socket_fd = ::accept(this->socket_fd, NULL, NULL);
 	if (accepted_socket_fd < 0) {
 		std::string error("Error en la llamada a accept().\nError: ");
-		std::string error_description(::strerror(errno));
+		std::string error_description(::strerror (errno));
 		error += error_description;
 		throw std::runtime_error(error);
 	}
@@ -94,7 +94,7 @@ int Socket::receive(char *buffer, uint32_t length) {
 		MSG_NOSIGNAL);
 		if (s < 0) {
 			std::string error("Error en la llamada a recv().\nError: ");
-			std::string error_description(::strerror(errno));
+			std::string error_description(::strerror (errno));
 			error += error_description;
 			throw std::runtime_error(error);
 		} else if (s == 0) {
@@ -162,7 +162,7 @@ void Socket::bind_and_listen() {
 
 	if (s < 0) {
 		std::string error("Error en la llamada a bind().\nError: ");
-		std::string error_description(::strerror(errno));
+		std::string error_description(::strerror (errno));
 		error += error_description;
 		throw std::runtime_error(error);
 	}
@@ -172,7 +172,7 @@ void Socket::bind_and_listen() {
 
 	if (s < 0) {
 		std::string error("Error en la llamada a listen().\nError: ");
-		std::string error_description(::strerror(errno));
+		std::string error_description(::strerror (errno));
 		error += error_description;
 		throw std::runtime_error(error);
 	}

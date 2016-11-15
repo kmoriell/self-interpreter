@@ -16,9 +16,9 @@ Object* Workspace::receive(std::string &code) {
 	Parser parser(vm);
 	parser.setContext(lobby);
 	std::vector<Object*> objs = parser.run(code);
-    int size = objs.size() - 1;
-    if (size >= 0)
-	    return objs[size];
+	int size = objs.size() - 1;
+	if (size >= 0)
+		return objs[size];
 	throw std::runtime_error("Error de sintaxis");
 	//selfInstr += code;
 	// TODO: terminar de definir el string devuelto

@@ -6,7 +6,7 @@
 #include "server_workspace.h"
 #include "server_object.h"
 
-class ProxyClient : public Proxy {
+class ProxyClient: public Proxy {
 private:
 	Server &server;
 	Workspace* workspace;

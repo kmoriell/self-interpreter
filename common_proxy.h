@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-class Proxy : public Thread {
+class Proxy: public Thread {
 public:
 	/** Constructor.
 	 * @param socket socket sobre el cual trabajar
@@ -40,7 +40,6 @@ protected:
 	 void closeWorkspace(std::string name);
 	 void deleteWorkspace(std::string name);*/
 	//virtual void sendCMDMessage() = 0;
-
 	/** Envia un mensaje
 	 * @message del tipo command_t con el mensaje
 	 */

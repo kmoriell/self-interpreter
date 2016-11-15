@@ -1,7 +1,7 @@
 #include <string>
 #include <gtkmm-3.0/gtkmm.h>
 
-class ColumnRecord : public Gtk::TreeModel::ColumnRecord {
+class ColumnRecord: public Gtk::TreeModel::ColumnRecord {
 public:
 	ColumnRecord() {
 		add(m_col_slotName);

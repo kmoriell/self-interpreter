@@ -77,5 +77,4 @@ const bool BOOLEAN_OBJ_DEFAULT = false;
 const float NUMBER_OBJ_DEFAULT = 0;
 const std::string STRING_OBJ_DEFAULT = "'insertar Cadena'";
 
-
 #endif /* _COMMON_DEFINE_H_ */

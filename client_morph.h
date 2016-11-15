@@ -18,7 +18,8 @@ public:
 	 5	std::string	nombreObjSlot
 	 6	std::string	previewObjSlot
 	 * */
-	typedef std::tuple<std::string, bool, bool, bool, bool, std::string, std::string> slot_morph;
+	typedef std::tuple<std::string, bool, bool, bool, bool, std::string,
+			std::string> slot_morph;
 	Morph();
 	void clear();
 
@@ -37,7 +38,9 @@ public:
 	//Setters
 	void setObjName(std::string &cad);
 	void setCodeSegment(std::string &cad);
-	void addSlot(std::string &slotName, bool isNativeMethod, bool isMutable, bool isArgument, bool isParent, std::string &objSlotName, std::string &objSlotPreview);
+	void addSlot(std::string &slotName, bool isNativeMethod, bool isMutable,
+			bool isArgument, bool isParent, std::string &objSlotName,
+			std::string &objSlotPreview);
 
 	void mostrar();
 

@@ -17,7 +17,7 @@
 #include "server_server.h"
 #include "server_workspace.h"
 
-class Accepter : public Thread {
+class Accepter: public Thread {
 private:
 	std::vector<ProxyClient*> program_threads;
 	Server &server;

@@ -28,7 +28,6 @@ public:
 	 */
 	bool sendCmdMessage(char command, std::string &message);
 
-
 	virtual void sendCMDMessage();
 
 	/** Metodo que sirve para

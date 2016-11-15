@@ -28,8 +28,7 @@ private:
 
 	slot_map getParentSlots() const;
 	Object::slot_map getParentSlots(Object* pointer) const;
-	bool findObject(std::string name, Object* &returnValue,
-			delegate& function);
+	bool findObject(std::string name, Object* &returnValue, delegate& function);
 
 public:
 	/// Constructor
@@ -49,7 +48,7 @@ public:
 	/** Devuelve todo los metodos nativos que tiene el objeto
 	 *
 	 */
-	std::map<std::string,fpointTuple> getNativeMethods() const;
+	std::map<std::string, fpointTuple> getNativeMethods() const;
 
 	/** Funcion nativa para agregar un slot.
 	 * @param args vector con Object* con los objetos
@@ -65,7 +64,8 @@ public:
 	 * @isArgument booleano que indica si es argumento o no.
 	 *
 	 */
-	Object* addSlot(std::string name, Object* obj, bool _mutable, bool isParentSlot, bool isArgument);
+	Object* addSlot(std::string name, Object* obj, bool _mutable,
+			bool isParentSlot, bool isArgument);
 
 	/** Funcion nativa para borrar un slot.
 	 * @param args vector con Object* con los objetos para borrar.
@@ -102,8 +102,7 @@ public:
 	 * @param args vector con Object* con los argumentos para pasar.
 	 *
 	 */
-	Object* recvMessage(std::string messageName,
-			std::vector<Object*> args);
+	Object* recvMessage(std::string messageName, std::vector<Object*> args);
 
 	/** Metodo nativo para clonar el objeto.
 	 * @param args vector de Object* vacio.

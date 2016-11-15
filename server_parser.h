@@ -27,7 +27,8 @@ private:
 	Object* keywordMessage();
 	Object* binaryMessage();
 	void pepito(std::string &strName, Object* &obj);
-	Object * recibirMensaje(Object* obj, std::string strName, std::vector<Object*> &args);
+	Object * recibirMensaje(Object* obj, std::string strName,
+			std::vector<Object*> &args);
 	//Object * recibirMensaje2(Object* obj, std::string strName, std::vector<Object*> &args);
 	Object* unaryMessage();
 	Object* receiver();
