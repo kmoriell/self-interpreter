@@ -1,0 +1,14 @@
+#MyTreeView {
+  background-color: green;
+}
+
+textview.view text {
+  font-family: monospace;
+  color: blue;
+}
+
+textview.view {
+  border-style: dotted;
+  border-width: 5px;
+  border-color: blue;
+}
