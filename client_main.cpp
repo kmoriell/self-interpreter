@@ -1,8 +1,14 @@
 #include <iostream>
 #include <fstream>
-#include "client_mainWindow.h"
 #include "client_proxyServer.h"
 #include "common_define.h"
+
+// #define SOLOGUI
+
+#ifdef SOLOGUI
+#include "client_mainWindow.h"
+#endif
+
 
 int main(int argc, char **argv) {
 	if (argc != 4) {
@@ -30,12 +36,17 @@ int main(int argc, char **argv) {
 	std::cout << "Se abre un hilo para el proxyServer." << std::endl;
 
 	std::cout << "Seteamos el flag." << std::endl;
+
+	#ifdef SOLOGUI
 	std::string message = LOBBY + PUNTO;
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
 	auto app = Gtk::Application::create();
 	MainWindow window(morph, proxyServer);
 	app->run(*window.getWindow());
-
+	#else
+	std::string message = script;
+	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
+    #endif
 	proxyServer.interrupt();
 	proxyServer.join();
 	std::cout << "JOIN." << std::endl;
