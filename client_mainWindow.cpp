@@ -9,9 +9,26 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer) :
 		throw "No se puede crear la ventana";
 	}
 	refBuilder->get_widget("window", pWindow);
+
 	addWidgets();
 	configureTreeView();
 	drawMorph();
+
+    pWindow->set_name("MyWindow");
+    pTreeView->set_name("MyTreeView");
+    pTextView->set_name("MyTextView");
+    Glib::RefPtr<Gtk::CssProvider> m_refCssProvider = Gtk::CssProvider::create();
+    m_refCssProvider->load_from_path("custom_textView.css");
+    auto refStyleContext = pWindow->get_style_context();
+    //refStyleContext->add_class("txtCodeSegment");
+
+    auto display = Gdk::Display::get_default();
+    auto screen = display->get_default_screen();
+
+    refStyleContext->add_provider_for_screen(screen, m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+    //refStyleContext = pTreeView->get_style_context();
+    //refStyleContext->add_provider(m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 	show_all_children();
 }
 
@@ -25,6 +42,10 @@ void MainWindow::addWidgets() {
 	refBuilder->get_widget("treeView", pTreeView);
 	refBuilder->get_widget("txtCodeSegment", pTextView);
 	refBuilder->get_widget("lblObjectName", pLabel);
+
+	refBuilder->get_widget("m_Open", pMenuItemOpen);
+
+	//refBuilder->get_widget("menuButton", pMenuButton);
 	if (pButton) {
 		pButton->signal_clicked().connect(
 				sigc::mem_fun(*this, &MainWindow::on_button_clicked));
@@ -35,6 +56,11 @@ void MainWindow::addWidgets() {
 				sigc::mem_fun(*this, &MainWindow::on_row_activated));
 		//pTreeView->signal_clicked
 	}
+
+	if (pMenuItemOpen) {
+	    pMenuItemOpen->signal_activate().connect(
+	            sigc::mem_fun(*this, &MainWindow::on_Open_selected));
+    }
 }
 
 void MainWindow::configureTreeView() {
@@ -65,7 +91,9 @@ void MainWindow::configureTreeView() {
 }
 
 void MainWindow::drawMorph() {
-	pLabel->set_text(morph.getObjName());
+    pLabel->set_use_markup(true);
+	pLabel->set_markup("<span font_weight='bold' size='x-large'>" + morph.getObjName() + "</span>");
+	//pLabel->set_text(morph.getObjName());
 	m_refTreeModel->clear();
 	Gtk::TreeModel::Row row;
 	colMutableCell.set_active(false);
@@ -76,12 +104,13 @@ void MainWindow::drawMorph() {
 			slotName = ":" + morph.getSlotName(i);
 		else if (morph.isParentSlot(i))
 			slotName = morph.getSlotName(i) + "+";
-		else if (morph.isNativeMethodSlot(i)) {
+		else if (morph.isNativeMethodSlot(i))
 			slotName = "<span color='red'>" + morph.getSlotName(i) + "</span>";
-		} else if (morph.isMutableSlot(i))
-			colMutableCell.set_active(true);
 		else
 			slotName = morph.getSlotName(i);
+
+		if (morph.isMutableSlot(i))
+			colMutableCell.set_active(true);
 
 		row[m_Columns.m_col_slotName] = slotName;
 		row[m_Columns.m_col_mutable] = morph.isMutableSlot(i);
@@ -121,7 +150,9 @@ Gtk::Window* MainWindow::getWindow() {
 
 void MainWindow::on_button_clicked() {
 	if (pWindow && pText) {
-		std::string text = pText->get_text();
+	    auto pTextBuffer = Glib::RefPtr < Gtk::TextBuffer
+			> ::cast_dynamic(refBuilder->get_object("textbuffer2"));
+		std::string text = pTextBuffer->get_text();
 		proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, text);
 		while (proxyServer.getFlag()) {
 		}
@@ -179,5 +210,56 @@ bool MainWindow::on_button_press_event(GdkEventButton* button_event) {
 	}
 
 	return return_value;
+}
+
+void MainWindow::on_Open_selected() {
+ Gtk::FileChooserDialog dialog("Seleccionar un archivo para procesar",
+          Gtk::FILE_CHOOSER_ACTION_OPEN);
+  dialog.set_transient_for(*pWindow);
+
+  //Add response buttons the the dialog:
+  dialog.add_button("_Cancelar", Gtk::RESPONSE_CANCEL);
+  dialog.add_button("_Abrir", Gtk::RESPONSE_OK);
+
+  auto filter_any = Gtk::FileFilter::create();
+  filter_any->set_name("Archivos self");
+  filter_any->add_pattern("*.self");
+  dialog.add_filter(filter_any);
+
+  //Show the dialog and wait for a user response:
+  int result = dialog.run();
+
+  //Handle the response:
+  switch(result)
+  {
+    case(Gtk::RESPONSE_OK):
+    {
+      std::cout << "Open clicked." << std::endl;
+
+      //Notice that this is a std::string, not a Glib::ustring.
+      std::string filename = dialog.get_filename();
+      std::ifstream file(filename);
+      std::string content, x;
+
+      while(file >> std::skipws >> x) {
+        content += x;
+      }
+
+      auto pTextBuffer = Glib::RefPtr<Gtk::TextBuffer>
+        ::cast_dynamic(refBuilder->get_object("textbuffer2"));
+	  pTextBuffer->set_text(content);
+      break;
+    }
+    case(Gtk::RESPONSE_CANCEL):
+    {
+      std::cout << "Cancel clicked." << std::endl;
+      break;
+    }
+    default:
+    {
+      std::cout << "Unexpected button clicked." << std::endl;
+      break;
+    }
+  }
 }
 

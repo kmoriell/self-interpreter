@@ -180,7 +180,7 @@ Object * Parser::unaryMessage() {
 Object * Parser::recibirMensaje(Object* obj, std::string strName,
 		std::vector<Object*> &args) {
 	if (flagExecute == 1) {
-		Object* objMessage = obj->recvMessage(strName, args);
+		Object *objMessage = obj->recvMessage(strName, args);
 		std::string code = objMessage->getCodeSegment();
 		if (code.size() > 0) {
 			//El objeto mensaje es un method object
@@ -189,7 +189,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 			objMessage->addSlot("self", obj, true, true, false);
 			std::vector<Object*> _vector = unParser.run(code);
 			obj = _vector[_vector.size() - 1];
-			//objMessage->removeSlot("self");
+			objMessage->removeSlot("self");
 		} else {
 			//El objeto mensaje es un data object.
 			obj = objMessage;

@@ -2,7 +2,9 @@
 #define MAINWINDOW_H_
 
 #include <gtkmm-3.0/gtkmm.h>
+#include <gdkmm/color.h>
 #include <iostream>
+#include <fstream>
 #include "client_columnRecord.h"
 #include "client_morph.h"
 #include "client_proxyServer.h"
@@ -10,15 +12,23 @@
 class MainWindow: public Gtk::Window {
 private:
 	Glib::RefPtr<Gtk::Builder> refBuilder;
+
 	Gtk::Window *pWindow = nullptr;
-	Gtk::Entry *pText = nullptr;
+	Gtk::TextView *pText = nullptr;
 	Gtk::Button *pButton = nullptr;
 	Gtk::TreeView *pTreeView = nullptr;
 	Gtk::TextView *pTextView = nullptr;
 	Gtk::Label *pLabel = nullptr;
+	Gtk::MenuButton *pMenuButton = nullptr;
 	Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
 	ColumnRecord m_Columns;
 	Gtk::Menu m_Menu_Popup;
+
+	// Menu
+	Gtk::MenuItem *pMenuItemOpen = nullptr;
+	//Gtk::MenuItem *pMenuItemExit = nullptr;
+
+	// Cuadro de dialogo abrir
 
 	// Columnas y celdas
 	Gtk::TreeViewColumn colSlotName;
@@ -40,6 +50,7 @@ private:
 	bool on_button_press_event(GdkEventButton* button_event);
 	void on_row_activated(const Gtk::TreeModel::Path& path,
 			Gtk::TreeViewColumn* column);
+	void on_Open_selected();
 	Morph &morph;
 	ProxyServer &proxyServer;
 public:

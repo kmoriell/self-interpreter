@@ -41,7 +41,7 @@ Object::Object(const Object& __object) {
 		std::string name = it->first;
 		slot_t tuple = it->second;
 		Object* obj;
-		if (name == SELF)
+		if (name == SELF || name == "lobby")
 			continue;
 
 		Object tmpObj = *(Object*) std::get < 0 > (tuple);
