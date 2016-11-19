@@ -14,7 +14,7 @@
 class Server {
 private:
 	std::mutex m;
-	std::map<std::string, uint32_t> workspaces;
+	//std::map<std::string, uint32_t> workspaces;
 	Workspace workspace;
 
 public:
@@ -24,8 +24,9 @@ public:
 	 void newWorkspace(std::string name);
 	 void closeWorkspace(std::string name);
 	 void deleteWorkspace(std::string name);*/
+	Object* receiveCode(Object* context, std::string &code);
 	Object* receiveCode(std::string &code);
-	Workspace* getWorkspace();
+	Object* getLobby();
 };
 
 #endif /* SERVER_SERVER_H_ */

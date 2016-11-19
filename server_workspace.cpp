@@ -12,9 +12,9 @@ Workspace::~Workspace() {
 	delete lobby;
 }
 
-Object* Workspace::receive(std::string &code) {
+Object* Workspace::receive(Object* context, std::string &code) {
 	Parser parser(vm);
-	parser.setContext(lobby);
+	parser.setContext(context);
 	std::vector<Object*> objs = parser.run(code);
 	int size = objs.size() - 1;
 	if (size >= 0)
@@ -23,6 +23,10 @@ Object* Workspace::receive(std::string &code) {
 	//selfInstr += code;
 	// TODO: terminar de definir el string devuelto
 	//return "";
+}
+
+Object* Workspace::getLobby() {
+	return lobby;
 }
 
 VirtualMachine* Workspace::getVirtualMachine() {

@@ -24,11 +24,12 @@ public:
 	 * @return Devuelve un Object* con el resultado de la ejecucion
 	 *
 	 */
-	Object* receive(std::string &code);
+	Object* receive(Object* context, std::string &code);
 
-	/** Devuelve la maquina virtual que tiene dentro
-	 *
-	 */
+	/// Devuelve el objeto lobby.
+	Object* getLobby();
+
+	/// Devuelve la maquina virtual que tiene dentro
 	VirtualMachine* getVirtualMachine();
 };
 

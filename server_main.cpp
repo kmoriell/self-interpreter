@@ -24,8 +24,7 @@ int main(int argc, char **argv) {
 
 		Server server;
 
-		Accepter *connections_accepter = new Accepter(port, server,
-				server.getWorkspace());
+		Accepter *connections_accepter = new Accepter(port, server);
 		// Este hilo va a estar corriendo durante toda la ejecucion del programa
 		connections_accepter->start();
 

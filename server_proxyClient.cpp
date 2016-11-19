@@ -2,9 +2,8 @@
 #include <string>
 #include <iostream>
 
-ProxyClient::ProxyClient(Socket &socket, Server &server, Workspace* workspace) :
+ProxyClient::ProxyClient(Socket &socket, Server &server) :
 		Proxy(socket), server(server) {
-	this->workspace = workspace;
 }
 
 void ProxyClient::execLobbyCMD(std::string &cad) {
@@ -19,46 +18,32 @@ void ProxyClient::execLobbyCMD(std::string &cad) {
 	}
 }
 
+void ProxyClient::execLocalCMD(std::string &cad) {
+	try {
+		objClientView = server.receiveCode(objClientView, cad);
+		ParserProtocoloServidor parser(objClientView);
+		sendOK(parser.getString());
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
+}
+
+void ProxyClient::showLobby(std::string &cad) {
+	try {
+		objClientView = server.getLobby();
+		ParserProtocoloServidor parser(objClientView);
+		sendOK(parser.getString());
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
+}
+
 void ProxyClient::setObjName(const std::string &cad) {
 	objClientView->setName(cad);
-	ParserProtocoloServidor parser(objClientView);
-	sendOK(parser.getString());
-}
-
-void ProxyClient::addSlotNil(const std::string &cad) {
-	Object* _obj = workspace->getVirtualMachine()->createNil();
-	objClientView->addSlot(cad, _obj, true, false, false);
-	ParserProtocoloServidor parser(objClientView);
-	sendOK(parser.getString());
-}
-
-void ProxyClient::addSlotBoolean(const std::string &cad) {
-	Object* _obj = workspace->getVirtualMachine()->createBoolean(
-			BOOLEAN_OBJ_DEFAULT);
-	objClientView->addSlot(cad, _obj, true, false, false);
-	ParserProtocoloServidor parser(objClientView);
-	sendOK(parser.getString());
-}
-
-void ProxyClient::addSlotNumber(const std::string &cad) {
-	Object* _obj = workspace->getVirtualMachine()->createNumber(
-			NUMBER_OBJ_DEFAULT);
-	objClientView->addSlot(cad, _obj, true, false, false);
-	ParserProtocoloServidor parser(objClientView);
-	sendOK(parser.getString());
-}
-
-void ProxyClient::addSlotString(const std::string &cad) {
-	std::string stringValue = STRING_OBJ_DEFAULT;
-	Object* _obj = workspace->getVirtualMachine()->createString(stringValue);
-	objClientView->addSlot(cad, _obj, true, false, false);
-	ParserProtocoloServidor parser(objClientView);
-	sendOK(parser.getString());
-}
-
-void ProxyClient::addSlotObject(const std::string &cad) {
-	Object* _obj = workspace->getVirtualMachine()->createEmptyObject();
-	objClientView->addSlot(cad, _obj, true, false, false);
 	ParserProtocoloServidor parser(objClientView);
 	sendOK(parser.getString());
 }
@@ -85,50 +70,33 @@ void ProxyClient::run() {
 				execLobbyCMD(cad);
 				break;
 			}
-			case SHOW_LOBBY:
+			case SHOW_LOBBY: {
+				cad = clientMessage.getMessage();
+				showLobby(cad);
 				break;
-			case EXEC_LOCAL_CMD:
+			}
+			case EXEC_LOCAL_CMD: {
+				cad = clientMessage.getMessage();
+				execLocalCMD(cad);
 				break;
+			}
+			case ADD_SLOT: {
+				cad += ADD_SLOTS_METHOD + OP_ARG + P_LEFT + SLOT_LIST_SEP;
+				cad += clientMessage.getMessage();
+				cad += SLOT_LIST_SEP + P_RIGHT + PUNTO;
+				execLocalCMD(cad);
+				break;
+			}
 			case SET_OBJ_NAME: {
 				cad = clientMessage.getMessage();
 				setObjName(cad);
 				break;
 			}
-			case SET_SLOT_NAME:
-				break;
-			case ADD_SLOT_NIL: {
-				cad = clientMessage.getMessage();
-				addSlotNil(cad);
-				break;
-			}
-			case ADD_SLOT_BOOL:
-				cad = clientMessage.getMessage();
-				addSlotBoolean(cad);
-				break;
-			case ADD_SLOT_NUMBER:
-				cad = clientMessage.getMessage();
-				addSlotNumber(cad);
-				break;
-			case ADD_SLOT_STRING:
-				cad = clientMessage.getMessage();
-				addSlotString(cad);
-				break;
-			case ADD_SLOT_OBJECT:
-				cad = clientMessage.getMessage();
-				addSlotObject(cad);
-				break;
-			case REMOVE_SLOT:
-				break;
-			case SWAP_MUTABILITY:
-				break;
-			case ADD_ARGUMENT_SLOT:
-				break;
-			case ADD_PARENT_SLOT:
-				break;
-			case SET_CODESEGMENT:
+			case SET_CODESEGMENT: {
 				cad = clientMessage.getMessage();
 				setCodeSegment(cad);
 				break;
+			}
 			default:
 				sendError("Comando desconocido.");
 			}

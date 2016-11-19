@@ -21,7 +21,6 @@ class Accepter: public Thread {
 private:
 	std::vector<ProxyClient*> program_threads;
 	Server &server;
-	Workspace* workspace;
 	Socket socket;
 	bool interrupt_task;
 
@@ -32,7 +31,7 @@ public:
 	 * @param server referencia al Server
 	 * @param workspace  puntero a Workspace.
 	 */
-	Accepter(uint32_t port, Server &server, Workspace *workspace);
+	Accepter(uint32_t port, Server &server);
 
 	/// Destructor
 	~Accepter();

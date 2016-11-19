@@ -2,6 +2,7 @@
 #include <fstream>
 #include "client_proxyServer.h"
 #include "common_define.h"
+#include <unistd.h>
 
 #define SOLOGUI
 
@@ -34,9 +35,7 @@ int main(int argc, char **argv) {
 	//Aca se abrio un hilo nuevo que es del proxy
 	proxyServer.start();
 	std::cout << "Se abre un hilo para el proxyServer." << std::endl;
-
 	std::cout << "Seteamos el flag." << std::endl;
-
 	#ifdef SOLOGUI
 	std::string message = LOBBY + PUNTO;
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
@@ -44,8 +43,29 @@ int main(int argc, char **argv) {
 	MainWindow window(morph, proxyServer);
 	app->run(*window.getWindow());
 	#else
-	std::string message = script;
+	std::string message;
+	message = LOBBY + PUNTO;
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
+	sleep(2);
+	//std::string message = script;
+	//message = "lobby _AddSlots: (|punto = (|x<-3.|).|)..";
+	//proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
+	message = "punto = (|x<-3.|).";
+	proxyServer.sendCmdMessage(ADD_SLOT, message);
+	sleep(2);
+	message = "lobby punto.";
+	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
+	sleep(2);
+	message = "x printObj.";
+	proxyServer.sendCmdMessage(EXEC_LOCAL_CMD, message);
+	sleep(2);
+	/*message = "juanjo";
+	proxyServer.sendCmdMessage(SET_OBJ_NAME, message);
+	sleep(2);
+	message = "code..";
+	proxyServer.sendCmdMessage(SET_CODESEGMENT, message);
+	sleep(2);*/
+	morph.mostrar();
     #endif
 	proxyServer.interrupt();
 	proxyServer.join();

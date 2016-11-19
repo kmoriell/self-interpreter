@@ -84,11 +84,11 @@
  workspaces.erase(name);
  m.unlock();
  } */
-Object* Server::receiveCode(std::string &code) {
+Object* Server::receiveCode(Object* context, std::string &code) {
 	Object *result;
 	try {
 		m.lock();
-		result = workspace.receive(code);
+		result = workspace.receive(context, code);
 		m.unlock();
 	} catch (...) {
 		m.unlock();
@@ -98,6 +98,12 @@ Object* Server::receiveCode(std::string &code) {
 	return result;
 }
 
-Workspace* Server::getWorkspace() {
-	return &workspace;
+Object* Server::receiveCode(std::string &code) {
+	Object *lobby = workspace.getLobby();
+	return receiveCode(lobby, code);
 }
+
+Object* Server::getLobby() {
+	return workspace.getLobby();
+}
+
