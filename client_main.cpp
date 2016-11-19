@@ -4,7 +4,7 @@
 #include "common_define.h"
 #include <unistd.h>
 
-#define SOLOGUI
+//#define SOLOGUI
 
 #ifdef SOLOGUI
 #include "client_mainWindow.h"
@@ -56,9 +56,13 @@ int main(int argc, char **argv) {
 	message = "lobby punto.";
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
 	sleep(2);
-	message = "x printObj.";
-	proxyServer.sendCmdMessage(EXEC_LOCAL_CMD, message);
+	/*message = "x";
+	proxyServer.sendCmdMessage(REMOVE_SLOT, message);
+	sleep(2);*/
+	message = "x";
+	proxyServer.sendCmdMessage(GET_SLOT_OBJ, message);
 	sleep(2);
+
 	/*message = "juanjo";
 	proxyServer.sendCmdMessage(SET_OBJ_NAME, message);
 	sleep(2);

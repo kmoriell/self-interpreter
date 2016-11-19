@@ -65,6 +65,23 @@ void ProxyClient::setCodeSegment(const std::string &cad) {
 	sendOK(parser.getString());
 }
 
+void ProxyClient::getSlotObj(const std::string &cad) {
+	auto slots = objClientView->getSlots();
+	auto it = slots.find(cad);
+	if (it != slots.end()) {
+		Object* obj = std::get<0>(it->second);
+		if (!obj) {
+			sendError("El slot tiene un puntero nulo");
+		} else {
+			objClientView = obj;
+			ParserProtocoloServidor parser(objClientView);
+			sendOK(parser.getString());
+		}
+	} else {
+		sendError("El slot buscado no existe");
+	}
+}
+
 void ProxyClient::run() {
 	while (!_interrupt) {
 		try {
@@ -101,6 +118,13 @@ void ProxyClient::run() {
 				execLocalCMD(cad);
 				break;
 			}
+			case REMOVE_SLOT: {
+				cad += REMOVE_SLOTS_METHOD + OP_ARG + P_LEFT + SLOT_LIST_SEP;
+				cad += clientMessage.getMessage();
+				cad += PUNTO + SLOT_LIST_SEP + P_RIGHT + PUNTO;
+				execLocalCMD(cad);
+				break;
+			}
 			case SET_OBJ_NAME: {
 				cad = clientMessage.getMessage();
 				setObjName(cad);
@@ -109,6 +133,11 @@ void ProxyClient::run() {
 			case SET_CODESEGMENT: {
 				cad = clientMessage.getMessage();
 				setCodeSegment(cad);
+				break;
+			}
+			case GET_SLOT_OBJ: {
+				cad = clientMessage.getMessage();
+				getSlotObj(cad);
 				break;
 			}
 			default:
