@@ -97,6 +97,14 @@ public:
 	 */
 	std::string getName() const;
 
+	/** Determina si es un DataObjecto o un MethodObject.
+	 * @param messageName nombre del slot.
+	 *
+	 */
+	bool isDataObject(std::string messageName);
+
+	bool isNativeMethod(std::string messageName);
+
 	/** Metodo principal que sirve para recibir mensajes. Devuelve un Object*
 	 * @param messageName nombre del slot que va a recibir el mensaje
 	 * @param args vector con Object* con los argumentos para pasar.

@@ -14,6 +14,10 @@ lobby _AddSlots:
 '>>> lobby printObj.' print. '\n' print.
 lobby printObj. '\n' print.
 
+
+lobby suma.
+
+
 '>>> suma printObj.' print. '\n' print. 
 suma printObj.
 '>>> suma print.' print. '\n' print. 

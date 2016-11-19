@@ -28,7 +28,7 @@ private:
 	Object* binaryMessage();
 	Object * recibirMensaje(Object* obj, std::string strName,
 			std::vector<Object*> &args);
-	//Object * recibirMensaje2(Object* obj, std::string strName, std::vector<Object*> &args);
+	Object * recibirMensaje2(Object* obj, std::string strName, std::vector<Object*> &args);
 	Object* unaryMessage();
 	Object* receiver();
 	bool slotList(Object* objContenedor);

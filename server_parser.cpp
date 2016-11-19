@@ -177,7 +177,7 @@ Object * Parser::unaryMessage() {
 	return nullptr;
 }
 
-Object * Parser::recibirMensaje(Object* obj, std::string strName,
+Object * Parser::recibirMensaje2(Object* obj, std::string strName,
 		std::vector<Object*> &args) {
 	if (flagExecute == 1) {
 		Object* objMessage = obj->recvMessage(strName, args);
@@ -202,76 +202,84 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 
 //2da version del recibirMensaje, se implementara a futuro
 //Con la version actual hay un problema con la clonacion de los method objects porque no se detectan correctamente
-/*Object * Parser::recibirMensaje2(Object* obj, std::string strName, std::vector<Object*> &args) {
- //std::cout << "recibirMensaje" << std::endl;
- if (flagExecute == 1) {*/
+Object * Parser::recibirMensaje(Object* obj, std::string strName,
+		std::vector<Object*> &args) {
+	//std::cout << "recibirMensaje" << std::endl;
+	if (flagExecute == 1) {
 //La asignacion se realiza en el recv_message cuando se le pasa un argumento a un objeto sin argumentos
-/* El recv message lo que hace es lo siguiente:
- * Si el objeto strName encontrado es un data object devuelve el mismo objeto.
- * Si es una funcion nativa la ejecuta y retorna el objeto resultado.
- * Si es un method object devuelve el method object con los argumentos pisados (es decir no ejecuto el codigo).
+		/* El recv message lo que hace es lo siguiente:
+		 * Si el objeto strName encontrado es un data object devuelve el mismo objeto.
+		 * Si es una funcion nativa la ejecuta y retorna el objeto resultado.
+		 * Si es un method object devuelve el method object con los argumentos pisados (es decir no ejecuto el codigo).
 
- Lo primero que se debe hacer es verificar si es un data object o un method object.
- * Si es un objeto primitivo ya lo consideramos data object por mas que tenga codeSegment.
- * Ya que la informacion de los objetos primitivos la guardamos en el codeSegment.
- * Si no era objeto primitivo miramos el codeSegment, si tiene codeSegment es un
- * method object, sino es un data object.
- *
- * Si el objeto que recibimos es un data object:
- * le aplicamos al dataObject el recv_message con
- * obj->recvMessage(strName, args);
- * Y luego devolvemos obj.
- * Ejemplo de esto seria cuando hacen: lobby x   (y x = 3.)
- * x es un data object ya que el objeto 3 es primitivo, entonces se devuelve el objeto x.
- *
- * Si el objeto que recibimos es un method object: le aplicamos el recv_message.
- * objMensaje = obj->recvMessage(strName, args);
- * Ahora vamos a tener los atributos seteados
- * Luego ejecutamos el codeSegment.
- Podemos hacerlo analizando el codeSegment (y habria que validar si es un tipo de dato primitivo)
- Hay que crear un atributo en object que indique si es un objeto primitivo.
- Si el objeto que recibimos es un data object (ejemplo lobby)*/
+		 Lo primero que se debe hacer es verificar si es un data object o un method object.
+		 * Si es un objeto primitivo ya lo consideramos data object por mas que tenga codeSegment.
+		 * Ya que la informacion de los objetos primitivos la guardamos en el codeSegment.
+		 * Si no era objeto primitivo miramos el codeSegment, si tiene codeSegment es un
+		 * method object, sino es un data object.
+		 *
+		 * Si el objeto que recibimos es un data object:
+		 * le aplicamos al dataObject el recv_message con
+		 * obj->recvMessage(strName, args);
+		 * Y luego devolvemos obj.
+		 * Ejemplo de esto seria cuando hacen: lobby x.   //x = 3.
+		 * x es un data object ya que el objeto 3 es primitivo, entonces se devuelve el objeto x.
+		 *
+		 * Si el objeto que recibimos es un method object: le aplicamos el recv_message.
+		 * objMensaje = obj->recvMessage(strName, args);
+		 * Ahora vamos a tener los atributos seteados
+		 * Luego ejecutamos el codeSegment.
+		 Podemos hacerlo analizando el codeSegment (y habria que validar si es un tipo de dato primitivo)
+		 Hay que crear un atributo en object que indique si es un objeto primitivo.
+		 Si el objeto que recibimos es un data object (ejemplo lobby)*/
 
-//std::cout << "Cadena:" << cad << std::endl;
-//std::cout << "FIN CAD" << std::endl;
-//std::cout << "Soy el original" << std::endl;
-//obj->printObj(std::vector<Object*>{});
-//std::cout << "Soy el clone" << std::endl;
-//Object* objClone = obj->clone(std::vector<Object*>{});
-//Object* objClone = obj;
-//objClone->printObj(std::vector<Object*>{});
-//std::cout << "R1" << std::endl;
-//Object* objMessage = objClone->recvMessage(strName, args);
-//std::cout << "R2" << std::endl;
-//context->printObj(std::vector<Object*>{});
-//std::string code = objMessage->getCodeSegment();*/
-/*std::string code = obj->getCodeSegment();
- if (code.size() > 0) {
- Object* objClone = obj->clone(std::vector<Object*>{});
- Object* objMessage = objClone->recvMessage(strName, args);
- //El objeto mensaje es un method object
- Parser unParser(code);
- unParser.setContext(objMessage);
- objMessage->addSlot("self", obj, true, true, false);
- std::vector<Object*> _vector = unParser.run();
- //objMessage->removeSlot("self");
- obj = _vector[_vector.size() - 1];
- //std::cout << std::endl << "Objeto Recibido de la salida del codesegment: " << std::endl;
- //obj->printObj(std::vector<Object*>{});
- } else {
- //El objeto mensaje es un data object.
- obj = obj->recvMessage(strName, args);
- //std::cout << std::endl << "Objeto Recibido: " << std::endl;
- //obj->printObj(std::vector<Object*>{});
- }
- //obj->printObj(std::vector<Object*>{});
- }
- // Si no pudo ejecutar el codigo del objeto mensaje devuelve el objeto mensaje.
- //todo verificar si esto esta bien o si se deberia devolver un nilObjk()
- //std::cout << std::endl << "Objeto que sale de Recibido: " << std::endl;
- //obj->printObj(std::vector<Object*>{});
- return obj;
- }*/
+		//std::cout << "Cadena:" << cad << std::endl;
+		//std::cout << "FIN CAD" << std::endl;
+		//std::cout << "Soy el original" << std::endl;
+		//obj->printObj(std::vector<Object*> { });
+		//std::cout << "Soy el clone" << std::endl;
+		//objClone->printObj(std::vector<Object*> { });
+		//std::cout << "R1" << std::endl;
+		//std::cout << "R2" << std::endl;
+		//context->printObj(std::vector<Object*> { });
+		if (obj->isDataObject(strName)) {
+			obj = obj->recvMessage(strName, args);
+		} else {
+			//El objeto mensaje es un method object
+			Object* objMessage;
+			if (obj->isNativeMethod(strName)) {
+				objMessage = obj->recvMessage(strName, args);
+			} else {
+				Object* objClone = obj->clone(std::vector<Object*> { });
+				//std::cout << "A. " << std::endl;
+				//objClone->printObj(std::vector<Object*> { });
+				objMessage = objClone->recvMessage(strName, args);
+				//std::cout << "B. " << std::endl;
+
+				std::string code = objMessage->getCodeSegment();
+
+				Parser unParser(vm);
+				unParser.setContext(objMessage);
+				objMessage->addSlot("self", obj, true, true, false);
+				//objMessage->printObj(std::vector<Object*> { });
+				//std::cout << "C. " << std::endl;
+				std::vector<Object*> _vector = unParser.run(code);
+				//objMessage->removeSlot("self");
+				obj = _vector[_vector.size() - 1];
+
+				//std::cout << "D. " << std::endl;
+			}
+			//std::cout << std::endl << "Objeto Recibido de la salida del codesegment: " << std::endl;
+			//obj->printObj(std::vector<Object*>{});
+		}
+		//obj->printObj(std::vector<Object*>{});
+	}
+	// Si no pudo ejecutar el codigo del objeto mensaje devuelve el objeto mensaje.
+	//todo verificar si esto esta bien o si se deberia devolver un nilObjk()
+	//std::cout << std::endl << "Objeto que sale de Recibido: " << std::endl;
+	//obj->printObj(std::vector<Object*>{});
+	return obj;
+}
 
 Object * Parser::receiver() {
 	if (debug)
@@ -337,7 +345,6 @@ bool Parser::isDigit() {
 	pCad = _pCad;
 	return false;
 }
-
 
 bool Parser::isAlpha() {
 	int _pCad = pCad; //checkpoint;

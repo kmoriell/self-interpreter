@@ -25,7 +25,8 @@
 '\n' print.
 
 'NIL' print. '\n' print.
-'BUG: no deberia tener el metodo print un nil' print. '\n' print.
+'>>> nil print.' print. '\n' print. 
+nil. '\n' print.
 '>>> nil printObj.' print. '\n' print. 
 nil printObj. '\n' print.
 

@@ -4,7 +4,7 @@
 #include "common_define.h"
 #include <unistd.h>
 
-#define SOLOGUI
+//#define SOLOGUI
 
 #ifdef SOLOGUI
 #include "client_mainWindow.h"
@@ -43,25 +43,30 @@ int main(int argc, char **argv) {
 	MainWindow window(morph, proxyServer);
 	app->run(*window.getWindow());
 	#else
-	std::string message;
+	std::string message = script;
+	std::cout << "script: " << script << std::endl;
+	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
+	sleep(2);
+
+	/*std::string message;
 	message = LOBBY + PUNTO;
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
 	sleep(2);
-	//std::string message = script;
-	//message = "lobby _AddSlots: (|punto = (|x<-3.|).|)..";
-	//proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
+	std::string message = script;
+	message = "lobby _AddSlots: (|punto = (|x<-3.|).|)..";
+	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
 	message = "punto = (|x<-3.|).";
 	proxyServer.sendCmdMessage(ADD_SLOT, message);
 	sleep(2);
 	message = "lobby punto.";
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
 	sleep(2);
-	/*message = "x";
+	message = "x";
 	proxyServer.sendCmdMessage(REMOVE_SLOT, message);
-	sleep(2);*/
+	sleep(2);
 	message = "x";
 	proxyServer.sendCmdMessage(GET_SLOT_OBJ, message);
-	sleep(2);
+	sleep(2);*/
 
 	/*message = "juanjo";
 	proxyServer.sendCmdMessage(SET_OBJ_NAME, message);

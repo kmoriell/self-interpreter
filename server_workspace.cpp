@@ -5,7 +5,7 @@ Workspace::Workspace() {
 	lobby = new Object();
 	lobby->setName(LOBBY);
 	//El slot lobby es necesario para cuando se realizan llamadas explicitas a lobby.
-	lobby->addSlot(LOBBY, lobby, false, false, false);
+	lobby->addSlot(LOBBY, lobby, false, true, false);
 }
 
 Workspace::~Workspace() {

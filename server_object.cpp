@@ -41,13 +41,17 @@ Object::Object(const Object& __object) {
 		std::string name = it->first;
 		slot_t tuple = it->second;
 		Object* obj;
-		if (name == SELF || name == "lobby")
-			continue;
+		/*if (name == SELF || name == "lobby")
+		 continue;*/
 
-		Object tmpObj = *(Object*) std::get < 0 > (tuple);
-		obj = new Object(tmpObj);
-
-		std::get < 0 > (tuple) = obj;
+		bool isParentSlot = std::get<2>(tuple);
+		if (isParentSlot) {
+			obj = (Object*) std::get<0>(tuple);
+		} else {
+			Object tmpObj = *(Object*) std::get<0>(tuple);
+			obj = new Object(tmpObj);
+		}
+		std::get<0>(tuple) = obj;
 
 		this->slots.insert(std::make_pair(name, tuple));
 	}
@@ -136,12 +140,23 @@ void Object::setName(const std::string name) {
 bool Object::findObject(std::string name, Object* &returnValue,
 		delegate& function) {
 
+	returnValue = nullptr;
+	function = nullptr;
+
 	// Primero me fijo en mis slots
 	auto it = slots.find(name);
 	if (it != slots.end()) {
 		// Significa que lo encontre
-		returnValue = (Object*) std::get < 0 > (it->second);
+		returnValue = (Object*) std::get<0>(it->second);
 		return true;
+	}
+
+	slot_map parents = getParentSlots();
+	for (auto parentSlot_it = parents.begin(); parentSlot_it != parents.end();
+			++parentSlot_it) {
+		Object* pslot = (Object*) std::get<0>(parentSlot_it->second);
+		if (pslot->findObject(name, returnValue, function))
+			return true;
 	}
 
 	// No lo encontro en sus slots. Busco en los metodos nativos
@@ -151,9 +166,9 @@ bool Object::findObject(std::string name, Object* &returnValue,
 		fpointTuple tuple = it_native->second;
 
 		// Pregunto si esta habilitado
-		if (std::get < 1 > (tuple)) {
+		if (std::get<1>(tuple)) {
 			// llamo a la funcion apuntada
-			function = std::get < 0 > (tuple);
+			function = std::get<0>(tuple);
 			return true;
 		}
 	}
@@ -161,37 +176,59 @@ bool Object::findObject(std::string name, Object* &returnValue,
 	// No encontre el metodo nativo
 	// Entonces le pregunto a mis parents slots por el slot
 	// buscado.
-	slot_map parents = getParentSlots();
-	for (auto parentSlot_it = parents.begin(); parentSlot_it != parents.end();
-			++parentSlot_it) {
-		Object* pslot = (Object*) std::get < 0 > (parentSlot_it->second);
-		if (pslot->findObject(name, returnValue, function))
-			return true;
-	}
+
 
 	return false;
+}
+
+bool Object::isDataObject(std::string messageName) {
+
+	// Primero verifico que el slot este en la lista de los slots,
+	// esto es que este agregado o que se haya sobrecargado un metodo
+	// nativo.
+	Object* obj; // = nullptr;
+	delegate func; // = nullptr;
+	bool retval = findObject(messageName, obj, func);
+
+	if (retval && obj) {
+		return (obj->codeSegment.size() == 0);
+	} else if (retval && func) {
+		return false;
+	} else {
+		std::string error = "El slot " + messageName +
+				" no fue encontrado.";
+				throw std::runtime_error(error);
+	}
+}
+
+bool Object::isNativeMethod(std::string messageName) {
+	Object* obj;
+	delegate func;
+	bool retval = findObject(messageName, obj, func);
+
+	return (retval && func);
 }
 
 Object* Object::recvMessage(std::string messageName,
 		std::vector<Object*> args) {
 
-	// Aca tengo mi puntero a objeto, lo que tendria que hacer es ejecutar el codigo
-	// del mensaje
-	//Object* foundObject = std::get < 0 > (it->second);
-	Object* message = nullptr;
-	delegate fpointer = nullptr;
+// Aca tengo mi puntero a objeto, lo que tendria que hacer es ejecutar el codigo
+// del mensaje
+//Object* foundObject = std::get < 0 > (it->second);
+	Object* message; // = nullptr;
+	delegate fpointer; // = nullptr;
 
 	if (!findObject(messageName, message, fpointer)) {
 		std::string error = messageName + " no encontrado.";
 		throw std::runtime_error(error);
 	}
 
-	// es un puntero a funcion
+// es un puntero a funcion
 	if (fpointer != nullptr)
 		return (this->*fpointer)(args);
 
-	// Una vez que tengo el objeto, necesito los argumentos, si es que tiene
-	// y les cambio el valor con los argumentos que se pasaron como parametro
+// Una vez que tengo el objeto, necesito los argumentos, si es que tiene
+// y les cambio el valor con los argumentos que se pasaron como parametro
 	slot_map object_slots = message->slots;
 	uint32_t argsCount = 0;
 	for (auto object_slots_it = object_slots.begin();
@@ -202,16 +239,16 @@ Object* Object::recvMessage(std::string messageName,
 			break;
 
 		// Verifico que sea argumento y que el slot sea mutable para poder modificarlo
-		bool __isMutable = std::get < 1 > (object_slots_it->second);
-		bool __isArg = std::get < 3 > (object_slots_it->second);
+		bool __isMutable = std::get<1>(object_slots_it->second);
+		bool __isArg = std::get<3>(object_slots_it->second);
 
 		if (__isArg && __isMutable) {
 			slot_t tupla = object_slots_it->second;
 
-			Object *__object = ((Object*) std::get < 0 > (tupla));
+			Object *__object = ((Object*) std::get<0>(tupla));
 			delete __object;
 			__object = args[argsCount];
-			std::get < 0 > (tupla) = __object;
+			std::get<0>(tupla) = __object;
 
 			// actualizo el valor del mapa
 			object_slots_it->second = tupla;
@@ -228,8 +265,8 @@ Object* Object::recvMessage(std::string messageName,
 	if (it != slots.end() && args.size() > 0) {
 		slot_t tuple = it->second;
 
-		if (std::get < 1 > (tuple)) {
-			std::get < 0 > (tuple) = args[0];
+		if (std::get<1>(tuple)) {
+			std::get<0>(tuple) = args[0];
 			it->second = tuple;
 
 			return args[0];
@@ -245,8 +282,8 @@ Object* Object::recvMessage(std::string messageName,
 Object::slot_map Object::getParentSlots() const {
 	slot_map parentSlots;
 	for (auto it = slots.begin(); it != slots.end(); ++it) {
-		if (std::get < 2 > (it->second)) {
-			if (std::get < 0 > (it->second) != this)
+		if (std::get<2>(it->second)) {
+			if (std::get<0>(it->second) != this)
 				parentSlots.insert(std::make_pair(it->first, it->second));
 		}
 	}
@@ -261,7 +298,7 @@ void Object::enableNativeMethod(Object* object, std::string methodName) {
 		throw std::runtime_error(error);
 	}
 	fpointTuple tuple = fpoint->second;
-	std::get < 1 > (tuple) = true;
+	std::get<1>(tuple) = true;
 	fpoint->second = tuple;
 }
 void Object::disableNativeMethod(Object* object, std::string methodName) {
@@ -272,7 +309,7 @@ void Object::disableNativeMethod(Object* object, std::string methodName) {
 		throw std::runtime_error(error);
 	}
 	fpointTuple tuple = fpoint->second;
-	std::get < 1 > (tuple) = false;
+	std::get<1>(tuple) = false;
 	fpoint->second = tuple;
 }
 
@@ -282,14 +319,14 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 	std::cout << this << " " << name << ": ";
 	std::cout << P_LEFT << SLOT_LIST_SEP;
 
-	//Escribe los slots (metodos no nativos)
+//Escribe los slots (metodos no nativos)
 	for (auto _it = slots.begin(); _it != slots.end(); ++_it) {
 		std::string slotName = _it->first;
 		slot_t slot = _it->second;
 
-		bool esMutable = std::get < 1 > (slot);
-		bool esParent = std::get < 2 > (slot);
-		bool esArgument = std::get < 3 > (slot);
+		bool esMutable = std::get<1>(slot);
+		bool esParent = std::get<2>(slot);
+		bool esArgument = std::get<3>(slot);
 
 		std::cout << " ";
 
@@ -305,17 +342,17 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 			std::cout << " " << OP_SLOT_MUTABLE << " ";
 		else
 			std::cout << " " << OP_SLOT_INMUTABLE << " ";
-		Object* dirObj = (Object*) std::get < 0 > (slot);
+		Object* dirObj = (Object*) std::get<0>(slot);
 		std::cout << dirObj;
 		//std::cout << "Es parent? " << esParent << std::endl;
 		std::cout << PUNTO;
 	}
 
-	//Escribe los slots nativos (metodos nativos)
+//Escribe los slots nativos (metodos nativos)
 	for (auto _it = nativeMethods.begin(); _it != nativeMethods.end(); ++_it) {
 		std::string slotNameNative = _it->first;
 		fpointTuple tuple = _it->second;
-		if (std::get < 1 > (tuple))
+		if (std::get<1>(tuple))
 			std::cout << " <" << slotNameNative << ">" << PUNTO;
 	}
 
@@ -326,9 +363,9 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 		std::string slotName = _it->first;
 		slot_t slot = _it->second;
 		Object* dirObj;
-		dirObj = (Object*) std::get < 0 > (slot);
+		dirObj = (Object*) std::get<0>(slot);
 		// Es distinto de this para el caso de lobby
-		bool esParent = std::get < 2 > (slot);
+		bool esParent = std::get<2>(slot);
 		if (dirObj != nullptr && dirObj != this && !esParent)
 			dirObj->printObj(std::vector<Object*> { });
 		else if (dirObj == nullptr)
@@ -358,42 +395,42 @@ Object* Object::print(const std::vector<Object*>& args) {
 	return this;
 }
 
+//TODO: el casteo (int) es provisorio hasta que el parser
+//sepa leer floats, por ahora solo lee naturales
+//TODO: al number hay que sacarle el . antes de considerarlo un numero.
+//TODO: refactor para no repetir tanto codigo
 Object* Object::operator*(const std::vector<Object*>& args) {
 	Object *first = (Object*) args[0];
-	Object *result = new Object(*this);
 
 	float number = ::atof(this->codeSegment.c_str());
 	float operand = ::atof(first->codeSegment.c_str());
-	result->codeSegment = std::to_string(number * operand);
-	return result;
+	codeSegment = std::to_string((int) (number * operand)) + PUNTO;
+	return this;
 }
 
 Object* Object::operator+(const std::vector<Object*>& args) {
 	Object *first = (Object*) args[0];
-	Object *result = new Object(*this);
 
 	float number = ::atof(this->codeSegment.c_str());
 	float operand = ::atof(first->codeSegment.c_str());
-	result->codeSegment = std::to_string(number + operand);
-	return result;
+	codeSegment = std::to_string((int) (number + operand)) + PUNTO;
+	return this;
 }
 
 Object* Object::operator-(const std::vector<Object*>& args) {
-	Object* first = (Object*) args[0];
-	Object *result = new Object(*this);
+	Object *first = (Object*) args[0];
 
 	float number = ::atof(this->codeSegment.c_str());
 	float operand = ::atof(first->codeSegment.c_str());
-	result->codeSegment = std::to_string(number - operand);
-	return result;
+	codeSegment = std::to_string((int) (number - operand)) + PUNTO;
+	return this;
 }
 
 Object* Object::operator/(const std::vector<Object*>& args) {
-	Object* first = (Object*) args[0];
-	Object *result = new Object(*this);
+	Object *first = (Object*) args[0];
 
 	float number = ::atof(this->codeSegment.c_str());
 	float operand = ::atof(first->codeSegment.c_str());
-	result->codeSegment = std::to_string(number / operand);
-	return result;
+	codeSegment = std::to_string((int) (number / operand)) + PUNTO;
+	return this;
 }

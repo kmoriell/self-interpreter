@@ -18,12 +18,12 @@ lobby _AddSlots:
 lobby printObj. '\n' print.
 
 'Removemos el slot n3 (el mas anidado) desde el contexto lobby.' print. '\n' print.
-'>>> lobby _RemoveSlots: ((lobby n1) n2) _RemoveSlots: (|n3.|).' print. '\n' print. 
+'>>> ((lobby n1) n2) _RemoveSlots: (|n3.|).' print. '\n' print. 
 '>>> lobby printObj. ' print. '\n' print. 
 ((lobby n1) n2) _RemoveSlots: (|n3.|).
 lobby printObj. '\n' print.
 
-'Removemos el slot n1 utilizando el lobby de forma implicita (ya que es el contexto de esta consola.' print. '\n' print.
+'Removemos el slot n1 utilizando el lobby de forma implicita (ya que es el contexto de esta consola).' print. '\n' print.
 '>>> _RemoveSlots: (|n1.|).' print. '\n' print. 
 '>>> lobby printObj. ' print. '\n' print. 
 _RemoveSlots: (|n1.|).
