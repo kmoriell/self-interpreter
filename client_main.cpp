@@ -3,7 +3,7 @@
 #include "client_proxyServer.h"
 #include "common_define.h"
 
-// #define SOLOGUI
+#define SOLOGUI
 
 #ifdef SOLOGUI
 #include "client_mainWindow.h"

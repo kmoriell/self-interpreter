@@ -180,7 +180,7 @@ Object * Parser::unaryMessage() {
 Object * Parser::recibirMensaje(Object* obj, std::string strName,
 		std::vector<Object*> &args) {
 	if (flagExecute == 1) {
-		Object *objMessage = obj->recvMessage(strName, args);
+		Object* objMessage = obj->recvMessage(strName, args);
 		std::string code = objMessage->getCodeSegment();
 		if (code.size() > 0) {
 			//El objeto mensaje es un method object
@@ -189,7 +189,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 			objMessage->addSlot("self", obj, true, true, false);
 			std::vector<Object*> _vector = unParser.run(code);
 			obj = _vector[_vector.size() - 1];
-			objMessage->removeSlot("self");
+			//objMessage->removeSlot("self");
 		} else {
 			//El objeto mensaje es un data object.
 			obj = objMessage;
@@ -286,6 +286,67 @@ Object * Parser::receiver() {
 	return obj;
 }
 
+bool Parser::isLowercaseLetter() {
+	int _pCad = pCad; //checkpoint;
+	char cCad = cad[pCad];
+	if ('a' <= cCad and cCad <= 'z') {
+		pCad++;
+		return true;
+	}
+	pCad = _pCad;
+	return false;
+}
+
+bool Parser::isUppercaseLetter() {
+	int _pCad = pCad; //checkpoint;
+	char cCad = cad[pCad];
+	if ('A' <= cCad and cCad <= 'Z') {
+		pCad++;
+		return true;
+	}
+	pCad = _pCad;
+	return false;
+}
+
+bool Parser::isLetter() {
+	int _pCad = pCad; //checkpoint;
+	if (isLowercaseLetter() or isUppercaseLetter())
+		return true;
+	pCad = _pCad;
+	return false;
+}
+
+bool Parser::isSign() {
+	int _pCad = pCad; //checkpoint;
+	char cCad = cad[pCad];
+	if (cCad == '-' or cCad == '+') {
+		pCad++;
+		return true;
+	}
+	pCad = _pCad;
+	return false;
+}
+
+bool Parser::isDigit() {
+	int _pCad = pCad; //checkpoint;
+	char cCad = cad[pCad];
+	if ('0' <= cCad and cCad <= '9') {
+		pCad++;
+		return true;
+	}
+	pCad = _pCad;
+	return false;
+}
+
+
+bool Parser::isAlpha() {
+	int _pCad = pCad; //checkpoint;
+	if (isDigit() or isLetter())
+		return true;
+	pCad = _pCad;
+	return false;
+}
+
 bool Parser::name(std::string &strName) {
 	if (debug)
 		std::cout << "name pos: " << pCad << std::endl;
@@ -294,16 +355,13 @@ bool Parser::name(std::string &strName) {
 	skipSpaces();
 	strName = "";
 	char cCad = cad[pCad];
-	if ('a' <= cCad and cCad <= 'z') {
-		pCad++;
+	if (isLowercaseLetter()) {
 		strName += cCad;
 		while (pCad < cad.size()) {
 			cCad = cad[pCad];
-			if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
-					or ('0' <= cCad and cCad <= '9')) {
-				pCad++;
+			if (isAlpha())
 				strName += cCad;
-			} else
+			else
 				break;
 		}
 	}
@@ -325,8 +383,7 @@ std::string Parser::string() {
 	std::string strString = "";
 	bool esString = false;
 	char cCad = cad[pCad];
-	if ('\'' == cCad) {
-		pCad++;
+	if (isString("'")) {
 		strString += cCad;
 		while (pCad < cad.size() and !esString) {
 			cCad = cad[pCad];
@@ -352,16 +409,13 @@ bool Parser::number(float &number) {
 	skipSpaces();
 	std::string strNumber = "";
 	char cCad = cad[pCad];
-	if (cCad == '-' or cCad == '+' or ('0' <= cCad and cCad <= '9')) {
-		pCad++;
+	if (isSign() or isDigit()) {
 		strNumber += cCad;
-
 		while (pCad < cad.size()) {
 			cCad = cad[pCad];
-			if ('0' <= cCad and cCad <= '9') {
-				pCad++;
+			if (isDigit())
 				strNumber += cCad;
-			} else
+			else
 				break;
 		}
 	}
@@ -381,16 +435,13 @@ bool Parser::lowerKeyword(std::string &strLowerKeyword) {
 	skipSpaces();
 	strLowerKeyword = "";
 	char cCad = cad[pCad];
-	if (('a' <= cCad and cCad <= 'z') or (cCad == '_')) {
-		pCad++;
+	if (isLowercaseLetter() or isString("_")) {
 		strLowerKeyword += cCad;
 		while (pCad < cad.size()) {
 			cCad = cad[pCad];
-			if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
-					or ('0' <= cCad and cCad <= '9')) {
-				pCad++;
+			if (isAlpha())
 				strLowerKeyword += cCad;
-			} else
+			else
 				break;
 		}
 	}
@@ -402,28 +453,31 @@ bool Parser::lowerKeyword(std::string &strLowerKeyword) {
 		return true;
 }
 
-/*bool Parser::capKeyword(std::string &strCapKeyword) {
- if (debug)
- std::cout << "capKeyword pos: " << pCad << std::endl;
+bool Parser::capKeyword(std::string &strCapKeyword) {
+	if (debug)
+		std::cout << "capKeyword pos: " << pCad << std::endl;
 
- skipSpaces();
- std::string strCapKeyword = "";
- char cCad = cad[pCad];
- if ('A' <= cCad and cCad <= 'Z') {
- pCad++;
- strCapKeyword += cCad;
- while (pCad < cad.size()) {
- cCad = cad[pCad];
- if (('a' <= cCad and cCad <= 'z') or ('A' <= cCad and cCad <= 'Z')
- or ('0' <= cCad and cCad <= '9')) {
- pCad++;
- strCapKeyword += cCad;
- } else
- break;
- }
- }
- return strCapKeyword;
- }*/
+	int _pCad = pCad; //checkpoint
+	skipSpaces();
+	strCapKeyword = "";
+	char cCad = cad[pCad];
+	if (isUppercaseLetter() or isString("_")) {
+		strCapKeyword += cCad;
+		while (pCad < cad.size()) {
+			cCad = cad[pCad];
+			if (isAlpha()) {
+				strCapKeyword += cCad;
+			} else
+				break;
+		}
+	}
+
+	if (strCapKeyword == "") {
+		pCad = _pCad;
+		return false;
+	} else
+		return true;
+}
 
 Object * Parser::objectObj() {
 	if (debug)

@@ -8,6 +8,7 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer) :
 	} catch (...) {
 		throw "No se puede crear la ventana";
 	}
+
 	refBuilder->get_widget("window", pWindow);
 
 	addWidgets();
@@ -16,7 +17,10 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer) :
 
     pWindow->set_name("MyWindow");
     pTreeView->set_name("MyTreeView");
-    pTextView->set_name("MyTextView");
+    //pGridSetObjName->set_name("GridSetObjName");
+
+    //pTextView->set_name("MyTextView");
+    pTxtObjName->set_name("txtObjName");
     Glib::RefPtr<Gtk::CssProvider> m_refCssProvider = Gtk::CssProvider::create();
     m_refCssProvider->load_from_path("custom_textView.css");
     auto refStyleContext = pWindow->get_style_context();
@@ -26,7 +30,6 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer) :
     auto screen = display->get_default_screen();
 
     refStyleContext->add_provider_for_screen(screen, m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
     //refStyleContext = pTreeView->get_style_context();
     //refStyleContext->add_provider(m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 	show_all_children();
@@ -37,17 +40,32 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::addWidgets() {
-	refBuilder->get_widget("btnEnviar", pButton);
-	refBuilder->get_widget("txtEntrada", pText);
+  // Primera fila
+  refBuilder->get_widget("btnLobby", pBtnLobby);
+  refBuilder->get_widget("btnGoBack", pBtnGoBack);
+  refBuilder->get_widget("btnRefresh", pBtnRefresh);
+	refBuilder->get_widget("btnEnviar", pBtnEnviar);
+	refBuilder->get_widget("txtEntrada", pTxtEntrada);
+
+	// Segunda fila
+	refBuilder->get_widget("btnApply", pBtnApply);
+	refBuilder->get_widget("txtObjectName", pTxtObjName);
+
 	refBuilder->get_widget("treeView", pTreeView);
-	refBuilder->get_widget("txtCodeSegment", pTextView);
-	refBuilder->get_widget("lblObjectName", pLabel);
+	refBuilder->get_widget("btnSetSlot", pBtnSetSlot);
+	refBuilder->get_widget("txtSlot", pTxtSlot);
+
+	refBuilder->get_widget("btnSetCodeSegment", pBtnSetCodeSegment);
+	refBuilder->get_widget("txtCodeSegment", pTxtCodeSegment);
+
 
 	refBuilder->get_widget("m_Open", pMenuItemOpen);
 
+	//refBuilder->get_widget("boxObject", pBoxObject);
+
 	//refBuilder->get_widget("menuButton", pMenuButton);
-	if (pButton) {
-		pButton->signal_clicked().connect(
+	if (pBtnEnviar) {
+	  pBtnEnviar->signal_clicked().connect(
 				sigc::mem_fun(*this, &MainWindow::on_button_clicked));
 	}
 
@@ -67,7 +85,7 @@ void MainWindow::configureTreeView() {
 	colSlotName.set_title("Slot");
 	colMutable.set_title("Mutable");
 	colObjName.set_title("Objeto");
-	colPreview.set_title("Previsualizacion");
+	colPreview.set_title("Vista Previa");
 
 	colMutableCell.set_activatable(true);
 
@@ -91,8 +109,9 @@ void MainWindow::configureTreeView() {
 }
 
 void MainWindow::drawMorph() {
-    pLabel->set_use_markup(true);
-	pLabel->set_markup("<span font_weight='bold' size='x-large'>" + morph.getObjName() + "</span>");
+  //pTxtObjName->set_use_markup(true);
+	//pLabel->set_markup();
+    pTxtObjName->set_text(morph.getObjName());
 	//pLabel->set_text(morph.getObjName());
 	m_refTreeModel->clear();
 	Gtk::TreeModel::Row row;
@@ -118,12 +137,12 @@ void MainWindow::drawMorph() {
 		row[m_Columns.m_col_preview] = morph.getSlotObjPreview(i);
 	}
 	auto pTextBuffer = Glib::RefPtr < Gtk::TextBuffer
-			> ::cast_dynamic(refBuilder->get_object("textbuffer1"));
+			> ::cast_dynamic(refBuilder->get_object("textBufferCodeSegment"));
 	pTextBuffer->set_text(morph.getCodeSegment());
 }
 
 void MainWindow::generatePopup() {
-	auto item = Gtk::manage(new Gtk::MenuItem("_Remover Slot", true));
+	/*auto item = Gtk::manage(new Gtk::MenuItem("_Remover Slot", true));
 	item->signal_activate().connect(
 			sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic));
 	m_Menu_Popup.append(*item);
@@ -139,7 +158,7 @@ void MainWindow::generatePopup() {
 	m_Menu_Popup.append(*item);
 
 	m_Menu_Popup.accelerate(*this);
-	m_Menu_Popup.show_all();
+	m_Menu_Popup.show_all();*/
 }
 
 Gtk::Window* MainWindow::getWindow() {
@@ -149,9 +168,9 @@ Gtk::Window* MainWindow::getWindow() {
 // Eventos
 
 void MainWindow::on_button_clicked() {
-	if (pWindow && pText) {
-	    auto pTextBuffer = Glib::RefPtr < Gtk::TextBuffer
-			> ::cast_dynamic(refBuilder->get_object("textbuffer2"));
+	if (pWindow) {
+	    auto pTextBuffer = Glib::RefPtr<Gtk::TextBuffer>
+	    ::cast_dynamic(refBuilder->get_object("txtBufferEntrada"));
 		std::string text = pTextBuffer->get_text();
 		proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, text);
 		while (proxyServer.getFlag()) {
@@ -193,7 +212,7 @@ void MainWindow::on_menu_file_popup_generic() {
 }
 
 bool MainWindow::on_button_press_event(GdkEventButton* button_event) {
-	bool return_value = false;
+/*	bool return_value = false;
 
 	//Call base class, to allow normal handling,
 	//such as allowing the row to be selected by the right-click:
@@ -209,7 +228,8 @@ bool MainWindow::on_button_press_event(GdkEventButton* button_event) {
 		//m_Menu_Popup.popup(button_event->button, button_event->time);
 	}
 
-	return return_value;
+	return return_value;*/
+  return false;
 }
 
 void MainWindow::on_Open_selected() {
@@ -246,7 +266,7 @@ void MainWindow::on_Open_selected() {
       }
 
       auto pTextBuffer = Glib::RefPtr<Gtk::TextBuffer>
-        ::cast_dynamic(refBuilder->get_object("textbuffer2"));
+        ::cast_dynamic(refBuilder->get_object("textBufferEntrada"));
 	  pTextBuffer->set_text(content);
       break;
     }

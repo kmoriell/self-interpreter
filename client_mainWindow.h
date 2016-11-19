@@ -14,15 +14,30 @@ private:
 	Glib::RefPtr<Gtk::Builder> refBuilder;
 
 	Gtk::Window *pWindow = nullptr;
-	Gtk::TextView *pText = nullptr;
-	Gtk::Button *pButton = nullptr;
+
+	// Botones
+	Gtk::Button *pBtnLobby = nullptr;
+	Gtk::Button *pBtnGoBack= nullptr;
+	Gtk::Button *pBtnRefresh = nullptr;
+	Gtk::Button *pBtnEnviar = nullptr;
+	Gtk::Button *pBtnApply = nullptr;
+	Gtk::Button *pBtnSetSlot = nullptr;
+	Gtk::Button *pBtnSetCodeSegment = nullptr;
+
+	// Cajas de texto
+	Gtk::TextView *pTxtEntrada = nullptr;
+	Gtk::TextView *pTxtCodeSegment = nullptr;
+	Gtk::Entry *pTxtObjName = nullptr;
+	Gtk::Entry *pTxtSlot = nullptr;
+
+	//Boxes
+	//Gtk::Box *pBoxObject = nullptr;
+
 	Gtk::TreeView *pTreeView = nullptr;
-	Gtk::TextView *pTextView = nullptr;
-	Gtk::Label *pLabel = nullptr;
-	Gtk::MenuButton *pMenuButton = nullptr;
+	//Gtk::MenuButton *pMenuButton = nullptr;
 	Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
 	ColumnRecord m_Columns;
-	Gtk::Menu m_Menu_Popup;
+	//Gtk::Menu m_Menu_Popup;
 
 	// Menu
 	Gtk::MenuItem *pMenuItemOpen = nullptr;

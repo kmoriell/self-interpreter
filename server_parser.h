@@ -26,7 +26,6 @@ private:
 	Object* expressionP();
 	Object* keywordMessage();
 	Object* binaryMessage();
-	void pepito(std::string &strName, Object* &obj);
 	Object * recibirMensaje(Object* obj, std::string strName,
 			std::vector<Object*> &args);
 	//Object * recibirMensaje2(Object* obj, std::string strName, std::vector<Object*> &args);
@@ -38,11 +37,20 @@ private:
 	bool operador(std::string &strOperador);
 	bool operadorSlot(std::string &strOperadorSlot);
 	bool lowerKeyword(std::string &strLowerKeyword);
-	//bool capKeyword(std::string &strCapKeyword);
+	bool capKeyword(std::string &strCapKeyword);
 
 	void skipSpaces();
 	bool isString(const std::string strMatch);
 
+	bool isLowercaseLetter();
+	bool isUppercaseLetter();
+	bool isLetter();
+	bool isSign();
+	bool isDigit();
+	bool isAlpha();
+
+	//Devuelven los objetos, ya sea creandolos
+	//o instanciandolos.
 	Object* nilObj();
 	Object* boolObj();
 	Object* stringObj();
