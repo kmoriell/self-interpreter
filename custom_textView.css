@@ -1,6 +1,15 @@
 #MyTreeView {
-  border-width: 2px;
-  border-color: pink;
+}
+
+treeview.view column-header {
+background-color: red;
+}
+
+treeview row:nth-child(odd) {
+    background-color: #FF00FF;
+}
+treeview row:nth-child(even) {
+    background-color: #00FFFF;
 }
 
 textview.view text {
@@ -12,14 +21,22 @@ textview.view {
   border-style: dotted;
   border-width: 5px;
   border-color: blue;
+  border-radius: 10px;
 }
 
+viewport {
+  border-width: 4px;
+  border-radius: 10px;
+}
 
+button
+{
+    border-radius: 10px;
+}
 
 grid {
   border-width: 4px;
   border-color: pink;
-  background-color: blue;
 }
 
 

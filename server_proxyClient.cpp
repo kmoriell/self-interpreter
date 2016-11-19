@@ -135,7 +135,7 @@ void ProxyClient::run() {
 				setCodeSegment(cad);
 				break;
 			}
-			case GET_SLOT_OBJ: {
+        case GET_SLOT_OBJ: {
 				cad = clientMessage.getMessage();
 				getSlotObj(cad);
 				break;
