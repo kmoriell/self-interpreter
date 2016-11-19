@@ -1,5 +1,6 @@
 #MyTreeView {
-  background-color: green;
+  border-width: 2px;
+  border-color: pink;
 }
 
 textview.view text {
@@ -12,3 +13,18 @@ textview.view {
   border-width: 5px;
   border-color: blue;
 }
+
+
+
+grid {
+  border-width: 4px;
+  border-color: pink;
+  background-color: blue;
+}
+
+
+#txtObjName {
+  font-size: 16pt;
+  font-weight: bold;
+}
+
