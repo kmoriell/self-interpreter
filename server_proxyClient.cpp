@@ -30,9 +30,20 @@ void ProxyClient::execLocalCMD(std::string &cad) {
 	}
 }
 
-void ProxyClient::showLobby(std::string &cad) {
+void ProxyClient::showLobby() {
 	try {
 		objClientView = server.getLobby();
+		ParserProtocoloServidor parser(objClientView);
+		sendOK(parser.getString());
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
+}
+
+void ProxyClient::execRefresh() {
+	try {
 		ParserProtocoloServidor parser(objClientView);
 		sendOK(parser.getString());
 	} catch (const std::runtime_error &e) {
@@ -71,8 +82,11 @@ void ProxyClient::run() {
 				break;
 			}
 			case SHOW_LOBBY: {
-				cad = clientMessage.getMessage();
-				showLobby(cad);
+				showLobby();
+				break;
+			}
+			case EXEC_REFRESH: {
+				execRefresh();
 				break;
 			}
 			case EXEC_LOCAL_CMD: {

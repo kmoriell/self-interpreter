@@ -15,7 +15,8 @@ public:
 	ProxyClient(Socket &socket, Server &server);
 	void execLobbyCMD(std::string &cad);
 	void execLocalCMD(std::string &cad);
-	void showLobby(std::string &cad);
+	void showLobby();
+	void execRefresh();
 	void setObjName(const std::string &cad);
 	void setCodeSegment(const std::string &cad);
 	virtual void run();
