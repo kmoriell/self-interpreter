@@ -75,6 +75,7 @@ class MainWindow : public Gtk::Window {
   void on_row_activated(const Gtk::TreeModel::Path& path,
                         Gtk::TreeViewColumn* column);
   void on_Open_selected();
+  void cellMutable_toggled(const Glib::ustring& path);
   Morph &morph;
   ProxyServer &proxyServer;
  public:

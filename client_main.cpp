@@ -4,7 +4,7 @@
 #include "common_define.h"
 #include <unistd.h>
 
-//#define SOLOGUI
+#define SOLOGUI
 
 #ifdef SOLOGUI
 #include "client_mainWindow.h"
@@ -75,7 +75,10 @@ int main(int argc, char **argv) {
 	proxyServer.sendCmdMessage(SET_CODESEGMENT, message);
 	sleep(2);*/
 	morph.mostrar();
+	char __char;
+    std::cin >> __char;
     #endif
+
 	proxyServer.interrupt();
 	proxyServer.join();
 	std::cout << "JOIN." << std::endl;

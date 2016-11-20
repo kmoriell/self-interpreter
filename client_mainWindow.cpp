@@ -105,7 +105,6 @@ void MainWindow::addWidgets() {
   if (pTreeView) {
     pTreeView->signal_row_activated().connect(
         sigc::mem_fun(*this, &MainWindow::on_row_activated));
-    //pTreeView->signal_clicked
   }
 
   if (pMenuItemOpen) {
@@ -121,6 +120,9 @@ void MainWindow::configureTreeView() {
   colPreview.set_title("Vista Previa");
 
   colMutableCell.set_activatable(true);
+
+  colMutableCell.signal_toggled().connect(
+      sigc::mem_fun(*this, &MainWindow::cellMutable_toggled),"asd");
 
   colSlotName.pack_start(colSlotNameCell, true);
   colMutable.pack_start(colMutableCell, true);
@@ -368,15 +370,13 @@ void MainWindow::on_Open_selected() {
       //Notice that this is a std::string, not a Glib::ustring.
       std::string filename = dialog.get_filename();
       std::ifstream file(filename);
-      std::string content, x;
 
-      while (file >> std::skipws >> x) {
-        content += x;
-      }
+      std::stringstream buffer;
+      buffer << file.rdbuf();
 
       auto pTextBuffer = Glib::RefPtr < Gtk::TextBuffer
-          > ::cast_dynamic(refBuilder->get_object("textBufferEntrada"));
-      pTextBuffer->set_text(content);
+          > ::cast_dynamic(refBuilder->get_object("txtBufferEntrada"));
+      pTextBuffer->set_text(buffer.str());
       break;
     }
     case (Gtk::RESPONSE_CANCEL): {
@@ -386,6 +386,22 @@ void MainWindow::on_Open_selected() {
     default: {
       std::cout << "Unexpected button clicked." << std::endl;
       break;
+    }
+  }
+}
+
+void MainWindow::cellMutable_toggled(const Glib::ustring& path) {
+  std::cout << "toggled = " << path << std::endl;
+
+  auto model = pTreeView->get_model();
+  if (model) {
+    Gtk::TreeModel::iterator iter = model->get_iter(path);
+    if (iter) {
+      Gtk::TreeModel::Row row = *iter;
+      bool value = row[m_Columns.m_col_mutable];
+      row.set_value(1, !value);
+      //row.set_activatable(true);
+      std::cout << "  toggled id=" << row[m_Columns.m_col_mutable] << std::endl;
     }
   }
 }

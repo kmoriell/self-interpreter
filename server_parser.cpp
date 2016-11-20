@@ -179,6 +179,7 @@ Object * Parser::unaryMessage() {
 
 Object * Parser::recibirMensaje2(Object* obj, std::string strName,
 		std::vector<Object*> &args) {
+		throw std::runtime_error("invalido");
 	if (flagExecute == 1) {
 		Object* objMessage = obj->recvMessage(strName, args);
 		std::string code = objMessage->getCodeSegment();
@@ -242,33 +243,30 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 		//std::cout << "R1" << std::endl;
 		//std::cout << "R2" << std::endl;
 		//context->printObj(std::vector<Object*> { });
-		if (obj->isDataObject(strName)) {
+		if (obj->isDataObject(strName) || obj->isNativeMethod(strName)) {
 			obj = obj->recvMessage(strName, args);
 		} else {
 			//El objeto mensaje es un method object
 			Object* objMessage;
-			if (obj->isNativeMethod(strName)) {
-				objMessage = obj->recvMessage(strName, args);
-			} else {
-				Object* objClone = obj->clone(std::vector<Object*> { });
-				//std::cout << "A. " << std::endl;
-				//objClone->printObj(std::vector<Object*> { });
-				objMessage = objClone->recvMessage(strName, args);
-				//std::cout << "B. " << std::endl;
+			Object* objClone = obj->clone(std::vector<Object*> { });
+			//std::cout << "A. " << std::endl;
+			//objClone->printObj(std::vector<Object*> { });
+			objMessage = objClone->recvMessage(strName, args);
+			//std::cout << "B. " << std::endl;
 
-				std::string code = objMessage->getCodeSegment();
+			std::string code = objMessage->getCodeSegment();
 
-				Parser unParser(vm);
-				unParser.setContext(objMessage);
-				objMessage->addSlot("self", obj, true, true, false);
-				//objMessage->printObj(std::vector<Object*> { });
-				//std::cout << "C. " << std::endl;
-				std::vector<Object*> _vector = unParser.run(code);
-				//objMessage->removeSlot("self");
-				obj = _vector[_vector.size() - 1];
+			Parser unParser(vm);
+			unParser.setContext(objMessage);
+			objMessage->addSlot("self", obj, true, true, false);
+			//objMessage->printObj(std::vector<Object*> { });
+			//std::cout << "C. " << std::endl;
+			std::vector<Object*> _vector = unParser.run(code);
+			//objMessage->removeSlot("self");
+			obj = _vector[_vector.size() - 1];
 
-				//std::cout << "D. " << std::endl;
-			}
+			//std::cout << "D. " << std::endl;
+
 			//std::cout << std::endl << "Objeto Recibido de la salida del codesegment: " << std::endl;
 			//obj->printObj(std::vector<Object*>{});
 		}

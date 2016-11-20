@@ -83,6 +83,7 @@
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
+        <property name="app_paintable">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
@@ -137,6 +138,7 @@
         <child>
           <object class="GtkGrid">
             <property name="visible">True</property>
+            <property name="app_paintable">True</property>
             <property name="can_focus">False</property>
             <property name="margin_top">8</property>
             <property name="hexpand">True</property>
@@ -144,6 +146,7 @@
             <child>
               <object class="GtkGrid">
                 <property name="visible">True</property>
+                <property name="app_paintable">True</property>
                 <property name="can_focus">False</property>
                 <property name="valign">center</property>
                 <property name="margin_left">8</property>
@@ -151,6 +154,7 @@
                 <child>
                   <object class="GtkButton" id="btnRefresh">
                     <property name="visible">True</property>
+                    <property name="app_paintable">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="margin_left">2</property>
@@ -164,6 +168,7 @@
                 <child>
                   <object class="GtkButton" id="btnGoBack">
                     <property name="visible">True</property>
+                    <property name="app_paintable">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="margin_left">2</property>
@@ -179,6 +184,7 @@
                   <object class="GtkButton" id="btnLobby">
                     <property name="label" translatable="yes">lobby</property>
                     <property name="visible">True</property>
+                    <property name="app_paintable">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="margin_right">2</property>
@@ -197,6 +203,7 @@
             <child>
               <object class="GtkGrid">
                 <property name="visible">True</property>
+                <property name="app_paintable">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">8</property>
                 <property name="hexpand">True</property>
@@ -205,6 +212,7 @@
                   <object class="GtkButton" id="btnEnviar">
                     <property name="label" translatable="yes">&gt;&gt;&gt;</property>
                     <property name="visible">True</property>
+                    <property name="app_paintable">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="vexpand">True</property>
@@ -217,6 +225,7 @@
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
+                    <property name="app_paintable">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
@@ -224,6 +233,7 @@
                     <child>
                       <object class="GtkTextView" id="txtEntrada">
                         <property name="visible">True</property>
+                        <property name="app_paintable">True</property>
                         <property name="can_focus">True</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
@@ -252,6 +262,7 @@
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
+            <property name="app_paintable">True</property>
             <property name="can_focus">False</property>
             <property name="margin_left">48</property>
             <property name="margin_right">48</property>
@@ -261,6 +272,7 @@
             <child>
               <object class="GtkViewport">
                 <property name="visible">True</property>
+                <property name="app_paintable">True</property>
                 <property name="can_focus">False</property>
                 <child>
                   <object class="GtkBox" id="boxObject">
@@ -275,6 +287,7 @@
                     <child>
                       <object class="GtkGrid" id="gridSetObjName">
                         <property name="visible">True</property>
+                        <property name="app_paintable">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">8</property>
                         <property name="margin_right">8</property>
@@ -316,10 +329,12 @@
                     <child>
                       <object class="GtkViewport">
                         <property name="visible">True</property>
+                        <property name="app_paintable">True</property>
                         <property name="can_focus">False</property>
                         <child>
                           <object class="GtkGrid">
                             <property name="visible">True</property>
+                            <property name="app_paintable">True</property>
                             <property name="can_focus">False</property>
                             <property name="margin_left">8</property>
                             <property name="margin_right">8</property>
@@ -391,6 +406,7 @@
                     <child>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
+                        <property name="app_paintable">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">8</property>
                         <property name="margin_right">8</property>
@@ -400,6 +416,7 @@
                         <child>
                           <object class="GtkButton" id="btnSetCodeSegment">
                             <property name="visible">True</property>
+                            <property name="app_paintable">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="image">imgApply2</property>
@@ -412,6 +429,7 @@
                         <child>
                           <object class="GtkScrolledWindow">
                             <property name="visible">True</property>
+                            <property name="app_paintable">True</property>
                             <property name="can_focus">True</property>
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
@@ -419,6 +437,7 @@
                             <child>
                               <object class="GtkTextView" id="txtCodeSegment">
                                 <property name="visible">True</property>
+                                <property name="app_paintable">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="hexpand">True</property>
                                 <property name="vexpand">True</property>
