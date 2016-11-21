@@ -106,11 +106,11 @@ public:
 	bool isNativeMethod(std::string messageName);
 
 	/** Metodo principal que sirve para recibir mensajes. Devuelve un Object*
-	 * @param messageName nombre del slot que va a recibir el mensaje
+	 * @param messageName nombre del slot que va a recibir el mensaje.
 	 * @param args vector con Object* con los argumentos para pasar.
 	 *
 	 */
-	Object* recvMessage(std::string messageName, std::vector<Object*> args);
+	Object* recvMessage(std::string messageName, std::vector<Object*> args, bool clonar);
 
 	/** Metodo nativo para clonar el objeto.
 	 * @param args vector de Object* vacio.

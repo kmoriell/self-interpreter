@@ -214,7 +214,7 @@ bool Object::isNativeMethod(std::string messageName) {
 }
 
 Object* Object::recvMessage(std::string messageName,
-		std::vector<Object*> args) {
+		std::vector<Object*> args, bool clonar) {
 
 // Aca tengo mi puntero a objeto, lo que tendria que hacer es ejecutar el codigo
 // del mensaje
@@ -228,11 +228,20 @@ Object* Object::recvMessage(std::string messageName,
 	}
 
 // es un puntero a funcion
-	if (fpointer != nullptr)
-		return (this->*fpointer)(args);
+	if (fpointer != nullptr) {
+		if (clonar)
+			message = this->clone(std::vector<Object*>{});
+		else
+			message = this;
+		return (message->*fpointer)(args);
+	}
+
 
 // Una vez que tengo el objeto, necesito los argumentos, si es que tiene
 // y les cambio el valor con los argumentos que se pasaron como parametro
+	if (clonar)
+		message = message->clone(std::vector<Object*>{});
+
 	slot_map object_slots = message->slots;
 	uint32_t argsCount = 0;
 	for (auto object_slots_it = object_slots.begin();

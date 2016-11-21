@@ -179,9 +179,9 @@ Object * Parser::unaryMessage() {
 
 Object * Parser::recibirMensaje2(Object* obj, std::string strName,
 		std::vector<Object*> &args) {
-		throw std::runtime_error("invalido");
+	throw std::runtime_error("invalido");
 	if (flagExecute == 1) {
-		Object* objMessage = obj->recvMessage(strName, args);
+		Object* objMessage = obj->recvMessage(strName, args, false);
 		std::string code = objMessage->getCodeSegment();
 		if (code.size() > 0) {
 			//El objeto mensaje es un method object
@@ -244,19 +244,33 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 		//std::cout << "R2" << std::endl;
 		//context->printObj(std::vector<Object*> { });
 
-
 		if (!obj->isDataObject(strName)) {
-		    /*obj->isNativeMethod(strName)*/
+			/*obj->isNativeMethod(strName)*/
 			//El objeto mensaje es un method object
 			if (strName == "_AddSlots" || strName == "_RemoveSlots"
-			    || strName == "printObj" || strName == "print" || strName == "clone") {
-			    obj = obj->recvMessage(strName, args);
-			    return obj;
+					|| strName == "printObj" || strName == "print"
+					|| strName == "clone") {
+				//std::cout << strName << " no será clonado por ser method object que no se clona."	<< std::endl;
+				obj = obj->recvMessage(strName, args, false);
+				return obj;
 			}
-			Object* objMessage;
-		    Object* objClone = obj->clone(std::vector<Object*> { });
+			//std::cout << strName << " será clonado por ser method object." << std::endl;
 
-		    objMessage = objClone->recvMessage(strName, args);
+
+			Object* objMessage;
+			//Object* objClone = obj->clone(std::vector<Object*> { });
+
+			//std::cout << strName << "Objeto real." << std::endl;
+			//obj->printObj(std::vector<Object*> { });
+			//std::cout << strName << "Objeto clon." << std::endl;
+			//objClone->printObj(std::vector<Object*> { });
+
+			objMessage = obj->recvMessage(strName, args, true);
+
+			//std::cout << strName << "Objeto real despues del recvMessage." << std::endl;
+			//obj->printObj(std::vector<Object*> { });
+
+			//objMessage = objClone->recvMessage(strName, args);
 			//std::cout << "B. " << std::endl;
 
 			std::string code = objMessage->getCodeSegment();
@@ -267,7 +281,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 			//objMessage->printObj(std::vector<Object*> { });
 			//std::cout << "C. " << std::endl;
 			std::vector<Object*> _vector = unParser.run(code);
-			objMessage->removeSlot("self");
+			//objMessage->removeSlot("self");
 			obj = _vector[_vector.size() - 1];
 
 			//std::cout << "D. " << std::endl;
@@ -275,7 +289,8 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 			//std::cout << std::endl << "Objeto Recibido de la salida del codesegment: " << std::endl;
 			//obj->printObj(std::vector<Object*>{});
 		} else {
-		    obj = obj->recvMessage(strName, args);
+			//std::cout << strName << " no será clonado por ser data object."<< std::endl;
+			obj = obj->recvMessage(strName, args, false);
 		}
 		//obj->printObj(std::vector<Object*>{});
 	}
