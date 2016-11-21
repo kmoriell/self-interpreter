@@ -166,9 +166,9 @@ clean:
 install:
 	install -m 0755 client $(prefix)/bin
 	install -m 0755 server $(prefix)/bin
-	install -m 0755 mainWindow.glade $(prefix)/bin
+	install -m 0755 windows.glade $(prefix)/bin
 
 uninstall:
 	$(RM) $(prefix)/bin/client
 	$(RM) $(prefix)/bin/server
-	$(RM) $(prefix)/bin/mainWindow.glade
+	$(RM) $(prefix)/bin/windows.glade
