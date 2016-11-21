@@ -12,6 +12,7 @@
 Object* VirtualMachine::createString(std::string &strString) {
 	//std::cout << "Creando objeto string" << std::endl; //todo nova
 	Object *obj = new Object();
+	obj->isPrimitive = true;
 	obj->setName(STRING_OBJ);
 	obj->setCodeSegment(strString + PUNTO);
 	obj->enableNativeMethod(obj, PRINT_METHOD);
@@ -26,6 +27,7 @@ Object* VirtualMachine::createString(std::string &strString) {
 Object* VirtualMachine::createNumber(float number) {
 	//std::cout << "Creando objeto number" << std::endl; //todo nova
 	Object *obj = new Object();
+	obj->isPrimitive = true;
 	obj->setName(NUMBER_OBJ);
 	//todo Casteamos a int porque el parser aun no soporta floats
 	obj->setCodeSegment(std::to_string((int) number) + PUNTO);
@@ -44,6 +46,7 @@ Object* VirtualMachine::createNumber(float number) {
 Object* VirtualMachine::createNil() {
 	//std::cout << "Creando objeto nil" << std::endl; //todo nova
 	Object *obj = new Object();
+	obj->isPrimitive = true;
 	obj->setName(NIL_OBJ);
 	obj->setCodeSegment(NIL + PUNTO);
 	obj->enableNativeMethod(obj, PRINT_METHOD);

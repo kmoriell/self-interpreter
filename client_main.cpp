@@ -4,7 +4,7 @@
 #include "common_define.h"
 #include <unistd.h>
 
-#define SOLOGUI
+//#define SOLOGUI
 
 #ifdef SOLOGUI
 #include "client_mainWindow.h"

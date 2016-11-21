@@ -243,15 +243,20 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 		//std::cout << "R1" << std::endl;
 		//std::cout << "R2" << std::endl;
 		//context->printObj(std::vector<Object*> { });
-		if (obj->isDataObject(strName) || obj->isNativeMethod(strName)) {
-			obj = obj->recvMessage(strName, args);
-		} else {
+
+
+		if (!obj->isDataObject(strName)) {
+		    /*obj->isNativeMethod(strName)*/
 			//El objeto mensaje es un method object
+			if (strName == "_AddSlots" || strName == "_RemoveSlots"
+			    || strName == "printObj" || strName == "print" || strName == "clone") {
+			    obj = obj->recvMessage(strName, args);
+			    return obj;
+			}
 			Object* objMessage;
-			Object* objClone = obj->clone(std::vector<Object*> { });
-			//std::cout << "A. " << std::endl;
-			//objClone->printObj(std::vector<Object*> { });
-			objMessage = objClone->recvMessage(strName, args);
+		    Object* objClone = obj->clone(std::vector<Object*> { });
+
+		    objMessage = objClone->recvMessage(strName, args);
 			//std::cout << "B. " << std::endl;
 
 			std::string code = objMessage->getCodeSegment();
@@ -269,6 +274,8 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 
 			//std::cout << std::endl << "Objeto Recibido de la salida del codesegment: " << std::endl;
 			//obj->printObj(std::vector<Object*>{});
+		} else {
+		    obj = obj->recvMessage(strName, args);
 		}
 		//obj->printObj(std::vector<Object*>{});
 	}

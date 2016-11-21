@@ -166,6 +166,8 @@ public:
 	 *
 	 */
 	void disableNativeMethod(Object* object, std::string methodName);
+
+	bool isPrimitive = false;
 };
 
 #endif /* COMMON_OBJECT_H_ */

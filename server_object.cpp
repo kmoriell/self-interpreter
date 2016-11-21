@@ -58,6 +58,7 @@ Object::Object(const Object& __object) {
 
 	this->nativeMethods = __object.nativeMethods;
 	this->codeSegment = __object.codeSegment;
+	this->isPrimitive = __object.isPrimitive;
 }
 
 Object::~Object() {
@@ -191,28 +192,10 @@ bool Object::isDataObject(std::string messageName) {
 	bool retval = findObject(messageName, obj, func);
 
 	if (retval && obj) {
-	    std::string codeSegment = obj->codeSegment.substr(0,
-	            obj->codeSegment.size() - 1);
+	    if (obj->isPrimitive)
+	        return true;
 
-        if (obj->codeSegment.size() != 0) {
-            bool isNumber = true;
-            bool isString = true;
-            bool isNil = true;
-            //bool isBoolean = true;
-	        for(char c : codeSegment)
-                isNumber = (isNumber && std::isdigit(c));
-
-            isString = *codeSegment.begin() == '\''
-                && *codeSegment.end() == '\'';
-
-            isNil = (codeSegment == NIL_OBJ);
-            /*isBoolean = (codeSegment == TRUE_OBJ ||
-                         codeSegment == FALSE_OBJ);*/
-
-            return isNumber || isString || isNil;
-        }
-		else
-		    return (obj->codeSegment.size() == 0);
+		return (obj->codeSegment.size() == 0);
 	} else if (retval && func) {
 		return false;
 	} else {
