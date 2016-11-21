@@ -267,7 +267,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 			//objMessage->printObj(std::vector<Object*> { });
 			//std::cout << "C. " << std::endl;
 			std::vector<Object*> _vector = unParser.run(code);
-			//objMessage->removeSlot("self");
+			objMessage->removeSlot("self");
 			obj = _vector[_vector.size() - 1];
 
 			//std::cout << "D. " << std::endl;
