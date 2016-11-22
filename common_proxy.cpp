@@ -71,7 +71,7 @@ int Proxy::receive() {
 	std::cout << "len = " << len << std::endl << " command = " << command
 			<< std::endl << " message = " << message << std::endl << std::endl;
 
-	delete message;
+	delete[] message;
 	delete[] strLen;
 	return s;
 }
@@ -94,6 +94,7 @@ void Proxy::send(command_t &response) {
 	this->serverSocket.send(&command, sizeof(char));
 	this->serverSocket.send(response.getMessage().c_str(),
 			response.getMessage().size());
+	delete [] strLen;
 }
 
 void Proxy::sendError(std::string msg) {

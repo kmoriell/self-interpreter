@@ -11,8 +11,10 @@ private:
 	Server &server;
 	//El proxy se guarda un puntero del objeto que ve el cliente.
 	Object* objClientView = nullptr;
+	Socket* sckptr = nullptr;
 public:
 	ProxyClient(Socket &socket, Server &server);
+	~ProxyClient();
 	void execLobbyCMD(std::string &cad);
 	void execLocalCMD(std::string &cad);
 	void showLobby();

@@ -9,8 +9,8 @@
 #include "server_object.h"
 #include "common_define.h"
 
-Parser::Parser(VirtualMachine &vm) :
-		vm(vm) {
+Parser::Parser(VirtualMachine &vm, Object* lobby) :
+		vm(vm), lobby(lobby) {
 	this->pCad = 0;
 	this->flagExecute = 0;
 	this->context = nullptr;
@@ -185,7 +185,7 @@ Object * Parser::recibirMensaje2(Object* obj, std::string strName,
 		std::string code = objMessage->getCodeSegment();
 		if (code.size() > 0) {
 			//El objeto mensaje es un method object
-			Parser unParser(vm);
+			Parser unParser(vm, lobby);
 			unParser.setContext(objMessage);
 			objMessage->addSlot("self", obj, true, true, false);
 			std::vector<Object*> _vector = unParser.run(code);
@@ -249,7 +249,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 			//El objeto mensaje es un method object
 			if (strName == "_AddSlots" || strName == "_RemoveSlots"
 					|| strName == "printObj" || strName == "print"
-					|| strName == "clone") {
+					|| strName == "clone" || strName == "collect") {
 				//std::cout << strName << " no será clonado por ser method object que no se clona."	<< std::endl;
 				obj = obj->recvMessage(strName, args, false);
 				return obj;
@@ -266,6 +266,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 			//objClone->printObj(std::vector<Object*> { });
 
 			objMessage = obj->recvMessage(strName, args, true);
+			lobby->addClonedObj(objMessage);
 
 			//std::cout << strName << "Objeto real despues del recvMessage." << std::endl;
 			//obj->printObj(std::vector<Object*> { });
@@ -275,7 +276,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 
 			std::string code = objMessage->getCodeSegment();
 
-			Parser unParser(vm);
+			Parser unParser(vm, lobby);
 			unParser.setContext(objMessage);
 			objMessage->addSlot("self", obj, true, true, false);
 			//objMessage->printObj(std::vector<Object*> { });

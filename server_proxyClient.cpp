@@ -4,6 +4,11 @@
 
 ProxyClient::ProxyClient(Socket &socket, Server &server) :
 		Proxy(socket), server(server) {
+		sckptr = &socket;
+}
+
+ProxyClient::~ProxyClient() {
+    delete sckptr;
 }
 
 void ProxyClient::execLobbyCMD(std::string &cad) {

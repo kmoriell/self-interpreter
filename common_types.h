@@ -43,6 +43,7 @@ public:
 		 command[strLengthSize] = this->instr;
 		 memcpy(command + strLengthSize + 1, message.c_str(), message.size());
 		 */
+		delete[] strLength;
 		return command;
 	}
 

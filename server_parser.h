@@ -8,7 +8,7 @@
 
 class Parser {
 public:
-	Parser(VirtualMachine &vm);
+	Parser(VirtualMachine &vm, Object *lobby);
 	std::vector<Object*> run(std::string &cad);
 	void setContext(Object* context);
 
@@ -19,7 +19,7 @@ private:
 	bool debug = false;
 	int flagExecute;
 	VirtualMachine &vm;
-
+	Object* lobby;
 	std::vector<Object*> script();
 	Object* expression();
 	Object* expressionCP();

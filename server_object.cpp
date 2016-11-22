@@ -33,6 +33,9 @@ Object::Object() {
 	this->nativeMethods.insert(
 			std::make_pair(CLONE_METHOD,
 					std::make_tuple(&Object::clone, true)));
+	this->nativeMethods.insert(
+			std::make_pair(COLLECT_METHOD,
+					std::make_tuple(&Object::collect, true)));
 }
 
 Object::Object(const Object& __object) {
@@ -303,9 +306,9 @@ Object::slot_map Object::getParentSlots() const {
 	return parentSlots;
 }
 
-void Object::enableNativeMethod(Object* object, std::string methodName) {
-	auto fpoint = object->nativeMethods.find(methodName);
-	if (fpoint == object->nativeMethods.end()) {
+void Object::enableNativeMethod(std::string methodName) {
+	auto fpoint = nativeMethods.find(methodName);
+	if (fpoint == nativeMethods.end()) {
 		std::string error = "No existe el mensaje ";
 		error += methodName;
 		throw std::runtime_error(error);
@@ -314,9 +317,9 @@ void Object::enableNativeMethod(Object* object, std::string methodName) {
 	std::get<1>(tuple) = true;
 	fpoint->second = tuple;
 }
-void Object::disableNativeMethod(Object* object, std::string methodName) {
-	auto fpoint = object->nativeMethods.find(methodName);
-	if (fpoint == object->nativeMethods.end()) {
+void Object::disableNativeMethod(std::string methodName) {
+	auto fpoint = nativeMethods.find(methodName);
+	if (fpoint == nativeMethods.end()) {
 		std::string error = "No existe el mensaje ";
 		error += methodName;
 		throw std::runtime_error(error);
@@ -326,7 +329,20 @@ void Object::disableNativeMethod(Object* object, std::string methodName) {
 	fpoint->second = tuple;
 }
 
+void Object::addClonedObj(Object *obj) {
+    clonedObjects.push(obj);
+}
+
 // Funciones nativas
+Object* Object::collect(const std::vector<Object*>& args) {
+	while (clonedObjects.size() > 0) {
+		Object *obj = clonedObjects.top();
+		delete obj;
+
+		clonedObjects.pop();
+	}
+	return this;
+}
 
 Object* Object::printObj(const std::vector<Object*>& args) {
 	std::cout << this << " " << name << ": ";
@@ -391,8 +407,8 @@ Object* Object::printObj(const std::vector<Object*>& args) {
 Object* Object::print(const std::vector<Object*>& args) {
 	std::string _codeSegment = codeSegment.substr(0, codeSegment.size() - 1);
 
-	for (char c : _codeSegment) {
-		size_t pos = _codeSegment.find('\'');
+	for (uint32_t i = 0; i <  _codeSegment.size(); i++) {
+		size_t pos = _codeSegment.find('\'', i);
 		if (pos != std::string::npos)
 			_codeSegment.replace(pos, 1, "");
 		else

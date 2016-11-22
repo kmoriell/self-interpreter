@@ -24,6 +24,8 @@ public:
 	 void newWorkspace(std::string name);
 	 void closeWorkspace(std::string name);
 	 void deleteWorkspace(std::string name);*/
+	Server() {};
+	~Server() {};
 	Object* receiveCode(Object* context, std::string &code);
 	Object* receiveCode(std::string &code);
 	Object* getLobby();

@@ -15,7 +15,7 @@ Object* VirtualMachine::createString(std::string &strString) {
 	obj->isPrimitive = true;
 	obj->setName(STRING_OBJ);
 	obj->setCodeSegment(strString + PUNTO);
-	obj->enableNativeMethod(obj, PRINT_METHOD);
+	obj->enableNativeMethod(PRINT_METHOD);
 	//obj->enableNativeMethod(obj, OP_SUMA);
 	//obj->enableNativeMethod(obj, OP_IGUAL);
 	//obj->enableNativeMethod(obj, OP_DISTINTO);
@@ -31,11 +31,11 @@ Object* VirtualMachine::createNumber(float number) {
 	obj->setName(NUMBER_OBJ);
 	//todo Casteamos a int porque el parser aun no soporta floats
 	obj->setCodeSegment(std::to_string((int) number) + PUNTO);
-	obj->enableNativeMethod(obj, PRINT_METHOD);
-	obj->enableNativeMethod(obj, OP_SUMA);
-	obj->enableNativeMethod(obj, OP_RESTA);
-	obj->enableNativeMethod(obj, OP_MULTIPLICACION);
-	obj->enableNativeMethod(obj, OP_DIVISION);
+	obj->enableNativeMethod(PRINT_METHOD);
+	obj->enableNativeMethod(OP_SUMA);
+	obj->enableNativeMethod(OP_RESTA);
+	obj->enableNativeMethod(OP_MULTIPLICACION);
+	obj->enableNativeMethod(OP_DIVISION);
 	//obj->enableNativeMethod(obj, OP_IGUAL");
 	//obj->enableNativeMethod(obj, OP_DISTINTO);
 	objects.push(obj);
@@ -49,7 +49,7 @@ Object* VirtualMachine::createNil() {
 	obj->isPrimitive = true;
 	obj->setName(NIL_OBJ);
 	obj->setCodeSegment(NIL + PUNTO);
-	obj->enableNativeMethod(obj, PRINT_METHOD);
+	obj->enableNativeMethod(PRINT_METHOD);
 	//obj->enableNativeMethod(obj, OP_IGUAL");
 	//obj->enableNativeMethod(obj, OP_DISTINTO);
 	objects.push(obj);
@@ -70,7 +70,7 @@ Object* VirtualMachine::createBoolean(bool value) {
 	//std::cout << "Creando objeto booleano" << std::endl; //todo nova
 	Object *obj = new Object();
 	obj->setName(BOOLEAN_OBJ);
-	obj->enableNativeMethod(obj, PRINT_METHOD);
+	obj->enableNativeMethod(PRINT_METHOD);
 	if (value)
 		obj->setCodeSegment(TRUE_STR + PUNTO);
 	else

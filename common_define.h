@@ -65,6 +65,7 @@ const std::string PRINTOBJ_METHOD = "printObj";
 const std::string CLONE_METHOD = "clone";
 const std::string ADD_SLOTS_METHOD = "_AddSlots";
 const std::string REMOVE_SLOTS_METHOD = "_RemoveSlots";
+const std::string COLLECT_METHOD = "collect";
 
 //Valores defaults para cuando se crean slots con objetos tipados
 const bool BOOLEAN_OBJ_DEFAULT = false;

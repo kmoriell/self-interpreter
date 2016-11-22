@@ -6,6 +6,7 @@
 #include <map>
 #include <tuple>
 #include <vector>
+#include <stack>
 
 class Object {
 public:
@@ -29,7 +30,7 @@ private:
 	slot_map getParentSlots() const;
 	Object::slot_map getParentSlots(Object* pointer) const;
 	bool findObject(std::string name, Object* &returnValue, delegate& function);
-
+	std::stack<Object*> clonedObjects;
 public:
 	/// Constructor
 	Object();
@@ -154,18 +155,18 @@ public:
 	Object* operator/(const std::vector<Object*>& args);
 
 	/** Habilita el metodo nativo.
-	 * @param object Object* que va a ser modificado y donde esta el metodo
 	 * @param methodName nombre del metodo a habilitar.
 	 *
 	 */
-	void enableNativeMethod(Object* object, std::string methodName);
+	void enableNativeMethod(std::string methodName);
 
 	/** Deshabilita el metodo nativo.
-	 * @param object Object* que va a ser modificado y donde esta el metodo
 	 * @param methodName nombre del metodo a habilitar.
 	 *
 	 */
-	void disableNativeMethod(Object* object, std::string methodName);
+	void disableNativeMethod(std::string methodName);
+
+	void addClonedObj(Object *obj);
 
 	bool isPrimitive = false;
 };

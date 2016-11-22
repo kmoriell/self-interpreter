@@ -16,7 +16,6 @@ public:
 	Object *createBoolean(bool value);
 	Object* createEmptyObject();
 	void destroyObjects(uint32_t count);
-
 };
 
 #endif /* SERVER_VIRTUALMACHINE_H_ */
