@@ -6,7 +6,7 @@
 
 class VirtualMachine {
 private:
-	std::stack<Object*> objects;
+	//std::stack<Object*> objects;
 	Object* lobby = nullptr;
 public:
 	~VirtualMachine();

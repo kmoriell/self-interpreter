@@ -23,8 +23,8 @@ Object* VirtualMachine::createString(std::string &strString) {
 	//obj->enableNativeMethod(obj, OP_SUMA);
 	//obj->enableNativeMethod(obj, OP_IGUAL);
 	//obj->enableNativeMethod(obj, OP_DISTINTO);
-	objects.push(obj);
-
+	//objects.push(obj);
+  lobby->createdObjects.insert(std::make_pair(obj, false));
 	return obj;
 }
 
@@ -42,8 +42,8 @@ Object* VirtualMachine::createNumber(float number) {
 	obj->enableNativeMethod(OP_DIVISION);
 	//obj->enableNativeMethod(obj, OP_IGUAL");
 	//obj->enableNativeMethod(obj, OP_DISTINTO);
-	objects.push(obj);
-
+	//objects.push(obj);
+  lobby->createdObjects.insert(std::make_pair(obj, false));
 	return obj;
 }
 
@@ -56,8 +56,8 @@ Object* VirtualMachine::createNil() {
 	obj->enableNativeMethod(PRINT_METHOD);
 	//obj->enableNativeMethod(obj, OP_IGUAL");
 	//obj->enableNativeMethod(obj, OP_DISTINTO);
-	objects.push(obj);
-
+	//objects.push(obj);
+  lobby->createdObjects.insert(std::make_pair(obj, false));
 	return obj;
 }
 
@@ -65,8 +65,8 @@ Object* VirtualMachine::createEmptyObject() {
 	//std::cout << "Creando objeto vacio" << std::endl; //todo nova
 	Object *obj = new Object(lobby);
 	obj->setName(COMPLEX_OBJ);
-	objects.push(obj);
-
+	//objects.push(obj);
+  lobby->createdObjects.insert(std::make_pair(obj, false));
 	return obj;
 }
 
@@ -79,16 +79,16 @@ Object* VirtualMachine::createBoolean(bool value) {
 		obj->setCodeSegment(TRUE_STR + PUNTO);
 	else
 		obj->setCodeSegment(FALSE_STR + PUNTO);
-	objects.push(obj);
-
+	//objects.push(obj);
+  lobby->createdObjects.insert(std::make_pair(obj, false));
 	return obj;
 }
 
 VirtualMachine::~VirtualMachine() {
-	while (objects.size() > 0) {
+	/*while (objects.size() > 0) {
 		Object *obj = objects.top();
 		delete obj;
 
 		objects.pop();
-	}
+	}*/
 }

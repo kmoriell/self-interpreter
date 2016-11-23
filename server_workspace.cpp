@@ -11,6 +11,7 @@ Workspace::Workspace() {
 }
 
 Workspace::~Workspace() {
+  lobby->collect(std::vector<Object*>{});
 	delete lobby;
 }
 

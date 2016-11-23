@@ -32,10 +32,12 @@ private:
 	Object::slot_map getParentSlots(Object* pointer) const;
 	bool findObject(std::string name, Object* &returnValue, delegate& function) const;
 	void configureNativeMethods();
+	void collect_internal();
 
-	std::stack<Object*> clonedObjects;
+	//std::stack<Object*> clonedObjects;
+
 public:
-
+	std::map<Object*, bool> createdObjects;
 	Object();
 	/// Constructor
 	Object(Object* lobby);
@@ -171,7 +173,7 @@ public:
 	 */
 	void disableNativeMethod(std::string methodName);
 
-	void addClonedObj(Object *obj);
+	//void addClonedObj(Object *obj);
 
 	bool isPrimitive = false;
 };
