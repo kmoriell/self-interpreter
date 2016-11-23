@@ -35,7 +35,7 @@ class MainWindow : public Gtk::Window {
 
   Gtk::TreeView *pTreeView = nullptr;
   //Gtk::MenuButton *pMenuButton = nullptr;
-  Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
+  Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
   ColumnRecord m_Columns;
   //Gtk::Menu m_Menu_Popup;
 
@@ -75,7 +75,7 @@ class MainWindow : public Gtk::Window {
   void on_row_activated(const Gtk::TreeModel::Path& path,
                         Gtk::TreeViewColumn* column);
   void on_Open_selected();
-  void cellMutable_toggled(const Glib::ustring& path);
+  void cellMutable_toggled(const Glib::ustring &path);
   Morph &morph;
   ProxyServer &proxyServer;
  public:

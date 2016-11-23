@@ -26,14 +26,19 @@ private:
 	std::string name;
 	std::string codeSegment;
 	std::map<std::string, fpointTuple> nativeMethods;
+	Object* lobby;
 
 	slot_map getParentSlots() const;
 	Object::slot_map getParentSlots(Object* pointer) const;
-	bool findObject(std::string name, Object* &returnValue, delegate& function);
+	bool findObject(std::string name, Object* &returnValue, delegate& function) const;
+	void configureNativeMethods();
+
 	std::stack<Object*> clonedObjects;
 public:
-	/// Constructor
+
 	Object();
+	/// Constructor
+	Object(Object* lobby);
 
 	/// Destructor
 	~Object();

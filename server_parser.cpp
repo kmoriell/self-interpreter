@@ -9,8 +9,8 @@
 #include "server_object.h"
 #include "common_define.h"
 
-Parser::Parser(VirtualMachine &vm, Object* lobby) :
-		vm(vm), lobby(lobby) {
+Parser::Parser(VirtualMachine &vm) :
+		vm(vm) {
 	this->pCad = 0;
 	this->flagExecute = 0;
 	this->context = nullptr;
@@ -185,7 +185,7 @@ Object * Parser::recibirMensaje2(Object* obj, std::string strName,
 		std::string code = objMessage->getCodeSegment();
 		if (code.size() > 0) {
 			//El objeto mensaje es un method object
-			Parser unParser(vm, lobby);
+			Parser unParser(vm);
 			unParser.setContext(objMessage);
 			objMessage->addSlot("self", obj, true, true, false);
 			std::vector<Object*> _vector = unParser.run(code);
@@ -234,55 +234,30 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 		 Hay que crear un atributo en object que indique si es un objeto primitivo.
 		 Si el objeto que recibimos es un data object (ejemplo lobby)*/
 
-		//std::cout << "Cadena:" << cad << std::endl;
-		//std::cout << "FIN CAD" << std::endl;
-		//std::cout << "Soy el original" << std::endl;
-		//obj->printObj(std::vector<Object*> { });
-		//std::cout << "Soy el clone" << std::endl;
-		//objClone->printObj(std::vector<Object*> { });
-		//std::cout << "R1" << std::endl;
-		//std::cout << "R2" << std::endl;
-		//context->printObj(std::vector<Object*> { });
-
 		if (!obj->isDataObject(strName)) {
-			/*obj->isNativeMethod(strName)*/
 			//El objeto mensaje es un method object
 			if (strName == "_AddSlots" || strName == "_RemoveSlots"
 					|| strName == "printObj" || strName == "print"
 					|| strName == "clone" || strName == "collect") {
 				//std::cout << strName << " no será clonado por ser method object que no se clona."	<< std::endl;
-				obj = obj->recvMessage(strName, args, false);
+			  obj = obj->recvMessage(strName, args, false);
+			  /*if (strName == "clone")
+			    lobby->addClonedObj(obj);*/
 				return obj;
 			}
-			//std::cout << strName << " será clonado por ser method object." << std::endl;
 
-
-			Object* objMessage;
-			//Object* objClone = obj->clone(std::vector<Object*> { });
-
-			//std::cout << strName << "Objeto real." << std::endl;
-			//obj->printObj(std::vector<Object*> { });
-			//std::cout << strName << "Objeto clon." << std::endl;
-			//objClone->printObj(std::vector<Object*> { });
-
-			objMessage = obj->recvMessage(strName, args, true);
-			lobby->addClonedObj(objMessage);
-
-			//std::cout << strName << "Objeto real despues del recvMessage." << std::endl;
-			//obj->printObj(std::vector<Object*> { });
-
-			//objMessage = objClone->recvMessage(strName, args);
-			//std::cout << "B. " << std::endl;
+			Object* objMessage = obj->recvMessage(strName, args, true);
+			//lobby->addClonedObj(objMessage);
 
 			std::string code = objMessage->getCodeSegment();
 
-			Parser unParser(vm, lobby);
+			Parser unParser(vm);
 			unParser.setContext(objMessage);
 			objMessage->addSlot("self", obj, true, true, false);
 			//objMessage->printObj(std::vector<Object*> { });
 			//std::cout << "C. " << std::endl;
 			std::vector<Object*> _vector = unParser.run(code);
-			//objMessage->removeSlot("self");
+			objMessage->removeSlot("self");
 			obj = _vector[_vector.size() - 1];
 
 			//std::cout << "D. " << std::endl;

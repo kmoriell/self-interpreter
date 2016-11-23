@@ -7,6 +7,7 @@
 class VirtualMachine {
 private:
 	std::stack<Object*> objects;
+	Object* lobby = nullptr;
 public:
 	~VirtualMachine();
 
@@ -16,6 +17,8 @@ public:
 	Object *createBoolean(bool value);
 	Object* createEmptyObject();
 	void destroyObjects(uint32_t count);
+
+	void setLobby(Object* lobby);
 };
 
 #endif /* SERVER_VIRTUALMACHINE_H_ */

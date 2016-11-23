@@ -9,9 +9,13 @@
  const std::string FALSE = "false";
  const std::string PUNTO = ".";*/
 
+void VirtualMachine::setLobby(Object* lobby) {
+  this->lobby = lobby;
+}
+
 Object* VirtualMachine::createString(std::string &strString) {
 	//std::cout << "Creando objeto string" << std::endl; //todo nova
-	Object *obj = new Object();
+	Object *obj = new Object(lobby);
 	obj->isPrimitive = true;
 	obj->setName(STRING_OBJ);
 	obj->setCodeSegment(strString + PUNTO);
@@ -26,7 +30,7 @@ Object* VirtualMachine::createString(std::string &strString) {
 
 Object* VirtualMachine::createNumber(float number) {
 	//std::cout << "Creando objeto number" << std::endl; //todo nova
-	Object *obj = new Object();
+	Object *obj = new Object(lobby);
 	obj->isPrimitive = true;
 	obj->setName(NUMBER_OBJ);
 	//todo Casteamos a int porque el parser aun no soporta floats
@@ -45,7 +49,7 @@ Object* VirtualMachine::createNumber(float number) {
 
 Object* VirtualMachine::createNil() {
 	//std::cout << "Creando objeto nil" << std::endl; //todo nova
-	Object *obj = new Object();
+	Object *obj = new Object(lobby);
 	obj->isPrimitive = true;
 	obj->setName(NIL_OBJ);
 	obj->setCodeSegment(NIL + PUNTO);
@@ -59,7 +63,7 @@ Object* VirtualMachine::createNil() {
 
 Object* VirtualMachine::createEmptyObject() {
 	//std::cout << "Creando objeto vacio" << std::endl; //todo nova
-	Object *obj = new Object();
+	Object *obj = new Object(lobby);
 	obj->setName(COMPLEX_OBJ);
 	objects.push(obj);
 
@@ -68,7 +72,7 @@ Object* VirtualMachine::createEmptyObject() {
 
 Object* VirtualMachine::createBoolean(bool value) {
 	//std::cout << "Creando objeto booleano" << std::endl; //todo nova
-	Object *obj = new Object();
+	Object *obj = new Object(lobby);
 	obj->setName(BOOLEAN_OBJ);
 	obj->enableNativeMethod(PRINT_METHOD);
 	if (value)

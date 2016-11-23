@@ -7,7 +7,7 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer)
   try {
     refBuilder->add_from_file("mainWindow.glade");
   } catch (...) {
-    throw "No se puede crear la ventana";
+    throw std::runtime_error("No se puede crear la ventana");
   }
 
   refBuilder->get_widget("window", pWindow);
@@ -114,33 +114,42 @@ void MainWindow::addWidgets() {
 }
 
 void MainWindow::configureTreeView() {
+  m_refTreeModel = Gtk::TreeStore::create(m_Columns);
+  pTreeView->set_model(m_refTreeModel);
+
   colSlotName.set_title("Slot");
   colMutable.set_title("Mutable");
   colObjName.set_title("Objeto");
   colPreview.set_title("Vista Previa");
 
-  colMutableCell.set_activatable(true);
+  //colMutableCell.property_activatable() = true;
 
-  colMutableCell.signal_toggled().connect(
-      sigc::mem_fun(*this, &MainWindow::cellMutable_toggled),"asd");
+  /*  colMutableCell.signal_toggled().connect(
+   sigc::mem_fun(*this, &MainWindow::cellMutable_toggled));*/
 
-  colSlotName.pack_start(colSlotNameCell, true);
-  colMutable.pack_start(colMutableCell, true);
-  colPreview.pack_start(colPreviewCell, true);
-  colObjName.pack_start(colObjNameCell, true);
+  /*colSlotName.pack_start(colSlotNameCell, true);
+   colMutable.pack_start(colMutableCell, true);
+   colPreview.pack_start(colPreviewCell, true);
+   colObjName.pack_start(colObjNameCell, true);*/
 
-  pTreeView->append_column(colSlotName);
-  pTreeView->append_column(colMutable);
-  pTreeView->append_column(colObjName);
-  pTreeView->append_column(colPreview);
+  // pTreeView->append_column(colSlotName);
+  //pTreeView->append_column(colMutable);
+  pTreeView->append_column("Slot", m_Columns.m_col_slotName);
+  pTreeView->append_column_editable("Mutable", m_Columns.m_col_mutable);
+  pTreeView->append_column("Objeto", m_Columns.m_col_objType);
+  pTreeView->append_column("Vista Previa", m_Columns.m_col_preview);
+  //pTreeView->append_column(colObjName);
+  //pTreeView->append_column(colPreview);
 
-  colSlotName.add_attribute(colSlotNameCell, "markup", 0);
-  colMutable.add_attribute(colMutableCell, "activatable", 1);
-  colObjName.add_attribute(colObjNameCell, "text", 2);
-  colPreview.add_attribute(colPreviewCell, "text", 3);
+  ((Gtk::CellRendererToggle*) pTreeView->get_column_cell_renderer(1))
+      ->signal_toggled().connect(
+      sigc::mem_fun(*this, &MainWindow::cellMutable_toggled));
 
-  m_refTreeModel = Gtk::ListStore::create(m_Columns);
-  pTreeView->set_model(m_refTreeModel);
+  /*colSlotName.add_attribute(colSlotNameCell, "markup", 0);
+   //colMutable.add_attribute(colMutableCell, "activatable", 1);
+   colObjName.add_attribute(colObjNameCell, "text", 2);
+   colPreview.add_attribute(colPreviewCell, "text", 3);*/
+
 }
 
 void MainWindow::drawMorph() {
@@ -150,7 +159,7 @@ void MainWindow::drawMorph() {
   //pLabel->set_text(morph.getObjName());
   m_refTreeModel->clear();
   Gtk::TreeModel::Row row;
-  colMutableCell.set_active(false);
+
   for (int i = 0; i < morph.getSlotsSize(); i++) {
     row = *(m_refTreeModel->append());
     std::string slotName;
@@ -162,9 +171,6 @@ void MainWindow::drawMorph() {
       slotName = morph.getSlotName(i);
     else
       slotName = morph.getSlotName(i);
-
-    if (morph.isMutableSlot(i))
-      colMutableCell.set_active(true);
 
     row[m_Columns.m_col_slotName] = slotName;
     row[m_Columns.m_col_mutable] = morph.isMutableSlot(i);
@@ -255,18 +261,18 @@ void MainWindow::btnApply_clicked() {
   drawMorph();
 }
 void MainWindow::btnSetSlot_clicked() {
-    std::string text = pTxtSlot->get_text();
+  std::string text = pTxtSlot->get_text();
 
-    proxyServer.sendCmdMessage(ADD_SLOT, text);
-    while (proxyServer.getFlag()) {
-    }
-    if (proxyServer.areThereErrors()) {
-      Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
-                                Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
-      dialog.set_secondary_text(proxyServer.getErrors());
-      dialog.run();
-    }
-    drawMorph();
+  proxyServer.sendCmdMessage(ADD_SLOT, text);
+  while (proxyServer.getFlag()) {
+  }
+  if (proxyServer.areThereErrors()) {
+    Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                              Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+    dialog.set_secondary_text(proxyServer.getErrors());
+    dialog.run();
+  }
+  drawMorph();
 }
 void MainWindow::btnSetCodeSegment_clicked() {
   auto pTextBuffer = Glib::RefPtr < Gtk::TextBuffer
@@ -390,19 +396,25 @@ void MainWindow::on_Open_selected() {
   }
 }
 
-void MainWindow::cellMutable_toggled(const Glib::ustring& path) {
+void MainWindow::cellMutable_toggled(const Glib::ustring &path) {
+  Gtk::TreeIter iter;
   std::cout << "toggled = " << path << std::endl;
 
-  auto model = pTreeView->get_model();
+  auto model = this->m_refTreeModel;
   if (model) {
-    Gtk::TreeModel::iterator iter = model->get_iter(path);
-    if (iter) {
-      Gtk::TreeModel::Row row = *iter;
-      bool value = row[m_Columns.m_col_mutable];
-      row.set_value(1, !value);
-      //row.set_activatable(true);
-      std::cout << "  toggled id=" << row[m_Columns.m_col_mutable] << std::endl;
-    }
+    iter = model->get_iter(path);
+
+    bool checked = iter->get_value(m_Columns.m_col_mutable);
+    std::string text = checked ? TRUE_BIN : FALSE_BIN;
+    proxyServer.sendCmdMessage(SWAP_MUTABILITY, text);
+      while (proxyServer.getFlag()) {
+      }
+      if (proxyServer.areThereErrors()) {
+        Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                                  Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+        dialog.set_secondary_text(proxyServer.getErrors());
+        dialog.run();
+      }
   }
 }
 

@@ -5,68 +5,85 @@
 #include <iostream>
 #include "common_define.h"
 
+Object::Object(Object* lobby) {
+
+  this->lobby = lobby;
+  configureNativeMethods();
+}
+
 Object::Object() {
-	this->nativeMethods.insert(
-			std::make_pair(PRINTOBJ_METHOD,
-					std::make_tuple(&Object::printObj, true)));
-	this->nativeMethods.insert(
-			std::make_pair(PRINT_METHOD,
-					std::make_tuple(&Object::print, false)));
-	this->nativeMethods.insert(
-			std::make_pair(OP_SUMA,
-					std::make_tuple(&Object::operator+, false)));
-	this->nativeMethods.insert(
-			std::make_pair(OP_RESTA,
-					std::make_tuple(&Object::operator-, false)));
-	this->nativeMethods.insert(
-			std::make_pair(OP_MULTIPLICACION,
-					std::make_tuple(&Object::operator*, false)));
-	this->nativeMethods.insert(
-			std::make_pair(OP_DIVISION,
-					std::make_tuple(&Object::operator/, false)));
-	this->nativeMethods.insert(
-			std::make_pair(ADD_SLOTS_METHOD,
-					std::make_tuple(&Object::_AddSlots, true)));
-	this->nativeMethods.insert(
-			std::make_pair(REMOVE_SLOTS_METHOD,
-					std::make_tuple(&Object::_RemoveSlots, true)));
-	this->nativeMethods.insert(
-			std::make_pair(CLONE_METHOD,
-					std::make_tuple(&Object::clone, true)));
-	this->nativeMethods.insert(
-			std::make_pair(COLLECT_METHOD,
-					std::make_tuple(&Object::collect, true)));
+  this->lobby = this;
+  configureNativeMethods();
 }
 
 Object::Object(const Object& __object) {
-	// Recorro los slots de __object
-	for (auto it = __object.slots.begin(); it != __object.slots.end(); ++it) {
-		std::string name = it->first;
-		slot_t tuple = it->second;
-		Object* obj;
-		/*if (name == SELF || name == "lobby")
-		 continue;*/
+  this->lobby = __object.lobby;
+  // Recorro los slots de __object
+  for (auto it = __object.slots.begin(); it != __object.slots.end(); ++it) {
+    std::string name = it->first;
+    slot_t tuple = it->second;
+    Object* obj;
 
-		bool isParentSlot = std::get<2>(tuple);
-		if (isParentSlot) {
-			obj = (Object*) std::get<0>(tuple);
-		} else {
-			Object tmpObj = *(Object*) std::get<0>(tuple);
-			obj = new Object(tmpObj);
-		}
-		std::get<0>(tuple) = obj;
+    bool isParentSlot = std::get<2>(tuple);
+    if (isParentSlot) {
+      obj = (Object*) std::get<0>(tuple);
+    } else {
+      Object tmpObj = *(Object*) std::get<0>(tuple);
+      obj = new Object(tmpObj);
 
-		this->slots.insert(std::make_pair(name, tuple));
-	}
+      /*Object *lobby = nullptr;
+      delegate fpointer = nullptr;
+      __object.findObject("lobby", lobby, fpointer);*/
 
-	this->nativeMethods = __object.nativeMethods;
-	this->codeSegment = __object.codeSegment;
-	this->isPrimitive = __object.isPrimitive;
+      lobby->addClonedObj(obj);
+    }
+    std::get<0>(tuple) = obj;
+
+    this->slots.insert(std::make_pair(name, tuple));
+  }
+
+  this->nativeMethods = __object.nativeMethods;
+  this->codeSegment = __object.codeSegment;
+  this->isPrimitive = __object.isPrimitive;
 }
 
 Object::~Object() {
 	slots.clear();
 	nativeMethods.clear();
+	collect(std::vector<Object*>{});
+}
+
+void Object::configureNativeMethods() {
+  this->nativeMethods.insert(
+      std::make_pair(PRINTOBJ_METHOD,
+          std::make_tuple(&Object::printObj, true)));
+  this->nativeMethods.insert(
+      std::make_pair(PRINT_METHOD,
+          std::make_tuple(&Object::print, false)));
+  this->nativeMethods.insert(
+      std::make_pair(OP_SUMA,
+          std::make_tuple(&Object::operator+, false)));
+  this->nativeMethods.insert(
+      std::make_pair(OP_RESTA,
+          std::make_tuple(&Object::operator-, false)));
+  this->nativeMethods.insert(
+      std::make_pair(OP_MULTIPLICACION,
+          std::make_tuple(&Object::operator*, false)));
+  this->nativeMethods.insert(
+      std::make_pair(OP_DIVISION,
+          std::make_tuple(&Object::operator/, false)));
+  this->nativeMethods.insert(
+      std::make_pair(ADD_SLOTS_METHOD,
+          std::make_tuple(&Object::_AddSlots, true)));
+  this->nativeMethods.insert(
+      std::make_pair(REMOVE_SLOTS_METHOD,
+          std::make_tuple(&Object::_RemoveSlots, true)));
+  this->nativeMethods.insert(
+      std::make_pair(CLONE_METHOD,
+          std::make_tuple(&Object::clone, true)));
+  this->nativeMethods.insert(
+      std::make_pair(COLLECT_METHOD,
+          std::make_tuple(&Object::collect, false)));
 }
 
 Object::slot_map Object::getSlots() const {
@@ -122,7 +139,9 @@ Object* Object::removeSlot(std::string name) {
 }
 
 Object* Object::clone(const std::vector<Object *> &args) {
-	return new Object(*this);
+	Object* obj = new Object(*this);
+	lobby->addClonedObj(obj);
+	return obj;
 }
 
 std::string Object::getCodeSegment() const {
@@ -142,7 +161,7 @@ void Object::setName(const std::string name) {
 }
 
 bool Object::findObject(std::string name, Object* &returnValue,
-		delegate& function) {
+		delegate& function) const {
 
 	returnValue = nullptr;
 	function = nullptr;
@@ -262,7 +281,6 @@ Object* Object::recvMessage(std::string messageName,
 			slot_t tupla = object_slots_it->second;
 
 			Object *__object = ((Object*) std::get<0>(tupla));
-			delete __object;
 			__object = args[argsCount];
 			std::get<0>(tupla) = __object;
 

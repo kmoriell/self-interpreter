@@ -7,6 +7,7 @@ Workspace::Workspace() {
 	//El slot lobby es necesario para cuando se realizan llamadas explicitas a lobby.
 	lobby->addSlot(LOBBY, lobby, false, true, false);
 	lobby->enableNativeMethod("collect");
+	vm.setLobby(lobby);
 }
 
 Workspace::~Workspace() {
@@ -14,7 +15,7 @@ Workspace::~Workspace() {
 }
 
 Object* Workspace::receive(Object* context, std::string &code) {
-	Parser parser(vm, lobby);
+	Parser parser(vm);
 	parser.setContext(context);
 	std::vector<Object*> objs = parser.run(code);
 	int size = objs.size() - 1;

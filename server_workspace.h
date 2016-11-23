@@ -5,6 +5,7 @@
 #include "server_parser.h"
 #include "server_virtualMachine.h"
 #include <string>
+#include <iostream>
 
 class Workspace {
 private:
