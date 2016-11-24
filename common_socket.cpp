@@ -1,10 +1,3 @@
-/*
- * socket.c
- *
- *  Created on: 21 de set. de 2016
- *      Author: kmoriell
- */
-
 #include "common_socket.h"
 #include <string>
 

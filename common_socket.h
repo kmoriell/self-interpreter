@@ -1,10 +1,3 @@
-/*
- * socket.h
- *
- *  Created on: 21 de set. de 2016
- *      Author: kmoriell
- */
-
 #ifndef COMMON_SOCKET_H_
 #define COMMON_SOCKET_H_
 

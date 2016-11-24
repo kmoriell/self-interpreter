@@ -1,10 +1,3 @@
-/*
- * client_proxyServer.cpp
- *
- *  Created on: 15 nov. 2016
- *      Author: kmoriell
- */
-
 #include "client_proxyServer.h"
 
 ProxyServer::ProxyServer(Socket &socket, Morph &morph, std::vector<std::string> &workspaces) :
@@ -58,14 +51,13 @@ void ProxyServer::run() {
 				case OK_MSG_MORPH: {
 					std::cout << "Se recibio un mensaje OK" << std::endl;
 					mensajeRecibido = clientMessage.getMessage();
-					ParserProtocoloCliente parser(morph, mensajeRecibido);
+					ParserProtocoloMorph parser(morph, mensajeRecibido);
 					break;
 				}
 				case OK_MSG_SELECT_WKS: {
 					std::cout << "Se recibio un mensaje OK de WKS" << std::endl;
 					mensajeRecibido = clientMessage.getMessage();
-					//el parser tiene que trabajar sobre otra clase, no sobre el morph
-					ParserProtocoloCliente parser(morph, mensajeRecibido);
+					ParserProtocoloWorkspaces parser(workspaces, mensajeRecibido);
 					break;
 				}
 				default:

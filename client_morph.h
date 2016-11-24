@@ -21,6 +21,9 @@ public:
 	typedef std::tuple<std::string, bool, bool, bool, bool, std::string,
 			std::string> slot_morph;
 	Morph();
+	Morph(const Morph&) = delete;
+	Morph(Morph&&) = delete;
+	Morph& operator= (const Morph&) = delete;
 	void clear();
 
 	//Getters

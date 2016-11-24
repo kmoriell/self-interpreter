@@ -13,7 +13,9 @@ SelectWkWindow::SelectWkWindow(Morph &morph, std::vector<std::string> &workspace
 
   refBuilder->get_widget("windowWorkspace", pWindow);
 
-  workspaces = proxyServer.sendCmdMessage()
+  std::string cad = "";
+  proxyServer.sendCmdMessage(AVAILABLE_WKS, cad);
+  drawWorkspaces();
 
   addWidgets();
   configureTreeView();
@@ -62,18 +64,23 @@ void SelectWkWindow::configureTreeView() {
   ((Gtk::CellRendererToggle*) pTreeView->get_column_cell_renderer(0))
       ->signal_toggled().connect(
       sigc::mem_fun(*this, &SelectWkWindow::treeView_toggled));
+}
 
-  Gtk::TreeModel::Row row = *(m_refTreeModel->append());
-  row[m_Columns.m_col_delete] = false;
-  row[m_Columns.m_col_wkName] = "prueba";
+void SelectWkWindow::drawWorkspaces() {
+	m_refTreeModel->clear();
+	for(auto str : workspaces) {
+		  Gtk::TreeModel::Row row = *(m_refTreeModel->append());
+		  row[m_Columns.m_col_delete] = false;
+		  row[m_Columns.m_col_wkName] = str;
+	}
 }
 
 // Eventos
 void SelectWkWindow::btnRefreshWk_clicked() {
-
+	drawWorkspaces();
 }
 void SelectWkWindow::btnNewWk_clicked() {
-
+	drawWorkspaces();
 }
 
 void SelectWkWindow::treeView_toggled(const Glib::ustring &path) {

@@ -1,10 +1,3 @@
-/*
- * common_types.h
- *
- *  Created on: 8 de nov. de 2016
- *      Author: kmoriell
- */
-
 #ifndef COMMON_TYPES_H_
 #define COMMON_TYPES_H_
 

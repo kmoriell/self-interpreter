@@ -4,7 +4,8 @@
 #include "common_socket.h"
 #include "common_proxy.h"
 #include "client_morph.h"
-#include "client_parserProtocoloCliente.h"
+#include "client_parserProtocoloMorph.h"
+#include "client_parserProtocoloWorkspaces.h"
 #include "common_define.h"
 #include <iostream>
 #include <vector>

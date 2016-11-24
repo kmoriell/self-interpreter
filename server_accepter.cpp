@@ -1,10 +1,3 @@
-/*
- * server_accepter.cpp
- *
- *  Created on: 22 de set. de 2016
- *      Author: kmoriell
- */
-
 #include "server_accepter.h"
 
 #include <stdexcept>
