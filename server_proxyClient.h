@@ -21,6 +21,7 @@ private:
 	void setObjName(const std::string &cad);
 	void setCodeSegment(const std::string &cad);
 	void getSlotObj(const std::string &cad);
+	void swapMutability(const std::string &cad);
 
 	void availableWks();
 	void loadWks(const std::string &cad);

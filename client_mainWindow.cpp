@@ -404,9 +404,9 @@ void MainWindow::cellMutable_toggled(const Glib::ustring &path) {
   if (model) {
     iter = model->get_iter(path);
 
-    bool checked = iter->get_value(m_Columns.m_col_mutable);
-    std::string text = checked ? TRUE_BIN : FALSE_BIN;
-    proxyServer.sendCmdMessage(SWAP_MUTABILITY, text);
+    std::string slotname = iter->get_value(m_Columns.m_col_slotName);
+    //std::string text = checked ? TRUE_BIN : FALSE_BIN;
+    proxyServer.sendCmdMessage(SWAP_MUTABILITY, slotname);
       while (proxyServer.getFlag()) {
       }
       if (proxyServer.areThereErrors()) {

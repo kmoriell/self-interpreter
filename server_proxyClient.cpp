@@ -97,6 +97,18 @@ void ProxyClient::getSlotObj(const std::string &cad) {
 	}
 }
 
+void ProxyClient::swapMutability(const std::string &cad) {
+	try {
+		std::string sendMsg;
+		sendMsg = server.swapMutability(idWorkspace, idObj, cad);
+		sendOK(sendMsg);
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
+}
+
 void ProxyClient::availableWks() {
 	try {
 		std::vector<std::string> vecWks = server.availableWorkspace();
@@ -217,6 +229,11 @@ void ProxyClient::run() {
 			case GET_SLOT_OBJ: {
 				cad = clientMessage.getMessage();
 				getSlotObj(cad);
+				break;
+			}
+			case SWAP_MUTABILITY: {
+				cad = clientMessage.getMessage();
+				swapMutability(cad);
 				break;
 			}
 			case AVAILABLE_WKS: {

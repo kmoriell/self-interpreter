@@ -243,6 +243,8 @@ class Object {
 
   uint32_t getId() const;
 
+  void swapSlotMutability(const std::string& slotName);
+
   bool isPrimitive = false;
 };
 

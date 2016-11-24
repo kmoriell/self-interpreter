@@ -7,7 +7,7 @@ Server::~Server() {
 		stack.push(std::get<0>(it->second));
 	}
 
-	while(stack.size() > 0) {
+	while (stack.size() > 0) {
 		auto wk = stack.top();
 		stack.pop();
 		delete wk;
@@ -115,10 +115,12 @@ Workspace* Server::getWorkspace(const std::string &idWk) {
 	return _wk;
 }
 
-std::string Server::receiveCode(const std::string &idWk, uint32_t &idObj, std::string &code) {
+std::string Server::receiveCode(const std::string &idWk, uint32_t &idObj,
+		std::string &code) {
 	std::cout << "ID Objeto consultado: " << idObj << std::endl;
 	std::cout << "Objeto consultado: " << std::endl;
-	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(
+			std::vector<Object*> { });
 
 	std::string msg = "";
 	try {
@@ -148,36 +150,43 @@ std::string Server::getLobby(const std::string &idWk, uint32_t &idObj) {
 std::string Server::getObj(const std::string &idWk, uint32_t &idObj) {
 	std::cout << "ID Objeto consultado: " << idObj << std::endl;
 	std::cout << "Objeto consultado: " << std::endl;
-	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(
+			std::vector<Object*> { });
 
 	Object* objRet = getWorkspace(idWk)->findObjectById(idObj);
 	return ParserProtocoloServidor(objRet).getString();
 }
 
-std::string Server::setObjName(const std::string &idWk, uint32_t &idObj, const std::string &cad) {
+std::string Server::setObjName(const std::string &idWk, uint32_t &idObj,
+		const std::string &cad) {
 	std::cout << "ID Objeto consultado: " << idObj << std::endl;
 	std::cout << "Objeto consultado: " << std::endl;
-	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(
+			std::vector<Object*> { });
 
 	Object* objRet = getWorkspace(idWk)->findObjectById(idObj);
 	objRet->setName(cad);
 	return ParserProtocoloServidor(objRet).getString();
 }
 
-std::string Server::setCodeSegment(const std::string &idWk, uint32_t &idObj, const std::string &cad) {
+std::string Server::setCodeSegment(const std::string &idWk, uint32_t &idObj,
+		const std::string &cad) {
 	std::cout << "ID Objeto consultado: " << idObj << std::endl;
 	std::cout << "Objeto consultado: " << std::endl;
-	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(
+			std::vector<Object*> { });
 
 	Object* objRet = getWorkspace(idWk)->findObjectById(idObj);
 	objRet->setCodeSegment(cad);
 	return ParserProtocoloServidor(objRet).getString();
 }
 
-std::string Server::getSlotObj(const std::string &idWk, uint32_t &idObj, const std::string &cad) {
+std::string Server::getSlotObj(const std::string &idWk, uint32_t &idObj,
+		const std::string &cad) {
 	std::cout << "ID Objeto consultado: " << idObj << std::endl;
 	std::cout << "Objeto consultado: " << std::endl;
-	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(
+			std::vector<Object*> { });
 
 	Object* obj = getWorkspace(idWk)->findObjectById(idObj);
 	auto slots = obj->getSlots();
@@ -193,4 +202,37 @@ std::string Server::getSlotObj(const std::string &idWk, uint32_t &idObj, const s
 	} else {
 		throw std::runtime_error("El slot buscado no existe");
 	}
+}
+
+std::string Server::swapMutability(const std::string &idWk, uint32_t &idObj,
+		const std::string &cad) {
+	std::cout << "ID Objeto consultado: " << idObj << std::endl;
+	std::cout << "Objeto consultado: " << std::endl;
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(
+			std::vector<Object*> { });
+
+	Object* obj = getWorkspace(idWk)->findObjectById(idObj);
+	obj->swapSlotMutability(cad);
+	idObj = obj->getId();
+	return ParserProtocoloServidor(obj).getString();
+	/*auto slots = obj->getSlots();
+	 auto it = slots.find(cad);
+	 if (it != slots.end()) {
+	 auto tuple = it->second;
+	 std::cout << "Es mutable? " << std::get<1>(tuple) << std::endl;
+	 if (std::get<1>(tuple)) {
+	 std::get<1>(tuple) = false;
+	 it->second = tuple;
+	 } else {
+	 std::get<1>(tuple) = true;
+	 it->second = tuple;
+	 }
+
+	 std::cout << "Y ahora, es mutable? " << std::get<1>(it->second)
+	 << std::endl;
+	 idObj = obj->getId();
+	 return ParserProtocoloServidor(obj).getString();
+	 } else {
+	 throw std::runtime_error("El slot buscado no existe");
+	 }*/
 }

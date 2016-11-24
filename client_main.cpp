@@ -31,6 +31,8 @@ int main(int argc, char **argv) {
 		script += x + " ";
 
 	Morph morph;
+	std::vector<std::string> vecWorkspaces;
+
 	Socket socket(server, port);
 	ProxyServer proxyServer(socket, morph);
 
@@ -69,33 +71,21 @@ int main(int argc, char **argv) {
 	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
 	sleep(2);*/
 
-	message = "punto = (|x<-3. y<-5.|).";
+	message = "punto <- 3.";
 	proxyServer.sendCmdMessage(ADD_SLOT, message);
 	sleep(2);
 
-	message = "lobby punto.";
-	proxyServer.sendCmdMessage(EXEC_LOCAL_CMD, message);
+	message = "";
+	proxyServer.sendCmdMessage(SHOW_LOBBY, message);
 	sleep(2);
 
-	message = "x";
-	proxyServer.sendCmdMessage(REMOVE_SLOT, message);
+	message = "punto";
+	proxyServer.sendCmdMessage(SWAP_MUTABILITY, message);
 	sleep(2);
 
-	message = "y";
-	proxyServer.sendCmdMessage(GET_SLOT_OBJ, message);
+	message = "";
+	proxyServer.sendCmdMessage(SHOW_LOBBY, message);
 	sleep(2);
-
-	/*message = "juanjo";
-	proxyServer.sendCmdMessage(SET_OBJ_NAME, message);
-	sleep(2);
-
-	message = "7.";
-	proxyServer.sendCmdMessage(SET_CODESEGMENT, message);
-	sleep(2);
-
-	message = "lobby punto.";
-	proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
-	sleep(2);*/
 
 	morph.mostrar();
 	char __char;

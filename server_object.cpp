@@ -37,7 +37,8 @@ Object::Object(const Object& __object) {
 			 __object.findObject("lobby", lobby, fpointer);*/
 
 			auto tuple = std::make_tuple(obj, false);
-			lobby->createdObjects.insert(std::make_pair(lobby->idCounter, tuple));
+			lobby->createdObjects.insert(
+					std::make_pair(lobby->idCounter, tuple));
 			id = lobby->idCounter;
 			lobby->idCounter++;
 
@@ -394,8 +395,8 @@ Object* Object::findObjectById(uint32_t id) {
 	auto it = createdObjects.find(id);
 
 	if (it == createdObjects.end()) {
-		std::string error = "No existe un objeto con el id " +
-				std::to_string(id);
+		std::string error = "No existe un objeto con el id "
+				+ std::to_string(id);
 		throw std::runtime_error(error);
 	} else
 		return std::get<0>(it->second);
@@ -424,6 +425,21 @@ void Object::collect_internal() {
 				}
 			}
 		}
+	}
+}
+
+void Object::swapSlotMutability(const std::string& slotName) {
+
+	auto it = slots.find(slotName);
+	if (it != slots.end()) {
+		auto tuple = it->second;
+
+		bool _mutable = std::get<1>(tuple);
+
+		std::get<1>(tuple) = !_mutable;
+		it->second = tuple;
+	} else {
+		throw std::runtime_error("El slot buscado no existe");
 	}
 }
 

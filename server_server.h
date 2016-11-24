@@ -38,6 +38,7 @@ public:
 	std::string setObjName(const std::string &idWk, uint32_t &idObj, const std::string &cad);
 	std::string setCodeSegment(const std::string &idWk, uint32_t &idObj, const std::string &cad);
 	std::string getSlotObj(const std::string &idWk, uint32_t &idObj, const std::string &cad);
+	std::string swapMutability(const std::string &idWk, uint32_t &idObj, const std::string &cad);
 };
 
 #endif /* SERVER_SERVER_H_ */
