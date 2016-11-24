@@ -7,10 +7,13 @@
 #include "client_parserProtocoloCliente.h"
 #include "common_define.h"
 #include <iostream>
+#include <vector>
+#include <string>
 
 class ProxyServer: public Proxy {
 private:
 	Morph &morph;
+	std::vector<std::string> &workspaces;
 	//Este flag le indica al proxy que debe ejecutar un comando.
 	bool flag;
 	std::string errorMsg;
@@ -20,7 +23,7 @@ public:
 	 * @papram port uint32_t con el puerto a conectarse
 	 * @param morph, Morph que procesa los datos para luego mostrarlos por pantalla
 	 */
-	ProxyServer(Socket &socket, Morph& morph);
+	ProxyServer(Socket &socket, Morph& morph, std::vector<std::string> &workspaces);
 
 	/** Envia un mensaje para ejecutar codigo self
 	 * @command, char con el comando a ejecutar
