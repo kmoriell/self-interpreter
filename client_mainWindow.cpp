@@ -213,7 +213,7 @@ void MainWindow::btnEnviar_clicked() {
     auto pTextBuffer = Glib::RefPtr < Gtk::TextBuffer
         > ::cast_dynamic(refBuilder->get_object("txtBufferEntrada"));
     std::string text = pTextBuffer->get_text();
-    proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, text);
+    proxyServer.sendCmdMessage(EXEC_LOCAL_CMD, text);
     while (proxyServer.getFlag()) {
     }
     if (proxyServer.areThereErrors()) {

@@ -73,3 +73,7 @@ Object* VirtualMachine::createBoolean(bool value) {
 	lobby->addCreatedObject(obj);
 	return obj;
 }
+
+Object* VirtualMachine::findObjectById(uint32_t id) {
+	return lobby->findObjectById(id);
+}

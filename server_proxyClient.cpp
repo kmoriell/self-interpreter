@@ -1,21 +1,23 @@
 #include "server_proxyClient.h"
 #include <string>
 #include <iostream>
+#include <vector>
 
 ProxyClient::ProxyClient(Socket &socket, Server &server) :
 		Proxy(socket), server(server) {
-		sckptr = &socket;
+	sckptr = &socket;
 }
 
 ProxyClient::~ProxyClient() {
-    delete sckptr;
+	delete sckptr;
 }
 
 void ProxyClient::execLobbyCMD(std::string &cad) {
 	try {
-		objClientView = server.receiveCode(cad);
-		ParserProtocoloServidor parser(objClientView);
-		sendOK(parser.getString());
+		std::string sendMsg;
+		uint32_t lobbyId = ID_LOBBY;
+		sendMsg = server.receiveCode(idWorkspace, lobbyId, cad);
+		sendOK(sendMsg);
 	} catch (const std::runtime_error &e) {
 		sendError(e.what());
 	} catch (...) {
@@ -25,9 +27,9 @@ void ProxyClient::execLobbyCMD(std::string &cad) {
 
 void ProxyClient::execLocalCMD(std::string &cad) {
 	try {
-		objClientView = server.receiveCode(objClientView, cad);
-		ParserProtocoloServidor parser(objClientView);
-		sendOK(parser.getString());
+		std::string sendMsg;
+		sendMsg = server.receiveCode(idWorkspace, idObj, cad);
+		sendOK(sendMsg);
 	} catch (const std::runtime_error &e) {
 		sendError(e.what());
 	} catch (...) {
@@ -37,9 +39,9 @@ void ProxyClient::execLocalCMD(std::string &cad) {
 
 void ProxyClient::showLobby() {
 	try {
-		objClientView = server.getLobby();
-		ParserProtocoloServidor parser(objClientView);
-		sendOK(parser.getString());
+		std::string sendMsg;
+		sendMsg = server.getLobby(idWorkspace, idObj);
+		sendOK(sendMsg);
 	} catch (const std::runtime_error &e) {
 		sendError(e.what());
 	} catch (...) {
@@ -49,8 +51,9 @@ void ProxyClient::showLobby() {
 
 void ProxyClient::execRefresh() {
 	try {
-		ParserProtocoloServidor parser(objClientView);
-		sendOK(parser.getString());
+		std::string sendMsg;
+		sendMsg = server.getObj(idWorkspace, idObj);
+		sendOK(sendMsg);
 	} catch (const std::runtime_error &e) {
 		sendError(e.what());
 	} catch (...) {
@@ -59,31 +62,101 @@ void ProxyClient::execRefresh() {
 }
 
 void ProxyClient::setObjName(const std::string &cad) {
-	objClientView->setName(cad);
-	ParserProtocoloServidor parser(objClientView);
-	sendOK(parser.getString());
+	try {
+		std::string sendMsg;
+		sendMsg = server.setObjName(idWorkspace, idObj, cad);
+		sendOK(sendMsg);
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
 }
 
 void ProxyClient::setCodeSegment(const std::string &cad) {
-	objClientView->setCodeSegment(cad);
-	ParserProtocoloServidor parser(objClientView);
-	sendOK(parser.getString());
+	try {
+		std::string sendMsg;
+		sendMsg = server.setCodeSegment(idWorkspace, idObj, cad);
+		sendOK(sendMsg);
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
 }
 
 void ProxyClient::getSlotObj(const std::string &cad) {
-	auto slots = objClientView->getSlots();
-	auto it = slots.find(cad);
-	if (it != slots.end()) {
-		Object* obj = std::get<0>(it->second);
-		if (!obj) {
-			sendError("El slot tiene un puntero nulo");
-		} else {
-			objClientView = obj;
-			ParserProtocoloServidor parser(objClientView);
-			sendOK(parser.getString());
+	try {
+		std::string sendMsg;
+		sendMsg = server.getSlotObj(idWorkspace, idObj, cad);
+		sendOK(sendMsg);
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
+}
+
+void ProxyClient::availableWks() {
+	try {
+		std::vector<std::string> vecWks = server.availableWorkspace();
+		std::string msg;
+		for (std::string str : vecWks) {
+			msg += str + CHAR_SEPARADOR;
 		}
-	} else {
-		sendError("El slot buscado no existe");
+		msg = msg.substr(0, msg.size()-1);
+		sendOKWks(msg);
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
+}
+
+void ProxyClient::loadWks(const std::string &cad) {
+	try {
+		idWorkspace = cad;
+		showLobby();
+	} catch (const std::runtime_error &e) {
+		idWorkspace.clear();
+		sendError(e.what());
+	} catch (...) {
+		idWorkspace.clear();
+		sendError("Error desconocido.");
+	}
+}
+
+void ProxyClient::newWks(const std::string &cad) {
+	try {
+		server.newWorkspace(cad);
+		availableWks();
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
+}
+
+void ProxyClient::deleteWks(const std::string &cad) {
+	try {
+		server.deleteWorkspace(cad);
+		availableWks();
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
+	}
+}
+
+void ProxyClient::closeWks(const std::string &cad) {
+	try {
+		server.closeWorkspace(cad);
+		availableWks();
+		idWorkspace.clear();
+	} catch (const std::runtime_error &e) {
+		sendError(e.what());
+	} catch (...) {
+		sendError("Error desconocido.");
 	}
 }
 
@@ -97,6 +170,7 @@ void ProxyClient::run() {
 			}
 
 			std::string cad = "";
+			std::cout << "idObjEnVista por el cliente: " << idObj << std::endl;
 			switch (this->clientMessage.getCommand()) {
 			case EXEC_LOBBY_CMD: {
 				cad = clientMessage.getMessage();
@@ -140,9 +214,33 @@ void ProxyClient::run() {
 				setCodeSegment(cad);
 				break;
 			}
-        case GET_SLOT_OBJ: {
+			case GET_SLOT_OBJ: {
 				cad = clientMessage.getMessage();
 				getSlotObj(cad);
+				break;
+			}
+			case AVAILABLE_WKS: {
+				availableWks();
+				break;
+			}
+			case LOAD_WK: {
+				cad = clientMessage.getMessage();
+				loadWks(cad);
+				break;
+			}
+			case NEW_WK: {
+				cad = clientMessage.getMessage();
+				newWks(cad);
+				break;
+			}
+			case DELETE_WK: {
+				cad = clientMessage.getMessage();
+				deleteWks(cad);
+				break;
+			}
+			case CLOSE_WK: {
+				cad = clientMessage.getMessage();
+				closeWks(cad);
 				break;
 			}
 			default:

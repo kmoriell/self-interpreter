@@ -25,13 +25,12 @@ public:
 	 * @return Devuelve un Object* con el resultado de la ejecucion
 	 *
 	 */
-	Object* receive(Object* context, std::string &code);
+	uint32_t receive(Object* context, std::string &code);
 
 	/// Devuelve el objeto lobby.
 	Object* getLobby();
 
-	/// Devuelve la maquina virtual que tiene dentro
-	VirtualMachine* getVirtualMachine();
+	Object* findObjectById(uint32_t id);
 };
 
 #endif /* SERVER_WORKSPACE_H_ */

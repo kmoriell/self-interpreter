@@ -57,10 +57,15 @@ protected:
 	 */
 	void sendError(std::string msg);
 
-	/** Envia un mensaje de OK
+	/** Envia un mensaje de OK para el Morph
 	 * @param msg con el resultado de la operacion.
 	 */
 	void sendOK(std::string msg);
+
+	/** Envia un mensaje de OK para la ventana selectora de Workspaces
+	 * @param msg con el resultado de la operacion.
+	 */
+	void sendOKWks(std::string msg);
 };
 
 #endif /* COMMON_PROXY_H_ */

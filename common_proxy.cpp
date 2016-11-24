@@ -103,7 +103,12 @@ void Proxy::sendError(std::string msg) {
 }
 
 void Proxy::sendOK(std::string msg) {
-	command_t response(msg.size(), OKMESSAGE, msg);
+	command_t response(msg.size(), OK_MSG_MORPH, msg);
+	send(response);
+}
+
+void Proxy::sendOKWks(std::string msg) {
+	command_t response(msg.size(), OK_MSG_SELECT_WKS, msg);
 	send(response);
 }
 

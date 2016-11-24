@@ -55,8 +55,14 @@ void ProxyServer::run() {
 					errorMsg = clientMessage.getMessage();
 					break;
 				}
-				case OKMESSAGE: {
+				case OK_MSG_MORPH: {
 					std::cout << "Se recibio un mensaje OK" << std::endl;
+					mensajeRecibido = clientMessage.getMessage();
+					ParserProtocoloCliente parser(morph, mensajeRecibido);
+					break;
+				}
+				case OK_MSG_SELECT_WKS: {
+					std::cout << "Se recibio un mensaje OK de WKS" << std::endl;
 					mensajeRecibido = clientMessage.getMessage();
 					ParserProtocoloCliente parser(morph, mensajeRecibido);
 					break;

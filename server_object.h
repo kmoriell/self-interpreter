@@ -42,7 +42,11 @@ class Object {
   std::string codeSegment;
   std::map<std::string, fpointTuple> nativeMethods;
   Object* lobby;
-  std::map<Object*, bool> createdObjects;
+
+  uint32_t id = 0;
+  uint32_t idCounter = 1;
+  typedef std::tuple<Object*, bool> tuple_createdObjects;
+  std::map<uint32_t, tuple_createdObjects> createdObjects;
 
  private:
   /** Devuelve los parent slots que tiene el objeto.
@@ -234,6 +238,10 @@ class Object {
   void disableNativeMethod(std::string methodName);
 
   void addCreatedObject(Object *obj);
+
+  Object* findObjectById(uint32_t id);
+
+  uint32_t getId() const;
 
   bool isPrimitive = false;
 };

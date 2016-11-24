@@ -3,7 +3,8 @@
 
 // Mensajes de servidor
 #define ERRORMESSAGE 0x50
-#define OKMESSAGE 0x00
+#define OK_MSG_MORPH 0x00
+#define OK_MSG_SELECT_WKS 0x01
 
 // Comandos que envia cliente y recibe servidor
 
@@ -11,7 +12,7 @@
 #define EXEC_LOBBY_CMD 0x01
 #define SHOW_LOBBY 0x02
 
-//Los comandos 0x[1,2]<x> se ejecutan en el contexto local del cliente
+//Los comandos 0x[1]<x> se ejecutan en el contexto local del cliente
 #define EXEC_LOCAL_CMD 0x10
 #define EXEC_REFRESH 0x11
 #define SET_OBJ_NAME 0x12
@@ -20,6 +21,13 @@
 #define REMOVE_SLOT 0x15
 #define SWAP_MUTABILITY 0x16
 #define GET_SLOT_OBJ 0x17
+
+//Los comandos 0x[2]<x> comandos relacionados a solicitudes de Workspaces
+#define AVAILABLE_WKS 0x20
+#define LOAD_WK 0x21
+#define NEW_WK 0x22
+#define DELETE_WK 0x23
+#define CLOSE_WK 0x24
 
 //Protocolo
 const std::string FALSE_BIN = "0";
@@ -50,14 +58,15 @@ const std::string P_RIGHT = ")";
 
 //Nombres objetos
 const std::string NIL_OBJ = "nil";
-const std::string BOOLEAN_OBJ = "bool";
+const std::string BOOLEAN_OBJ = "boolean";
 const std::string STRING_OBJ = "string";
 const std::string NUMBER_OBJ = "number";
-const std::string NATIVE_METHOD = "native method";
+const std::string NATIVE_METHOD = "native";
 const std::string COMPLEX_OBJ = "object";
 
 //Otras Constantes
 const std::string LOBBY = "lobby";
+#define ID_LOBBY 0
 const std::string SELF = "self";
 const std::string COMPLEX_PREVIEW = "...";
 const std::string PRINT_METHOD = "print";

@@ -1,116 +1,196 @@
 #include "server_server.h"
 
+Server::~Server() {
+	std::stack<Workspace*> stack;
+
+	for (auto it = workspaces.begin(); it != workspaces.end(); ++it) {
+		stack.push(std::get<0>(it->second));
+	}
+
+	while(stack.size() > 0) {
+		auto wk = stack.top();
+		stack.pop();
+		delete wk;
+	}
+}
+
 std::string Server::loadWorkspace(std::string name) {
-  m.lock();
-  auto it = workspaces.find(name);
-  if (it == workspaces.end()) {
-    m.unlock();
-    throw std::runtime_error("No existe el workspace");
-  }
+	m.lock();
+	auto it = workspaces.find(name);
+	if (it == workspaces.end()) {
+		m.unlock();
+		throw std::runtime_error("No existe el workspace");
+	}
 
-  workspace_tuple tuple = it->second;
+	workspace_tuple tuple = it->second;
 
-  if (std::get<1>(tuple) > 0) {
-    m.unlock();
-    std::string error = "El workspace ";
-    error += name + " esta en uso.";
-    throw std::runtime_error(error);
-  }
+	if (std::get<1>(tuple) > 0) {
+		m.unlock();
+		std::string error = "El workspace ";
+		error += name + " esta en uso.";
+		throw std::runtime_error(error);
+	}
 
-  std::get<1>(tuple) += 1;
-  m.unlock();
+	std::get<1>(tuple) += 1;
+	m.unlock();
 
-  std::ifstream file(name);
-  if (!file.is_open()) {
-    std::string error = "No se puede abrir el workspace ";
-    error += name + ".";
-    throw std::runtime_error(error);
-  }
+	std::ifstream file(name);
+	if (!file.is_open()) {
+		std::string error = "No se puede abrir el workspace ";
+		error += name + ".";
+		throw std::runtime_error(error);
+	}
 
-  std::string x, strFile;
+	std::string x, strFile;
 
-  while (file >> x)
-    strFile += x + " ";
+	while (file >> x)
+		strFile += x + " ";
 
-  return strFile;
+	return strFile;
 }
 
 std::vector<std::string> Server::availableWorkspace() {
-  std::vector<std::string> _workspaces;
-  m.lock();
-  for (auto it = workspaces.begin(); it != workspaces.end(); ++it) {
-    _workspaces.push_back(it->first);
-  }
-  m.unlock();
-  return _workspaces;
+	std::vector<std::string> _workspaces;
+	m.lock();
+	for (auto it = workspaces.begin(); it != workspaces.end(); ++it) {
+		_workspaces.push_back(it->first);
+	}
+	m.unlock();
+	return _workspaces;
 }
 
 void Server::newWorkspace(std::string name) {
-  m.lock();
-  auto it = workspaces.find(name);
+	m.lock();
+	auto it = workspaces.find(name);
 
-  if (it != workspaces.end()) {
-    workspace_tuple tuple = it->second;
-    std::get<1>(tuple) += 1;
-    it->second = tuple;
-  } else {
-    Workspace *wk = new Workspace();
-    workspace_tuple tuple = std::make_tuple(wk, 0);
-    workspaces.insert(std::make_pair(name, tuple));
-  }
-  m.unlock();
+	if (it != workspaces.end()) {
+		workspace_tuple tuple = it->second;
+		std::get<1>(tuple) += 1;
+		it->second = tuple;
+	} else {
+		Workspace *wk = new Workspace();
+		workspace_tuple tuple = std::make_tuple(wk, 0);
+		workspaces.insert(std::make_pair(name, tuple));
+	}
+	m.unlock();
 }
 
 void Server::closeWorkspace(std::string name) {
-  m.lock();
-  auto it = workspaces.find(name);
-  if (it == workspaces.end()) {
-    m.unlock();
-    throw std::runtime_error("No existe el workspace");
-  }
+	m.lock();
+	auto it = workspaces.find(name);
+	if (it == workspaces.end()) {
+		m.unlock();
+		throw std::runtime_error("No existe el workspace");
+	}
 
-  workspace_tuple tuple = it->second;
-  std::get<1>(tuple) -= 1;
-  it->second = tuple;
-  m.unlock();
+	workspace_tuple tuple = it->second;
+	std::get<1>(tuple) -= 1;
+	it->second = tuple;
+	m.unlock();
 }
 
 /*bool Server::checkExistence(std::string name) {
 
-}*/
+ }*/
 
 void Server::deleteWorkspace(std::string name) {
-  m.lock();
-  auto it = workspaces.find(name);
-  if (it == workspaces.end()) {
-    m.unlock();
-    throw std::runtime_error("No existe el workspace");
-  }
+	m.lock();
+	auto it = workspaces.find(name);
+	if (it == workspaces.end()) {
+		m.unlock();
+		throw std::runtime_error("No existe el workspace");
+	}
 
-  workspaces.erase(name);
-  m.unlock();
+	workspaces.erase(name);
+	m.unlock();
 }
 
-Object* Server::receiveCode(Object* context, std::string &code) {
-  Object *result;
-  try {
-    m.lock();
-    result = workspace.receive(context, code);
-    m.unlock();
-  } catch (...) {
-    m.unlock();
-    throw;
-  }
-
-  return result;
+Workspace* Server::getWorkspace(const std::string &idWk) {
+	auto it = workspaces.find(idWk);
+	if (it == workspaces.end()) {
+		std::string error = "El workspace " + idWk + " no existe";
+		throw std::runtime_error(error);
+	}
+	Workspace* _wk = std::get<0>(it->second);
+	return _wk;
 }
 
-Object* Server::receiveCode(std::string &code) {
-  Object *lobby = workspace.getLobby();
-  return receiveCode(lobby, code);
+std::string Server::receiveCode(const std::string &idWk, uint32_t &idObj, std::string &code) {
+	std::cout << "ID Objeto consultado: " << idObj << std::endl;
+	std::cout << "Objeto consultado: " << std::endl;
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+
+	std::string msg = "";
+	try {
+		m.lock();
+		Workspace* wk = getWorkspace(idWk);
+		Object *context = wk->findObjectById(idObj);
+		uint32_t idRet;
+		idRet = wk->receive(context, code);
+		Object *objRet = wk->findObjectById(idRet);
+		idObj = idRet;
+
+		std::cout << "ID Objeto respuesta: " << idObj << std::endl;
+		msg = ParserProtocoloServidor(objRet).getString();
+		m.unlock();
+	} catch (...) {
+		m.unlock();
+		throw;
+	}
+	return msg;
 }
 
-Object* Server::getLobby() {
-  return workspace.getLobby();
+std::string Server::getLobby(const std::string &idWk, uint32_t &idObj) {
+	idObj = ID_LOBBY;
+	return getObj(idWk, idObj);
 }
 
+std::string Server::getObj(const std::string &idWk, uint32_t &idObj) {
+	std::cout << "ID Objeto consultado: " << idObj << std::endl;
+	std::cout << "Objeto consultado: " << std::endl;
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+
+	Object* objRet = getWorkspace(idWk)->findObjectById(idObj);
+	return ParserProtocoloServidor(objRet).getString();
+}
+
+std::string Server::setObjName(const std::string &idWk, uint32_t &idObj, const std::string &cad) {
+	std::cout << "ID Objeto consultado: " << idObj << std::endl;
+	std::cout << "Objeto consultado: " << std::endl;
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+
+	Object* objRet = getWorkspace(idWk)->findObjectById(idObj);
+	objRet->setName(cad);
+	return ParserProtocoloServidor(objRet).getString();
+}
+
+std::string Server::setCodeSegment(const std::string &idWk, uint32_t &idObj, const std::string &cad) {
+	std::cout << "ID Objeto consultado: " << idObj << std::endl;
+	std::cout << "Objeto consultado: " << std::endl;
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+
+	Object* objRet = getWorkspace(idWk)->findObjectById(idObj);
+	objRet->setCodeSegment(cad);
+	return ParserProtocoloServidor(objRet).getString();
+}
+
+std::string Server::getSlotObj(const std::string &idWk, uint32_t &idObj, const std::string &cad) {
+	std::cout << "ID Objeto consultado: " << idObj << std::endl;
+	std::cout << "Objeto consultado: " << std::endl;
+	getWorkspace(idWk)->findObjectById(idObj)->printObj(std::vector<Object*> {});
+
+	Object* obj = getWorkspace(idWk)->findObjectById(idObj);
+	auto slots = obj->getSlots();
+	auto it = slots.find(cad);
+	if (it != slots.end()) {
+		Object* objRet = std::get<0>(it->second);
+		if (!objRet) {
+			throw std::runtime_error("El slot tiene un puntero nulo");
+		} else {
+			idObj = objRet->getId();
+			return ParserProtocoloServidor(objRet).getString();
+		}
+	} else {
+		throw std::runtime_error("El slot buscado no existe");
+	}
+}
