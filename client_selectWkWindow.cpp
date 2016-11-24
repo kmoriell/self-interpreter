@@ -1,6 +1,8 @@
 #include "client_selectWkWindow.h"
 
-SelectWkWindow::SelectWkWindow(Morph &morph, std::vector<std::string> &workspaces, ProxyServer &proxyServer)
+SelectWkWindow::SelectWkWindow(Morph &morph,
+                               std::vector<std::string> &workspaces,
+                               ProxyServer &proxyServer)
     : morph(morph),
       workspaces(workspaces),
       proxyServer(proxyServer) {
@@ -15,10 +17,10 @@ SelectWkWindow::SelectWkWindow(Morph &morph, std::vector<std::string> &workspace
 
   std::string cad = "";
   proxyServer.sendCmdMessage(AVAILABLE_WKS, cad);
-  drawWorkspaces();
 
   addWidgets();
   configureTreeView();
+  drawWorkspaces();
   show_all_children();
 }
 
@@ -67,40 +69,65 @@ void SelectWkWindow::configureTreeView() {
 }
 
 void SelectWkWindow::drawWorkspaces() {
-	m_refTreeModel->clear();
-	for(auto str : workspaces) {
-		  Gtk::TreeModel::Row row = *(m_refTreeModel->append());
-		  row[m_Columns.m_col_delete] = false;
-		  row[m_Columns.m_col_wkName] = str;
-	}
+  m_refTreeModel->clear();
+  for (auto str : workspaces) {
+    Gtk::TreeModel::Row row = *(m_refTreeModel->append());
+    row[m_Columns.m_col_delete] = false;
+    row[m_Columns.m_col_wkName] = str;
+  }
 }
 
 // Eventos
 void SelectWkWindow::btnRefreshWk_clicked() {
-	drawWorkspaces();
+  drawWorkspaces();
 }
+
 void SelectWkWindow::btnNewWk_clicked() {
-	drawWorkspaces();
+  std::string wkName = pTxtNewWk->get_text();
+  if (wkName.size() == 0) {
+    Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                              Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+    dialog.set_secondary_text(
+        "No se indico un nombre para el nuevo Workspace.");
+    dialog.run();
+    return;
+  }
+  proxyServer.sendCmdMessage(NEW_WK, wkName);
+  while (proxyServer.getFlag()) {
+  }
+
+  drawWorkspaces();
+  pTxtNewWk->set_text("");
 }
 
 void SelectWkWindow::treeView_toggled(const Glib::ustring &path) {
   Gtk::TreeIter iter;
-  std::cout << "toggled = " << path << std::endl;
 
   auto model = this->m_refTreeModel;
   if (model) {
     iter = model->get_iter(path);
 
-    bool checked = iter->get_value(m_Columns.m_col_delete);
-    /*proxyServer.sendCmdMessage(SWAP_MUTABILITY, text);
-     while (proxyServer.getFlag()) {
-     }
-     if (proxyServer.areThereErrors()) {
-     Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
-     Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
-     dialog.set_secondary_text(proxyServer.getErrors());
-     dialog.run();
-     }*/
+    std::string wkName = iter->get_value(m_Columns.m_col_wkName);
+    Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                              Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+    dialog.set_secondary_text("¿Desea borrar el Workspace " + wkName + "?");
+    Gtk::ResponseType resp = (Gtk::ResponseType) dialog.run();
+
+    if (resp == Gtk::RESPONSE_NO) {
+      iter->set_value(m_Columns.m_col_delete, false);
+      return;
+    }
+
+    proxyServer.sendCmdMessage(DELETE_WK, wkName);
+    while (proxyServer.getFlag()) {
+    }
+    if (proxyServer.areThereErrors()) {
+      Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                                Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+      dialog.set_secondary_text(proxyServer.getErrors());
+      dialog.run();
+    }
+    drawWorkspaces();
   }
 }
 
@@ -114,6 +141,11 @@ void SelectWkWindow::treeView_on_row_activated(const Gtk::TreeModel::Path& path,
         /*  << row[m_Columns.m_col_name] << */std::endl;
 
     Glib::ustring text = row[m_Columns.m_col_wkName];
+    std::string sText = std::string(text.c_str());
+
+    proxyServer.sendCmdMessage(LOAD_WK, sText);
+    while (proxyServer.getFlag()) {
+    }
 
     MainWindow* _window = new MainWindow(morph, proxyServer);
     _window->getWindow()->show();

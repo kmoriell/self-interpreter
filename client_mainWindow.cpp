@@ -16,6 +16,13 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer)
   configureTreeView();
   drawMorph();
 
+  /*Gdk::Geometry geo;
+  geo.screen_width(640);
+  geo.screen_height(480);*/
+
+
+  //pWindow->set_geometry_hints(nullptr, nullptr,Gdk::HINT_MAX_SIZE);
+
   pWindow->set_name("MyWindow");
   pTreeView->set_name("MyTreeView");
   //pGridSetObjName->set_name("GridSetObjName");
@@ -35,6 +42,7 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer)
       screen, m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   //refStyleContext = pTreeView->get_style_context();
   //refStyleContext->add_provider(m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
   show_all_children();
 }
 
@@ -62,6 +70,7 @@ void MainWindow::addWidgets() {
   refBuilder->get_widget("txtCodeSegment", pTxtCodeSegment);
 
   refBuilder->get_widget("m_Open", pMenuItemOpen);
+  refBuilder->get_widget("m_CloseWorkspace", pMenuItemCloseWorkspace);
 
   //refBuilder->get_widget("boxObject", pBoxObject);
 
@@ -111,45 +120,30 @@ void MainWindow::addWidgets() {
     pMenuItemOpen->signal_activate().connect(
         sigc::mem_fun(*this, &MainWindow::on_Open_selected));
   }
+
+  if (pMenuItemCloseWorkspace) {
+    pMenuItemCloseWorkspace->signal_activate().connect(
+        sigc::mem_fun(*this, &MainWindow::on_CloseWorkspace_selected));
+  }
 }
 
 void MainWindow::configureTreeView() {
   m_refTreeModel = Gtk::TreeStore::create(m_Columns);
   pTreeView->set_model(m_refTreeModel);
 
-  colSlotName.set_title("Slot");
-  colMutable.set_title("Mutable");
-  colObjName.set_title("Objeto");
-  colPreview.set_title("Vista Previa");
-
-  //colMutableCell.property_activatable() = true;
-
-  /*  colMutableCell.signal_toggled().connect(
-   sigc::mem_fun(*this, &MainWindow::cellMutable_toggled));*/
-
-  /*colSlotName.pack_start(colSlotNameCell, true);
-   colMutable.pack_start(colMutableCell, true);
-   colPreview.pack_start(colPreviewCell, true);
-   colObjName.pack_start(colObjNameCell, true);*/
-
-  // pTreeView->append_column(colSlotName);
-  //pTreeView->append_column(colMutable);
+  pTreeView->append_column_editable("[-]", m_Columns.m_col_delete);
   pTreeView->append_column("Slot", m_Columns.m_col_slotName);
   pTreeView->append_column_editable("Mutable", m_Columns.m_col_mutable);
   pTreeView->append_column("Objeto", m_Columns.m_col_objType);
   pTreeView->append_column("Vista Previa", m_Columns.m_col_preview);
-  //pTreeView->append_column(colObjName);
-  //pTreeView->append_column(colPreview);
 
-  ((Gtk::CellRendererToggle*) pTreeView->get_column_cell_renderer(1))
+  ((Gtk::CellRendererToggle*) pTreeView->get_column_cell_renderer(0))
+        ->signal_toggled().connect(
+        sigc::mem_fun(*this, &MainWindow::cellDelete_toggled));
+
+  ((Gtk::CellRendererToggle*) pTreeView->get_column_cell_renderer(2))
       ->signal_toggled().connect(
       sigc::mem_fun(*this, &MainWindow::cellMutable_toggled));
-
-  /*colSlotName.add_attribute(colSlotNameCell, "markup", 0);
-   //colMutable.add_attribute(colMutableCell, "activatable", 1);
-   colObjName.add_attribute(colObjNameCell, "text", 2);
-   colPreview.add_attribute(colPreviewCell, "text", 3);*/
-
 }
 
 void MainWindow::drawMorph() {
@@ -164,9 +158,9 @@ void MainWindow::drawMorph() {
     row = *(m_refTreeModel->append());
     std::string slotName;
     if (morph.isArgumentSlot(i))
-      slotName = ":" + morph.getSlotName(i);
+      slotName = OP_ARG + morph.getSlotName(i);
     else if (morph.isParentSlot(i))
-      slotName = morph.getSlotName(i) + "+";
+      slotName = morph.getSlotName(i) + OP_PARENT;
     else if (morph.isNativeMethodSlot(i))
       slotName = morph.getSlotName(i);
     else
@@ -182,25 +176,6 @@ void MainWindow::drawMorph() {
   pTextBuffer->set_text(morph.getCodeSegment());
 }
 
-void MainWindow::generatePopup() {
-  /*auto item = Gtk::manage(new Gtk::MenuItem("_Remover Slot", true));
-   item->signal_activate().connect(
-   sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic));
-   m_Menu_Popup.append(*item);
-
-   item = Gtk::manage(new Gtk::MenuItem("_Invertir Mutabilidad", true));
-   item->signal_activate().connect(
-   sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic));
-   m_Menu_Popup.append(*item);
-
-   item = Gtk::manage(new Gtk::MenuItem("_Ver objetos del slot", true));
-   item->signal_activate().connect(
-   sigc::mem_fun(*this, &MainWindow::on_menu_file_popup_generic));
-   m_Menu_Popup.append(*item);
-
-   m_Menu_Popup.accelerate(*this);
-   m_Menu_Popup.show_all();*/
-}
 
 Gtk::Window* MainWindow::getWindow() {
   return pWindow;
@@ -241,7 +216,17 @@ void MainWindow::btnLobby_clicked() {
 }
 
 void MainWindow::btnGoBack_clicked() {
-
+  std::string empty;
+  proxyServer.sendCmdMessage(GO_BACK, empty);
+  while (proxyServer.getFlag()) {
+  }
+  if (proxyServer.areThereErrors()) {
+    Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                              Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+    dialog.set_secondary_text(proxyServer.getErrors());
+    dialog.run();
+  }
+  drawMorph();
 }
 void MainWindow::btnRefresh_clicked() {
 
@@ -316,39 +301,21 @@ void MainWindow::on_row_activated(const Gtk::TreeModel::Path& path,
   }
 }
 
-void MainWindow::on_menu_file_popup_generic() {
-  std::cout << "A popup menu item was selected." << std::endl;
+void MainWindow::on_CloseWorkspace_selected() {
+  Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                            Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+  dialog.set_secondary_text("¿Desea abandonar el Workspace?");
+  Gtk::ResponseType resp = (Gtk::ResponseType) dialog.run();
 
-  auto refSelection = pTreeView->get_selection();
-  if (refSelection) {
-    Gtk::TreeModel::iterator iter = refSelection->get_selected();
-    if (iter) {
-      Gtk::TreeModel::Row row = *iter;
-      auto id = row[m_Columns.m_col_slotName];
-      std::cout << "  Selected ID=" << id << std::endl;
-    }
+  if (resp == Gtk::RESPONSE_NO) {
+    return;
   }
-}
 
-bool MainWindow::on_button_press_event(GdkEventButton* button_event) {
-  /*	bool return_value = false;
-
-   //Call base class, to allow normal handling,
-   //such as allowing the row to be selected by the right-click:
-   return_value = Gtk::Window::on_button_press_event(button_event);
-
-   //Then do our custom stuff:
-   if ((button_event->type == GDK_BUTTON_PRESS)
-   && (button_event->button == 3)) {
-   m_Menu_Popup.popup_at_pointer((GdkEvent*) button_event);
-
-   // Menu::popup_at_pointer() is new in gtkmm 3.22.
-   // If you have an older revision, try this:
-   //m_Menu_Popup.popup(button_event->button, button_event->time);
-   }
-
-   return return_value;*/
-  return false;
+  std::string emptyString = "";
+  proxyServer.sendCmdMessage(CLOSE_WK, emptyString);
+  while (proxyServer.getFlag()) {
+  }
+  this->getWindow()->close();
 }
 
 void MainWindow::on_Open_selected() {
@@ -405,7 +372,7 @@ void MainWindow::cellMutable_toggled(const Glib::ustring &path) {
     iter = model->get_iter(path);
 
     bool checked = iter->get_value(m_Columns.m_col_mutable);
-    std::string text = checked ? TRUE_BIN : FALSE_BIN;
+    std::string text = iter->get_value(m_Columns.m_col_slotName);
     proxyServer.sendCmdMessage(SWAP_MUTABILITY, text);
       while (proxyServer.getFlag()) {
       }
@@ -414,7 +381,38 @@ void MainWindow::cellMutable_toggled(const Glib::ustring &path) {
                                   Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
         dialog.set_secondary_text(proxyServer.getErrors());
         dialog.run();
+        iter->set_value(m_Columns.m_col_mutable, checked);
       }
+  }
+}
+
+void MainWindow::cellDelete_toggled(const Glib::ustring &path) {
+  Gtk::TreeIter iter;
+  auto model = this->m_refTreeModel;
+  if (model) {
+    iter = model->get_iter(path);
+
+    std::string slotName = iter->get_value(m_Columns.m_col_slotName);
+    Gtk::MessageDialog dialog(*this, "Confirmar", false,
+                                  Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+        dialog.set_secondary_text("¿Desea borrar el slot " + slotName + "?");
+        Gtk::ResponseType resp = (Gtk::ResponseType) dialog.run();
+
+        if (resp == Gtk::RESPONSE_NO) {
+          iter->set_value(m_Columns.m_col_delete, false);
+          return;
+        }
+    proxyServer.sendCmdMessage(REMOVE_SLOT, slotName);
+      while (proxyServer.getFlag()) {
+      }
+      if (proxyServer.areThereErrors()) {
+        Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                                  Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+        dialog.set_secondary_text(proxyServer.getErrors());
+        dialog.run();
+        iter->set_value(m_Columns.m_col_delete, false);
+      }
+      drawMorph();
   }
 }
 

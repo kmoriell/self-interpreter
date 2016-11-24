@@ -30,8 +30,6 @@ class MainWindow : public Gtk::Window {
   Gtk::Entry *pTxtObjName = nullptr;
   Gtk::Entry *pTxtSlot = nullptr;
 
-  //Boxes
-  //Gtk::Box *pBoxObject = nullptr;
 
   Gtk::TreeView *pTreeView = nullptr;
   //Gtk::MenuButton *pMenuButton = nullptr;
@@ -41,20 +39,7 @@ class MainWindow : public Gtk::Window {
 
   // Menu
   Gtk::MenuItem *pMenuItemOpen = nullptr;
-  //Gtk::MenuItem *pMenuItemExit = nullptr;
-
-  // Cuadro de dialogo abrir
-
-  // Columnas y celdas
-  Gtk::TreeViewColumn colSlotName;
-  Gtk::TreeViewColumn colMutable;
-  Gtk::TreeViewColumn colObjName;
-  Gtk::TreeViewColumn colPreview;
-
-  Gtk::CellRendererText colSlotNameCell;
-  Gtk::CellRendererToggle colMutableCell;
-  Gtk::CellRendererText colPreviewCell;
-  Gtk::CellRendererText colObjNameCell;
+  Gtk::MenuItem *pMenuItemCloseWorkspace = nullptr;
 
   void addWidgets();
   void configureTreeView();
@@ -70,12 +55,13 @@ class MainWindow : public Gtk::Window {
   void btnSetSlot_clicked();
   void btnSetCodeSegment_clicked();
 
-  void on_menu_file_popup_generic();
-  bool on_button_press_event(GdkEventButton* button_event);
   void on_row_activated(const Gtk::TreeModel::Path& path,
                         Gtk::TreeViewColumn* column);
   void on_Open_selected();
+  void on_CloseWorkspace_selected();
   void cellMutable_toggled(const Glib::ustring &path);
+  void cellDelete_toggled(const Glib::ustring &path);
+
   Morph &morph;
   ProxyServer &proxyServer;
  public:

@@ -21,6 +21,7 @@
 #define REMOVE_SLOT 0x15
 #define SWAP_MUTABILITY 0x16
 #define GET_SLOT_OBJ 0x17
+#define GO_BACK 0x18
 
 //Los comandos 0x[2]<x> comandos relacionados a solicitudes de Workspaces
 #define AVAILABLE_WKS 0x20

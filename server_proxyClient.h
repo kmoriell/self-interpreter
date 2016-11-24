@@ -7,7 +7,9 @@ class ProxyClient: public Proxy {
 private:
 	Server &server;
 	std::string idWorkspace;
-	uint32_t idObj = ID_LOBBY;
+	std::stack<uint32_t> seenObj;
+
+	//uint32_t idObj = ID_LOBBY;
 	Socket* sckptr = nullptr;
 public:
 	ProxyClient(Socket &socket, Server &server);
@@ -22,12 +24,15 @@ private:
 	void setCodeSegment(const std::string &cad);
 	void getSlotObj(const std::string &cad);
 	void swapMutability(const std::string &cad);
+	void goBack();
 
 	void availableWks();
 	void loadWks(const std::string &cad);
 	void newWks(const std::string &cad);
 	void deleteWks(const std::string &cad);
-	void closeWks(const std::string &cad);
+	void closeWks();
+
+	uint32_t topObj();
 };
 
 #endif /* SERVER_PROXYCLIENT_H_ */
