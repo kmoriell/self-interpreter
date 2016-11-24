@@ -352,9 +352,9 @@ void Object::disableNativeMethod(std::string methodName) {
   fpoint->second = tuple;
 }
 
-/*void Object::addClonedObj(Object *obj) {
- //clonedObjects.push(obj);
- }*/
+void Object::addCreatedObject(Object *obj) {
+  createdObjects.insert(std::make_pair(obj, false));
+}
 
 void Object::collect_internal() {
   // Recorro todos los slots,

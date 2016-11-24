@@ -80,7 +80,7 @@ CFLAGS += $(shell pkg-config --cflags gtkmm-3.0) \
 	-DGTK_DISABLE_DEPRECATED	\
 	-DGDKMM_DISABLE_DEPRECATED 	\
 	-DGTKMM_DISABLE_DEPRECATED
-LDFLAGS += $(shell pkg-config --libs gtkmm-3.0)
+LDFLAGS_CLIENTE += $(shell pkg-config --libs gtkmm-3.0)
 endif
 
 # Linkea con libm de ser necesario.
@@ -147,7 +147,7 @@ client: $(o_common_files) $(o_client_files)
 		if [ -n "$(directorios)" ]; then echo "Directorios encontrados: $(directorios)"; fi; \
 		false; \
 	fi >&2
-	$(LD) $(o_common_files) $(o_client_files) -o client $(LDFLAGS)
+	$(LD) $(o_common_files) $(o_client_files) -o client $(LDFLAGS) $(LDFLAGS_CLIENTE)
 
 server: $(o_common_files) $(o_server_files)
 	@if [ -z "$(o_server_files)" ]; \

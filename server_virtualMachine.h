@@ -6,11 +6,8 @@
 
 class VirtualMachine {
 private:
-	//std::stack<Object*> objects;
 	Object* lobby = nullptr;
 public:
-	~VirtualMachine();
-
 	Object *createNil();
 	Object *createString(std::string &strString);
 	Object *createNumber(float number);
