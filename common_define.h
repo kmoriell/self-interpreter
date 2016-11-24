@@ -24,7 +24,7 @@
 //Protocolo
 const std::string FALSE_BIN = "0";
 const std::string TRUE_BIN = "1";
-#define CHAR_SEPARADOR '@'
+#define CHAR_SEPARADOR '~'
 
 //Operadores
 const std::string OP_SUMA = "+";

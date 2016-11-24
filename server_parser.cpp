@@ -17,9 +17,18 @@ Parser::Parser(VirtualMachine &vm) :
 }
 
 std::vector<Object*> Parser::run(std::string &cad) {
+	//Si se utiliza el caracter especial de protocolo de lanza exccepcion
+	if (cad.find(CHAR_SEPARADOR) != std::string::npos) {
+		std::stringstream ss;
+		std::string s;
+		char c = CHAR_SEPARADOR;
+		ss << c;
+		ss >> s;
+		std::string msg = "El caracter especial " + s + " está prohibido por protocolo.";
+		throw std::runtime_error(msg);
+	}
+
 	this->cad = cad;
-	//std::cout << "Contexto: " << this->context << "<<< " << std::endl;
-	//std::cout << ">>> " << *this->cad << "<<< " << std::endl;
 	std::vector<Object*> objects = script();
 	return objects;
 }
