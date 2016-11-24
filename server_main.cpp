@@ -3,79 +3,39 @@
 
 #include "server_accepter.h"
 #include "server_server.h"
-#include "common_define.h"
 
-void exit_routine(Accepter* connections_accepter) {
-	// mando la señal para interrumpir el aceptador de conexiones
-	connections_accepter->interrupt();
-	connections_accepter->join();
-}
+#define SERVER_PARAMS 3
+const char* SERVER_MODE_SERVER = "s";
+const char* SERVER_MODE_FILE = "f";
+#define RET_OK 0
+#define RET_NOK 1
+
+#include "server_modeSelector.h"
 
 int main(int argc, char **argv) {
-	//Bipaseamos el server-client para testear el parser localmente
-	std::string cad;
-	if (argc != 2) {
-		std::cerr << "Forma de uso: >>> ./server <numeroPuerto>" << std::endl;
-		return 1;
-	}
-
 	try {
-		int port = std::stoi(argv[1]);
-
-		Server server;
-
-		Accepter *connections_accepter = new Accepter(port, server);
-		// Este hilo va a estar corriendo durante toda la ejecucion del programa
-		connections_accepter->start();
-
-		char c = '\0';
-		while (c != 'q') {
-			std::cin.get(c);
+		if (argc == SERVER_PARAMS) {
+			char* mode = *(argv + 1);
+			if (strcmp(mode, SERVER_MODE_SERVER) == 0) {
+				int port = std::stoi(*(argv + 2));
+				ModeSelector modeSelector(port);
+			} else if (strcmp(mode, SERVER_MODE_FILE) == 0) {
+				std::string filename = std::string(*(argv + 2));
+				ModeSelector modeSelector(filename);
+			} else {
+				std::cerr
+						<< "FForma de uso: >>> ./server <modo s|f> <port|file>"
+						<< std::endl;
+			}
+		} else {
+			std::cerr << "jForma de uso: >>> ./server <modo s|f> <port|file>"
+					<< std::endl;
+			return RET_NOK;
 		}
-		exit_routine(connections_accepter);
-		delete connections_accepter;
 	} catch (const std::runtime_error &e) {
 		std::cout << "Error. " << std::endl << e.what() << std::endl;
 	} catch (...) {
 		std::cout << "Error desconocido." << std::endl << std::endl;
 	}
-
-	// >>> .\tp server pruebas/*.self
-	/*if (argc != 2) {
-	 std::cout << "Falta el archivo a procesar." << std::endl;
-	 return 1;
-	 }
-
-	 std::ifstream filein(argv[1]);
-	 std::string script, x;
-	 while (filein >> x)
-	 script += x + " ";
-
-	 //std::cout << "SCRIPT A EJECUTAR: " << std::endl << script << std::endl;
-	 std::string cad;
-	 Object *lobby = new Object();
-	 lobby->setName(LOBBY);
-	 std::cout << "Lobby context: " << lobby << std::endl;
-	 //El slot lobby es necesario para cuando se realizan llamadas explicitas a lobby.
-	 lobby->addSlot(LOBBY, lobby, false, false, false);
-
-	 VirtualMachine vm;
-	 Parser parser(vm);
-	 parser.setContext(lobby);
-
-	 Object* obj;
-	 std::vector<Object*> _vector = parser.run(script);
-	 ;
-	 obj = _vector[_vector.size() - 1];
-	 std::cout << std::endl << "Objeto Salida para dibujar: " << std::endl;
-	 obj->printObj(std::vector<Object*> { });*/
-
-	/*std::cout << std::endl << "Dibujando.. " << std::endl;
-	 Morph unMorph;
-	 std::string cadMorph = ParserProtocoloServidor(obj).getString();
-	 ParserProtocoloCliente(unMorph, cadMorph);
-	 delete lobby;
-	 return 0;*/
-
-	return 0;
+	return RET_OK;
 }

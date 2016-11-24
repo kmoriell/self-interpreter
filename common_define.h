@@ -67,9 +67,13 @@ const std::string ADD_SLOTS_METHOD = "_AddSlots";
 const std::string REMOVE_SLOTS_METHOD = "_RemoveSlots";
 const std::string COLLECT_METHOD = "collect";
 
+
 //Valores defaults para cuando se crean slots con objetos tipados
 const bool BOOLEAN_OBJ_DEFAULT = false;
 const float NUMBER_OBJ_DEFAULT = 0;
 const std::string STRING_OBJ_DEFAULT = "'insertar Cadena'";
+
+//Server
+#define SERVER_QUIT_CHAR 'q'
 
 #endif /* _COMMON_DEFINE_H_ */
