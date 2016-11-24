@@ -10,16 +10,31 @@
 
 class Object {
  public:
+  /** Definicion del tipo delegate que es un puntero a funcion
+   * que tiene la forma Object* funcion (const std::vector<Object*>&)
+   */
   typedef Object* (Object::*delegate)(const std::vector<Object*>&);
 
-  /* puntero a Object con la referencia al objeto*
+  /** Formato que tiene el slot.
+   * puntero a Object con la referencia al objeto*
    * booleano que indica si es mutable o no
    * booleano que indica si el objeto apuntado es un parent slot
    * booleano que indica si esta implementado nativamente
    * booleano que indica si es un argumento (:)
    */
   typedef std::tuple<Object*, bool, bool, bool> slot_t;
+
+  /** Formato que representa el diccionario interno.
+   * Con string como clave que representa el nombre del
+   * slot, y slot_t que representa el valor.
+   */
   typedef std::map<std::string, slot_t> slot_map;
+
+  /** Formato que representa las funciones nativas que estan
+   * habilitadas.
+   * En la primera parte de la tupla esta el puntero a funcion
+   * En la segunda un booleano que indica si esta habilitado o no.
+   */
   typedef std::tuple<delegate, bool> fpointTuple;
  private:
   slot_map slots;
@@ -143,7 +158,7 @@ class Object {
 
   /** Determina si es un DataObjecto o un MethodObject.
    * @param messageName nombre del slot.
-   *
+   * \retval true si es data object, false si no lo es.
    */
   bool isDataObject(std::string messageName);
 
@@ -152,10 +167,11 @@ class Object {
   /** Metodo principal que sirve para recibir mensajes. Devuelve un Object*
    * @param messageName nombre del slot que va a recibir el mensaje.
    * @param args vector con Object* con los argumentos para pasar.
-   *
+   * @param clone indica si hay que clonar o no.
+   * \retval Object con el slot solicitado con los argumentos procesados.
    */
   Object* recvMessage(std::string messageName, std::vector<Object*> args,
-                      bool clonar);
+                      bool clone);
 
   /** Metodo nativo para clonar el objeto.
    * @param args vector de Object* vacio.
@@ -185,22 +201,29 @@ class Object {
 
   /** Metodo nativo para efectuar la suma
    * @param args vector de Object* vacio.
+   * \retval Object con el resultado de la operacion. Se opera sobre
+   * el primer operando, es decir, sobre el llamante del metodo.
    */
   Object* operator+(const std::vector<Object*>& args);
 
   /** Metodo nativo para efectuar la resta
    * @param args vector de Object* vacio.
+   * \retval Object con el resultado de la operacion. Se opera sobre
+   * el primer operando, es decir, sobre el llamante del metodo.
    */
   Object* operator-(const std::vector<Object*>& args);
 
   /** Metodo nativo para efectuar la division
    * @param args vector de Object* vacio.
+   * \retval Object con el resultado de la operacion. Se opera sobre
+   * el primer operando, es decir, sobre el llamante del metodo.
    */
   Object* operator/(const std::vector<Object*>& args);
 
   /** Habilita el metodo nativo.
    * @param methodName nombre del metodo a habilitar.
-   *
+   * \retval Object con el resultado de la operacion. Se opera sobre
+   * el primer operando, es decir, sobre el llamante del metodo.
    */
   void enableNativeMethod(std::string methodName);
 

@@ -242,34 +242,38 @@ bool Object::isNativeMethod(std::string messageName) {
 }
 
 Object* Object::recvMessage(std::string messageName, std::vector<Object*> args,
-                            bool clonar) {
+                            bool clone) {
+  Object* message;
+  delegate fpointer;
 
-// Aca tengo mi puntero a objeto, lo que tendria que hacer es ejecutar el codigo
-// del mensaje
-//Object* foundObject = std::get < 0 > (it->second);
-  Object* message;  // = nullptr;
-  delegate fpointer;  // = nullptr;
-
+  // Busco el slot solicitado
   if (!findObject(messageName, message, fpointer)) {
     std::string error = messageName + " no encontrado.";
     throw std::runtime_error(error);
   }
 
-// es un puntero a funcion
+  // si fpointer no es nullptr, es un puntero a una funcion nativa
   if (fpointer != nullptr) {
-    if (clonar)
+    if (clone)
       message = this->clone(std::vector<Object*> { });
     else
       message = this;
+
+    // Devuelvo el resultado de la llamada a la funcion
+    // nativa.
     return (message->*fpointer)(args);
   }
 
-// Una vez que tengo el objeto, necesito los argumentos, si es que tiene
-// y les cambio el valor con los argumentos que se pasaron como parametro
-  if (clonar)
+  // Si hay que clonar, clono el mensaje para luego modificarle
+  // los argumentos
+  if (clone)
     message = message->clone(std::vector<Object*> { });
 
+  // Una vez que tengo el objeto, necesito los argumentos, si es que tiene
+  // y les cambio el valor con los argumentos que se pasaron como parametro
   slot_map object_slots = message->slots;
+
+  // Contador de argumentos
   uint32_t argsCount = 0;
   for (auto object_slots_it = object_slots.begin();
       object_slots_it != object_slots.end(); ++object_slots_it) {
@@ -283,23 +287,28 @@ Object* Object::recvMessage(std::string messageName, std::vector<Object*> args,
     bool __isArg = std::get < 3 > (object_slots_it->second);
 
     if (__isArg && __isMutable) {
-      slot_t tupla = object_slots_it->second;
+      slot_t tuple = object_slots_it->second;
 
-      Object *__object = ((Object*) std::get < 0 > (tupla));
+      Object *__object = ((Object*) std::get < 0 > (tuple));
       __object = args[argsCount];
-      std::get < 0 > (tupla) = __object;
+      std::get < 0 > (tuple) = __object;
 
       // actualizo el valor del mapa
-      object_slots_it->second = tupla;
+      object_slots_it->second = tuple;
       argsCount++;
     }
   }
 
+  // Si hay argumentos significa que hay que cambiar
+  // los punteros de los argumentos.
   if (argsCount != 0) {
     message->slots = object_slots;
     return message;
   }
 
+  // Busco en los slots el mensaje, lo que se esta implementando aca
+  // es un cambio de valor de un objeto mutable.
+  // Si no es mutable, genera excepcion.
   auto it = slots.find(messageName);
   if (it != slots.end() && args.size() > 0) {
     slot_t tuple = it->second;
@@ -340,6 +349,7 @@ void Object::enableNativeMethod(std::string methodName) {
   std::get < 1 > (tuple) = true;
   fpoint->second = tuple;
 }
+
 void Object::disableNativeMethod(std::string methodName) {
   auto fpoint = nativeMethods.find(methodName);
   if (fpoint == nativeMethods.end()) {
@@ -362,11 +372,15 @@ void Object::collect_internal() {
       ++object_slots_it) {
     slot_t tuple = object_slots_it->second;
 
-    // Si es parent slot
+    // Si no es parent slot, llamo recursivamente
+    // a collect_internal para ir marcando los objetos
+    // que no tienen acceso desde lobby.
     if (!std::get < 2 > (tuple)) {
       Object* slotObj = std::get < 0 > (tuple);
       slotObj->collect_internal();
 
+      // busco el objeto (por su direccion de memoria) y
+      // lo marco, indicando que se puede acceder desde lobby.
       auto it = lobby->createdObjects.find(slotObj);
       it->second = true;
     }
@@ -378,6 +392,9 @@ Object* Object::collect(const std::vector<Object*>& args) {
   collect_internal();
 
   std::vector<Object*> deleteObjects;
+  // Recorro los objetos creados, el unico objeto que
+  // va a tener es lobby. Reviso que no esten marcados
+  // los guardo en un vector para luego hacerles el delete.
   for (auto it = createdObjects.begin(); it != createdObjects.end(); ++it) {
     if (!it->second) {
       deleteObjects.push_back(it->first);
