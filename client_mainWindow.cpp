@@ -38,8 +38,8 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer)
   //auto display = Gdk::Display::get_default();
   //auto screen = display->get_default_screen();
 
-  /*refStyleContext->add_provider_for_screen(
-      screen, m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);*/
+  refStyleContext->add_provider_for_screen(
+      screen, m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   //refStyleContext = pTreeView->get_style_context();
   //refStyleContext->add_provider(m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
@@ -131,7 +131,7 @@ void MainWindow::configureTreeView() {
   m_refTreeModel = Gtk::TreeStore::create(m_Columns);
   pTreeView->set_model(m_refTreeModel);
 
-  pTreeView->append_column_editable("[-]", m_Columns.m_col_delete);
+  pTreeView->append_column_editable("[ - ]", m_Columns.m_col_delete);
   pTreeView->append_column("Slot", m_Columns.m_col_slotName);
   pTreeView->append_column_editable("Mutable", m_Columns.m_col_mutable);
   pTreeView->append_column("Objeto", m_Columns.m_col_objType);
