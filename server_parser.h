@@ -7,11 +7,6 @@
 #include "server_virtualMachine.h"
 
 class Parser {
-public:
-	Parser(VirtualMachine &vm);
-	std::vector<Object*> run(std::string &cad);
-	void setContext(Object* context);
-
 private:
 	Object* context;
 	std::string cad;
@@ -19,6 +14,14 @@ private:
 	bool debug = false;
 	int flagExecute;
 	VirtualMachine &vm;
+
+public:
+	Parser(VirtualMachine &vm);
+	std::vector<Object*> run(std::string &cad);
+	void setContext(Object* context);
+
+
+private:
 	std::vector<Object*> script();
 	Object* expression();
 	Object* expressionCP();
@@ -27,7 +30,6 @@ private:
 	Object* binaryMessage();
 	Object * recibirMensaje(Object* obj, std::string strName,
 			std::vector<Object*> &args);
-	Object * recibirMensaje2(Object* obj, std::string strName, std::vector<Object*> &args);
 	Object* unaryMessage();
 	Object* receiver();
 	bool slotList(Object* objContenedor);

@@ -17,14 +17,15 @@ Parser::Parser(VirtualMachine &vm) :
 }
 
 std::vector<Object*> Parser::run(std::string &cad) {
-	//Si se utiliza el caracter especial de protocolo de lanza exccepcion
+	//Si se utiliza el caracter especial de protocolo se lanza excepcion
 	if (cad.find(CHAR_SEPARADOR) != std::string::npos) {
 		std::stringstream ss;
 		std::string s;
 		char c = CHAR_SEPARADOR;
 		ss << c;
 		ss >> s;
-		std::string msg = "El caracter especial " + s + " está prohibido por protocolo.";
+		std::string msg = "El caracter especial " + s
+				+ " está prohibido por protocolo.";
 		throw std::runtime_error(msg);
 	}
 
@@ -102,11 +103,13 @@ Object * Parser::expressionP() {
 	if (isString(P_LEFT) and ((obj = expression()) != nullptr)
 			and isString(P_RIGHT))
 		return obj;
+
 	pCad = _pCad;
 	return obj;
 }
 
 Object * Parser::keywordMessage() {
+	//Los keywordMessage solo soportan hasta un argumento.
 	if (debug)
 		std::cout << "keywordMessage pos: " << pCad << std::endl;
 
@@ -117,7 +120,6 @@ Object * Parser::keywordMessage() {
 
 	if ((obj = receiver()) != nullptr and lowerKeyword(strLowerKeyword)
 			and isString(OP_ARG) and (arg = expressionCP()) != nullptr) {
-		//std::cout << "soy binaryMessage pos: " << pCad << std::endl;
 		std::vector<Object*> args = { arg };
 		obj = recibirMensaje(obj, strLowerKeyword, args);
 		if (obj != nullptr)
@@ -127,7 +129,6 @@ Object * Parser::keywordMessage() {
 
 	if (lowerKeyword(strLowerKeyword) and isString(OP_ARG) and (arg =
 			expressionCP()) != nullptr) {
-		//std::cout << "soy binaryMessage pos: " << pCad << std::endl;
 		std::vector<Object*> args = { arg };
 		obj = recibirMensaje(context, strLowerKeyword, args);
 		if (obj != nullptr)
@@ -149,7 +150,6 @@ Object * Parser::binaryMessage() {
 
 	if ((obj = receiver()) != nullptr and operador(strOp) and (arg =
 			expressionCP()) != nullptr) {
-		//std::cout << "soy binaryMessage pos: " << pCad << std::endl;
 		std::vector<Object*> args = { arg };
 		obj = recibirMensaje(obj, strOp, args);
 		if (obj != nullptr)
@@ -186,35 +186,8 @@ Object * Parser::unaryMessage() {
 	return nullptr;
 }
 
-Object * Parser::recibirMensaje2(Object* obj, std::string strName,
-		std::vector<Object*> &args) {
-	throw std::runtime_error("invalido");
-	if (flagExecute == 1) {
-		Object* objMessage = obj->recvMessage(strName, args, false);
-		std::string code = objMessage->getCodeSegment();
-		if (code.size() > 0) {
-			//El objeto mensaje es un method object
-			Parser unParser(vm);
-			unParser.setContext(objMessage);
-			objMessage->addSlot("self", obj, true, true, false);
-			std::vector<Object*> _vector = unParser.run(code);
-			obj = _vector[_vector.size() - 1];
-			//objMessage->removeSlot("self");
-		} else {
-			//El objeto mensaje es un data object.
-			obj = objMessage;
-		}
-	}
-	// Si no pudo ejecutar el codigo del objeto mensaje devuelve el objeto mensaje.
-	//todo verificar si esto esta bien o si se deberia devolver un nilObjk()
-	return obj;
-}
-
-//2da version del recibirMensaje, se implementara a futuro
-//Con la version actual hay un problema con la clonacion de los method objects porque no se detectan correctamente
 Object * Parser::recibirMensaje(Object* obj, std::string strName,
 		std::vector<Object*> &args) {
-	//std::cout << "recibirMensaje" << std::endl;
 	if (flagExecute == 1) {
 //La asignacion se realiza en el recv_message cuando se le pasa un argumento a un objeto sin argumentos
 		/* El recv message lo que hace es lo siguiente:
@@ -245,36 +218,27 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
 
 		if (!obj->isDataObject(strName)) {
 			//El objeto mensaje es un method object
-			if (strName == "_AddSlots" || strName == "_RemoveSlots"
-					|| strName == "printObj" || strName == "print"
-					|| strName == "clone" || strName == "collect") {
-				//std::cout << strName << " no será clonado por ser method object que no se clona."	<< std::endl;
-			  obj = obj->recvMessage(strName, args, false);
-			  /*if (strName == "clone")
-			    lobby->addClonedObj(obj);*/
+
+			//Algunos métodos nativos se clonan y otros no
+			//Pero todos los métodos nativos son considerados method objects.
+			if (strName == ADD_SLOTS_METHOD || strName == REMOVE_SLOTS_METHOD
+					|| strName == PRINTOBJ_METHOD || strName == PRINT_METHOD
+					|| strName == CLONE_METHOD || strName == COLLECT_METHOD) {
+				obj = obj->recvMessage(strName, args, false);
 				return obj;
 			}
 
 			Object* objMessage = obj->recvMessage(strName, args, true);
-			//lobby->addClonedObj(objMessage);
-
 			std::string code = objMessage->getCodeSegment();
 
 			Parser unParser(vm);
 			unParser.setContext(objMessage);
-			objMessage->addSlot("self", obj, true, true, false);
-			//objMessage->printObj(std::vector<Object*> { });
-			//std::cout << "C. " << std::endl;
+			objMessage->addSlot(SELF, obj, true, true, false);
 			std::vector<Object*> _vector = unParser.run(code);
-			objMessage->removeSlot("self");
+			objMessage->removeSlot(SELF);
 			obj = _vector[_vector.size() - 1];
-
-			//std::cout << "D. " << std::endl;
-
-			//std::cout << std::endl << "Objeto Recibido de la salida del codesegment: " << std::endl;
-			//obj->printObj(std::vector<Object*>{});
 		} else {
-			//std::cout << strName << " no será clonado por ser data object."<< std::endl;
+			//El mensaje no será clonado por ser un data object.
 			obj = obj->recvMessage(strName, args, false);
 		}
 		//obj->printObj(std::vector<Object*>{});
@@ -385,8 +349,8 @@ bool Parser::name(std::string &strName) {
 		return true;
 }
 
-//todo //Asi como esta soporta strings con espacios en medio //No soporta 'hola "'" zaraza' -> falta un detector de doble comilla
 std::string Parser::string() {
+	//No soporta strings con comillas simples escapeadas por comillas dobles.
 	if (debug)
 		std::cout << "string pos: " << pCad << std::endl;
 
@@ -413,8 +377,8 @@ std::string Parser::string() {
 	return strString;
 }
 
-//todo //Por ahora solo soporta numeros enteros positivos
 bool Parser::number(float &number) {
+	//No soporta números que no sean enteros.
 	if (debug)
 		std::cout << "number pos: " << pCad << std::endl;
 
@@ -518,13 +482,11 @@ Object * Parser::objectObj() {
 bool Parser::slotList(Object* objContenedor) {
 	if (debug)
 		std::cout << "slotList pos: " << pCad << std::endl;
-	//int _pCad = pCad; //checkpoint
 	int tipoSlot; //0 normal, 1 argumento, 2 parent
 	std::string strName;
 	std::string strOpSlot;
 	Object* objSlot;
 
-	//todo, quedo medio negro, hay que cambiar las definiciones de tipoSlot
 	int pLastSlot = pCad;
 	while (pCad < cad.size()) {
 		if (slotNameExtended(tipoSlot, strName) and (operadorSlot(strOpSlot))
@@ -566,9 +528,8 @@ bool Parser::slotList(Object* objContenedor) {
 			}
 		}
 	}
-	//es equivalente a decir que el slotlist esta vacio
-	//por eso se devuelve true, porque es una opcion válida
-	//pCad = _pCad;
+	//Si no se encontro una sintaxis válida se da por supuesto
+	//que el slotlist está vacio, lo cual es una opción válida
 	return true;
 }
 
@@ -582,6 +543,8 @@ bool Parser::slotNameExtended(int &tipoSlot, std::string &strName) {
 		tipoSlot = 1;
 	} else {
 		pCad = _pCad;
+		//Se agrega el soporte de operadores en los nombres de slots
+		//que por enunciado no estaban soportados
 		if (name(strName) and isString(OP_PARENT)) {
 			tipoSlot = 2;
 		} else {
@@ -594,7 +557,6 @@ bool Parser::slotNameExtended(int &tipoSlot, std::string &strName) {
 	return true;
 }
 
-//todo falta name bool
 Object * Parser::constant() {
 	if (debug)
 		std::cout << "constant pos: " << pCad << std::endl;
@@ -775,14 +737,12 @@ Object * Parser::nameObj(Object* &context) {
 	std::string strName;
 
 	if (name(strName)) {
-		//std::cout << strName << " es name. pos: " << pCad << std::endl;
 		if (flagExecute == 1) {
 			std::vector<Object*> args = { };
 			obj = recibirMensaje(context, strName, args);
-			//obj = context->recvMessage(strName, std::vector<Object*> { });
 		} else {
 			//Se utiliza cuando no se debe ejecutar el codigo
-			//std::cout <<" no ejecutar: " << std::endl;
+			//Pero se debe devolver algo válido.
 			obj = vm.createNil();
 		}
 	} else

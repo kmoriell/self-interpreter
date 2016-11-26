@@ -11,7 +11,7 @@ Workspace::Workspace() {
 }
 
 Workspace::~Workspace() {
-  lobby->collect(std::vector<Object*>{});
+	lobby->collect(std::vector<Object*> { });
 	delete lobby;
 }
 
@@ -21,15 +21,9 @@ uint32_t Workspace::receive(Object* context, std::string &code) {
 	std::vector<Object*> objs = parser.run(code);
 	int size = objs.size() - 1;
 	if (size >= 0) {
-		std::cout << "Salida del parser: " << std::endl;
-		objs[size]->printObj(std::vector<Object*> {});
-		std::cout << "IDObj Salida del parser: " << objs[size]->getId() << std::endl;
 		return objs[size]->getId();
-	}
-	throw std::runtime_error("Error de sintaxis");
-	//selfInstr += code;
-	// TODO: terminar de definir el string devuelto
-	//return "";
+	} else
+		throw std::runtime_error("Error de sintaxis");
 }
 
 Object* Workspace::getLobby() {

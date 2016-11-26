@@ -8,7 +8,7 @@ lobby _AddSlots:
 		x <- 3.
 		y <- 4.
 		squarenorm = (|| ((x*x)+(y*y)). ).
-		print = (|| '(' print. x print. ';' print. y print. ')' print.).
+		mostrar = (|| '(' print. x print. ';' print. y print. ')' print.).
 	|).
 |).
 
@@ -22,9 +22,9 @@ lobby _AddSlots:
 '>>> lobby printObj.' print. '\n' print. 
 lobby printObj.
 
-'>>> punto1 print.' print. '\n' print. 
+'>>> punto1 mostrar.' print. '\n' print. 
 'Salida esperada: (3;4)' print. '\n' print.
-punto1 print. '\n' print.
+punto1 mostrar. '\n' print.
 
 '\n' print.
 '>>> (punto1 squarenorm) print.' print. '\n' print. 

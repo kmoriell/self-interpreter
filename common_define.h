@@ -70,6 +70,8 @@ const std::string LOBBY = "lobby";
 #define ID_LOBBY 0
 const std::string SELF = "self";
 const std::string COMPLEX_PREVIEW = "...";
+
+//Metodos nativos
 const std::string PRINT_METHOD = "print";
 const std::string PRINTOBJ_METHOD = "printObj";
 const std::string CLONE_METHOD = "clone";

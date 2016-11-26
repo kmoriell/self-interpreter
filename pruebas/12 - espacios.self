@@ -15,5 +15,5 @@ print . '\n' print.
  lobby _AddSlots  :   (|		null = ( ( nil)  ) . y <- 0 .|).
 lobby printObj.
 
-
+'\n' print.
 'FIN TEST.' print. '\n' print.

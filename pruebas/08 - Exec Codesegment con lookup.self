@@ -8,20 +8,20 @@ lobby _AddSlots:
 		x <- 3.
 		y <- 4.
 		squarenorm = (|| ((x*x)+(y*y)). ).
-		print = (|| '(' print. x print. ';' print. y print. ')' print.).
+		mostrar = (|| '(' print. x print. ';' print. y print. ')' print.).
 	|).
 	holaMundo = 
 	(|
 		hola = 'hola'.
 		mundo = 'mundo'.
-		print = (|| hola print. ' ' print. mundo print.).
+		mostrar = (|| hola print. ' ' print. mundo print.).
 	|).
 |).
 
 'Se crearon varios slots en el lobby.' print. '\n' print.
-'>>> punto print.' print. '\n' print. 
+'>>> punto mostrar.' print. '\n' print. 
 'Salida esperada: (3;4)' print. '\n' print.
-punto print. '\n' print.
+punto mostrar. '\n' print.
 
 '\n' print.
 '>>> (punto squarenorm) print.' print. '\n' print. 
@@ -29,9 +29,9 @@ punto print. '\n' print.
 (punto squarenorm) print. '\n' print.
 
 '\n' print.
-'>>> holaMundo print.' print. '\n' print. 
+'>>> holaMundo mostrar.' print. '\n' print. 
 'Salida esperada: hola mundo' print. '\n' print.
-holaMundo print. '\n' print.
+holaMundo mostrar. '\n' print.
 
 '\n' print.
 'FIN TEST.' print. '\n' print.
