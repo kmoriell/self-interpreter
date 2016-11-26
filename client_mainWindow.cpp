@@ -35,8 +35,8 @@ MainWindow::MainWindow(Morph &morph, ProxyServer &proxyServer)
   auto refStyleContext = pWindow->get_style_context();
   //refStyleContext->add_class("txtCodeSegment");
 
-  //auto display = Gdk::Display::get_default();
-  //auto screen = display->get_default_screen();
+  auto display = Gdk::Display::get_default();
+  auto screen = display->get_default_screen();
 
   refStyleContext->add_provider_for_screen(
       screen, m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
