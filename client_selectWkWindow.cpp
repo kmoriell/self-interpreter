@@ -17,7 +17,8 @@ SelectWkWindow::SelectWkWindow(Morph &morph,
 
   std::string cad = "";
   proxyServer.sendCmdMessage(AVAILABLE_WKS, cad);
-
+  while (proxyServer.getFlag()) {
+  }
   addWidgets();
   configureTreeView();
   drawWorkspaces();
@@ -59,7 +60,7 @@ void SelectWkWindow::configureTreeView() {
   m_refTreeModel = Gtk::TreeStore::create(m_Columns);
   pTreeView->set_model(m_refTreeModel);
 
-  pTreeView->append_column_editable("[-]", m_Columns.m_col_delete);
+  pTreeView->append_column_editable("[ - ]", m_Columns.m_col_delete);
   pTreeView->append_column("Workspace", m_Columns.m_col_wkName);
 
   // Conecto el evento para controlar el checkbox
