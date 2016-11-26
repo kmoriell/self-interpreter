@@ -1,5 +1,5 @@
 '\n' print. 'INICIA TEST.' print. '\n' print.
-'Se prueba que se realicen prints de objetos primarios:' print. '\n' print. '\n' print.
+'Se prueba que se realicen prints de objetos primarios y que se creen con los metodos nativos correctos.' print. '\n' print. '\n' print.
 
 'STRING' print. '\n' print.
 'BUG: no soporta comillas simples anidadas.' print. '\n' print.

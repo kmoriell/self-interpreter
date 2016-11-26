@@ -1,5 +1,5 @@
 '\n' print. 'INICIA TEST.' print. '\n' print.
-'Se ejecuta un test que provee la cátedra adaptado para los prints.' print. '\n' print.
+'Se ejecuta un test que provee la cátedra (elaborado por Martin Di Paola) adaptado para los prints.' print. '\n' print.
 
 'Debería dar 1.' print. '\n' print.
 lobby _AddSlots: (| x <- 1. |) . 

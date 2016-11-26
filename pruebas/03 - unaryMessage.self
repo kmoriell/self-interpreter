@@ -1,5 +1,5 @@
 '\n' print. 'INICIA TEST.' print. '\n' print.
-'Se prueba mensajes unarios:' print. '\n' print. '\n' print.
+'Se prueba mensajes unarios.' print. '\n' print. '\n' print.
 
 'RECEIVER NAME: receiver explicito' print. '\n' print.
 '>>> lobby printObj.' print. '\n' print. 
