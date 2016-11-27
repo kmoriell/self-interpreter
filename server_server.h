@@ -25,11 +25,15 @@ private:
 private:
 	Workspace* getWorkspace(const std::string &idWk);
 public:
-	 std::string loadWorkspace(std::string name);
+	 void loadWorkspace(std::string name);
 	 std::vector<std::string> availableWorkspace();
 	 void newWorkspace(std::string name);
 	 void closeWorkspace(std::string name);
 	 void deleteWorkspace(std::string name);
+	Server(const Server&) = delete;
+	Server(Server&&) = delete;
+	Server& operator=(const Server&) = delete;
+	Server& operator=(Server&&) = delete;
 	Server() {};
 	~Server();
 	std::string receiveCode(const std::string &idWk, uint32_t &idObj, std::string &code);

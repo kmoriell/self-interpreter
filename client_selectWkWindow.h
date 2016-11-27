@@ -5,7 +5,7 @@
 #include <gdkmm/color.h>
 #include <iostream>
 #include "client_columnRecordWk.h"
-#include "client_mainWindow.h"
+#include "client_morphWindow.h"
 
 class SelectWkWindow : public Gtk::Window {
  private:
@@ -45,6 +45,12 @@ class SelectWkWindow : public Gtk::Window {
    SelectWkWindow(Morph &morph, std::vector<std::string> &workspaces, ProxyServer &proxyServer);
    Gtk::Window *getWindow();
 
+   // Elimino los contructores por copia y moviemiento. Tambien los
+   // operadores de asignacion
+   SelectWkWindow(const SelectWkWindow&) = delete;
+   SelectWkWindow(SelectWkWindow&&) = delete;
+   SelectWkWindow& operator=(const SelectWkWindow&) = delete;
+   SelectWkWindow& operator=(SelectWkWindow&&) = delete;
 };
 
 

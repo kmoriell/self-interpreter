@@ -17,6 +17,26 @@ public:
 	 */
 	Proxy(Socket &socket);
 
+	/** Constructor por copia eliminado
+	 *
+	 */
+	Proxy(const Proxy&) = delete;
+
+	/** Constructor por moviemiento eliminado
+	 *
+	 */
+	Proxy(Proxy&&) = delete;
+
+	/** Operador asignacion eliminado
+	 *
+	 */
+	Proxy& operator=(const Proxy&) = delete;
+
+	/** Operador asignacion por moviemiento eliminado
+	 *
+	 */
+	Proxy& operator=(Proxy&&) = delete;
+
 	/** Indica si la conexion finalizo.
 	 *
 	 */

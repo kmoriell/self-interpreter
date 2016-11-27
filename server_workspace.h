@@ -17,6 +17,12 @@ public:
 	/// Constructor
 	Workspace();
 
+	Workspace(const Workspace&) = delete;
+	Workspace(Workspace&&) = delete;
+
+	Workspace& operator=(const Workspace&) = delete;
+	Workspace& operator=(Workspace&&) = delete;
+
 	/// Destructor
 	~Workspace();
 

@@ -10,6 +10,11 @@ private:
 
 public:
 	ParserProtocoloServidor(Object* obj);
+	ParserProtocoloServidor(const ParserProtocoloServidor&);
+	ParserProtocoloServidor(ParserProtocoloServidor&&);
+
+	ParserProtocoloServidor& operator=(const ParserProtocoloServidor&);
+	ParserProtocoloServidor& operator=(ParserProtocoloServidor&&);
 	std::string getString();
 };
 

@@ -13,7 +13,11 @@ private:
 
 public:
 	ParserProtocoloMorph(Morph &morph, std::string &cad);
-	//ParserProtocoloCliente(std::vector<std::string> &workspaces, std::string &cad);
+	ParserProtocoloMorph(const ParserProtocoloMorph&) = delete;
+	ParserProtocoloMorph(ParserProtocoloMorph&&) = delete;
+
+	ParserProtocoloMorph& operator=(const ParserProtocoloMorph&) = delete;
+	ParserProtocoloMorph& operator=(ParserProtocoloMorph&&) = delete;
 
 private:
 	std::string getCampo();

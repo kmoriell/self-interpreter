@@ -80,23 +80,54 @@ void SelectWkWindow::drawWorkspaces() {
 
 // Eventos
 void SelectWkWindow::btnRefreshWk_clicked() {
-  drawWorkspaces();
+    std::string empty = "";
+    proxyServer.sendCmdMessage(AVAILABLE_WKS, empty);
+    while (proxyServer.getFlag()) {
+    }
+    drawWorkspaces();
 }
 
 void SelectWkWindow::btnNewWk_clicked() {
   std::string wkName = pTxtNewWk->get_text();
+
   if (wkName.size() == 0) {
     Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
                               Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
     dialog.set_secondary_text(
         "No se indico un nombre para el nuevo Workspace.");
     dialog.run();
+    pTxtNewWk->set_text("");
     return;
   }
-  proxyServer.sendCmdMessage(NEW_WK, wkName);
-  while (proxyServer.getFlag()) {
+
+  if (wkName.find(CHAR_SEPARADOR) != std::string::npos) {
+    Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                              Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+    std::stringstream ss;
+	std::string s;
+	char c = CHAR_SEPARADOR;
+	ss << c;
+	ss >> s;
+    dialog.set_secondary_text(
+        "El caracter especial " + s
+				+ " está prohibido por protocolo.");
+    dialog.run();
+    pTxtNewWk->set_text("");
+    return;
+
   }
 
+  proxyServer.sendCmdMessage(NEW_WK, wkName);
+  while (proxyServer.getFlag()) {}
+
+  if (proxyServer.areThereErrors()) {
+      Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                                Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+      dialog.set_secondary_text(proxyServer.getErrors());
+      dialog.run();
+      pTxtNewWk->set_text("");
+      return;
+  }
   drawWorkspaces();
   pTxtNewWk->set_text("");
 }
@@ -109,7 +140,7 @@ void SelectWkWindow::treeView_toggled(const Glib::ustring &path) {
     iter = model->get_iter(path);
 
     std::string wkName = iter->get_value(m_Columns.m_col_wkName);
-    Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+    Gtk::MessageDialog dialog(*this, "¿Esta seguro?", false,
                               Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
     dialog.set_secondary_text("¿Desea borrar el Workspace " + wkName + "?");
     Gtk::ResponseType resp = (Gtk::ResponseType) dialog.run();
@@ -127,6 +158,7 @@ void SelectWkWindow::treeView_toggled(const Glib::ustring &path) {
                                 Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
       dialog.set_secondary_text(proxyServer.getErrors());
       dialog.run();
+      return;
     }
     drawWorkspaces();
   }
@@ -148,7 +180,7 @@ void SelectWkWindow::treeView_on_row_activated(const Gtk::TreeModel::Path& path,
     while (proxyServer.getFlag()) {
     }
 
-    MainWindow* _window = new MainWindow(morph, proxyServer);
+    MorphWindow* _window = new MorphWindow(morph, proxyServer);
     _window->getWindow()->show();
 
     /*std::string str(text.c_str());

@@ -9,6 +9,11 @@ private:
 	Object* lobby = nullptr;
 
 public:
+	VirtualMachine(const VirtualMachine&) = delete;
+	VirtualMachine(VirtualMachine&&) = delete;
+	VirtualMachine& operator=(const VirtualMachine&) = delete;
+	VirtualMachine& operator=(VirtualMachine&&) = delete;
+	VirtualMachine() {}
 	Object *createNil();
 	Object *createString(std::string &strString);
 	Object *createNumber(float number);

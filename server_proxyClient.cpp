@@ -169,6 +169,7 @@ void ProxyClient::availableWks() {
 void ProxyClient::loadWks(const std::string &cad) {
   try {
     idWorkspace = cad;
+    server.loadWorkspace(cad);
     showLobby();
   } catch (const std::runtime_error &e) {
     idWorkspace.clear();

@@ -13,6 +13,12 @@ private:
 	Socket* sckptr = nullptr;
 public:
 	ProxyClient(Socket &socket, Server &server);
+	ProxyClient(const ProxyClient&) = delete;
+	ProxyClient(ProxyClient&&) = delete;
+
+	ProxyClient& operator=(const ProxyClient&) = delete;
+	ProxyClient& operator=(ProxyClient&&) = delete;
+
 	~ProxyClient();
 	virtual void run();
 private:

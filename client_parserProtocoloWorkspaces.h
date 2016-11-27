@@ -13,6 +13,11 @@ private:
 public:
 	ParserProtocoloWorkspaces(std::vector<std::string> &workspaces, std::string &cad);
 
+	ParserProtocoloWorkspaces(const ParserProtocoloWorkspaces&) = delete;
+	ParserProtocoloWorkspaces(ParserProtocoloWorkspaces&&) = delete;
+
+	ParserProtocoloWorkspaces& operator=(const ParserProtocoloWorkspaces&) = delete;
+	ParserProtocoloWorkspaces& operator=(ParserProtocoloWorkspaces&&) = delete;
 private:
 	std::string getCampo();
 };

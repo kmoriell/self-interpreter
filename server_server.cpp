@@ -14,7 +14,7 @@ Server::~Server() {
 	}
 }
 
-std::string Server::loadWorkspace(std::string name) {
+void Server::loadWorkspace(std::string name) {
 	m.lock();
 	auto it = workspaces.find(name);
 	if (it == workspaces.end()) {
@@ -23,30 +23,9 @@ std::string Server::loadWorkspace(std::string name) {
 	}
 
 	workspace_tuple tuple = it->second;
-
-	if (std::get<1>(tuple) > 0) {
-		m.unlock();
-		std::string error = "El workspace ";
-		error += name + " esta en uso.";
-		throw std::runtime_error(error);
-	}
-
 	std::get<1>(tuple) += 1;
+	it->second = tuple;
 	m.unlock();
-
-	std::ifstream file(name);
-	if (!file.is_open()) {
-		std::string error = "No se puede abrir el workspace ";
-		error += name + ".";
-		throw std::runtime_error(error);
-	}
-
-	std::string x, strFile;
-
-	while (file >> x)
-		strFile += x + " ";
-
-	return strFile;
 }
 
 std::vector<std::string> Server::availableWorkspace() {
@@ -63,16 +42,18 @@ void Server::newWorkspace(std::string name) {
 	m.lock();
 	auto it = workspaces.find(name);
 
-	if (it != workspaces.end()) {
-		workspace_tuple tuple = it->second;
-		std::get<1>(tuple) += 1;
-		it->second = tuple;
-	} else {
+	if (it == workspaces.end()) {
 		Workspace *wk = new Workspace();
 		workspace_tuple tuple = std::make_tuple(wk, 0);
 		workspaces.insert(std::make_pair(name, tuple));
+		m.unlock();
+	} else {
+		m.unlock();
+		std::string error = "Ya existe un workspace llamado " +
+		    name + ".";
+		throw std::runtime_error(error);
 	}
-	m.unlock();
+
 }
 
 void Server::closeWorkspace(std::string name) {
@@ -99,10 +80,19 @@ void Server::deleteWorkspace(std::string name) {
 	if (it == workspaces.end()) {
 		m.unlock();
 		throw std::runtime_error("No existe el workspace");
+	} else {
+	    auto tuple = it->second;
+	    if (std::get<1>(tuple) == 0) {
+	        	workspaces.erase(name);
+	        	m.unlock();
+	    } else {
+	    		m.unlock();
+	    		std::string error = "El workspace " +
+	    				    name + " tiene un cliente conectado.";
+	    		throw std::runtime_error(error);
+	    }
 	}
 
-	workspaces.erase(name);
-	m.unlock();
 }
 
 Workspace* Server::getWorkspace(const std::string &idWk) {

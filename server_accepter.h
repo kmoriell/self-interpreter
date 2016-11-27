@@ -26,6 +26,26 @@ public:
 	 */
 	Accepter(uint32_t port, Server &server);
 
+	/** Constructor por copia deshabilitado
+	 *
+	 */
+	Accepter(const Accepter&) = delete;
+
+	/** Constructor por moviemiento deshabilitado
+	 *
+	 */
+	Accepter(Accepter&&) = delete;
+
+	/** Operador asignacion deshabilitado
+	 *
+	 */
+	Accepter& operator=(const Accepter&) = delete;
+
+	/** Operador asignacion por moviemiento deshabilitado
+	 *
+	 */
+	Accepter& operator=(Accepter&&) = delete;
+
 	/// Destructor
 	~Accepter();
 

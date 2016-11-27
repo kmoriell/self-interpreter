@@ -103,6 +103,12 @@ class Object {
    */
   Object& operator=(const Object& _object) = delete;
 
+
+  /** Operador de asignacion por moviemiento deshabilitado
+   *
+   */
+  Object& operator=(Object&&) = delete;
+
   /** Devuelve todos los slots que tiene el objeto.
    *
    */

@@ -8,7 +8,16 @@
 class ModeSelector {
 public:
 	ModeSelector(int port);
+
 	ModeSelector(std::string filename);
+
+	ModeSelector(const ModeSelector&) = delete;
+
+	ModeSelector(ModeSelector&&) = delete;
+
+	ModeSelector& operator=(const ModeSelector&) = delete;
+
+	ModeSelector& operator=(ModeSelector&&) = delete;
 	virtual ~ModeSelector();
 
 private:

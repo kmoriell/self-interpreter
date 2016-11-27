@@ -54,6 +54,7 @@ const std::string PUNTO = ".";
 const std::string OP_ARG = ":";
 const std::string SLOT_LIST_SEP = "|";
 const std::string OP_PARENT = "*";
+const std::string OP_NATIVE_METHOD = "(*)";
 const std::string P_LEFT = "(";
 const std::string P_RIGHT = ")";
 

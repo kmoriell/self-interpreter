@@ -17,6 +17,13 @@ private:
 
 public:
 	Parser(VirtualMachine &vm);
+
+	Parser(const Parser&) = delete;
+	Parser(Parser&&) = delete;
+
+	Parser& operator=(const Parser&) = delete;
+	Parser& operator=(Parser&&) = delete;
+
 	std::vector<Object*> run(std::string &cad);
 	void setContext(Object* context);
 
