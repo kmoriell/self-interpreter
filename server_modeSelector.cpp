@@ -4,16 +4,16 @@
 ModeSelector::ModeSelector(int port) {
 	try {
 		Server server;
-		Accepter *connectionsAccepter = new Accepter(port, server);
+		Accepter *accepter = new Accepter(port, server);
 		// Este hilo va a estar corriendo durante toda la ejecucion del programa
-		connectionsAccepter->start();
+		accepter->start();
 
 		char c = '\0';
 		while (c != SERVER_QUIT_CHAR) {
 			std::cin.get(c);
 		}
-		exitRoutine (connectionsAccepter);
-		delete connectionsAccepter;
+		exitRoutine (accepter);
+		delete accepter;
 	} catch (const std::runtime_error &e) {
 		std::cout << "Error. " << std::endl << e.what() << std::endl;
 	} catch (...) {
@@ -34,12 +34,8 @@ ModeSelector::ModeSelector(std::string filename) {
 
 }
 
-ModeSelector::~ModeSelector() {
-	// TODO Auto-generated destructor stub
-}
-
-void ModeSelector::exitRoutine(Accepter* connectionsAccepter) {
+void ModeSelector::exitRoutine(Accepter* accepter) {
 	// mando la señal para interrumpir el aceptador de conexiones
-	connectionsAccepter->interrupt();
-	connectionsAccepter->join();
+	accepter->interrupt();
+	accepter->join();
 }

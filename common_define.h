@@ -1,13 +1,12 @@
 #ifndef _COMMON_DEFINE_H_
 #define _COMMON_DEFINE_H_
 
-// Mensajes de servidor
+// Mensajes que envía el servidor y recibe el cliente
 #define ERRORMESSAGE 0x50
 #define OK_MSG_MORPH 0x00
 #define OK_MSG_SELECT_WKS 0x01
 
-// Comandos que envia cliente y recibe servidor
-
+// Mensajes que envía el cliente y recibe el servidor
 //Los comandos 0x0<x> se ejecutan en el contexto lobby
 #define EXEC_LOBBY_CMD 0x01
 #define SHOW_LOBBY 0x02
@@ -58,7 +57,7 @@ const std::string OP_NATIVE_METHOD = "(*)";
 const std::string P_LEFT = "(";
 const std::string P_RIGHT = ")";
 
-//Nombres objetos
+//Nombres objetos default
 const std::string NIL_OBJ = "nil";
 const std::string BOOLEAN_OBJ = "boolean";
 const std::string STRING_OBJ = "string";
@@ -79,12 +78,6 @@ const std::string CLONE_METHOD = "clone";
 const std::string ADD_SLOTS_METHOD = "_AddSlots";
 const std::string REMOVE_SLOTS_METHOD = "_RemoveSlots";
 const std::string COLLECT_METHOD = "collect";
-
-
-//Valores defaults para cuando se crean slots con objetos tipados
-const bool BOOLEAN_OBJ_DEFAULT = false;
-const float NUMBER_OBJ_DEFAULT = 0;
-const std::string STRING_OBJ_DEFAULT = "'insertar Cadena'";
 
 //Server
 #define SERVER_QUIT_CHAR 'q'
