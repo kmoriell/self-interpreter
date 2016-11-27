@@ -6,16 +6,16 @@ ProxyServer::ProxyServer(Socket &socket, Morph &morph, std::vector<std::string> 
 	this->flag = false;
 }
 
-bool ProxyServer::sendCmdMessage(char command, std::string &message) {
+bool ProxyServer::sendCmdMessage(char command, std::string &strMessage) {
 	if (flag)
 		return false;
 	else {
 		morph.clear();
 		std::cout << "comando a enviar: " << command << std::endl;
-		std::cout << "mensaje a enviar: " << message << std::endl;
+		std::cout << "mensaje a enviar: " << strMessage << std::endl;
 		message.setCommand(command);
-		message.setMessage(message.c_str());
-		message.setLength(message.size());
+		message.setMessage(strMessage.c_str());
+		message.setLength(strMessage.size());
 		this->flag = true;
 		return true;
 	}

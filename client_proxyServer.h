@@ -43,7 +43,7 @@ public:
 	 * @param comando a enviar
 	 * @param mensaje a enviar
 	 */
-	bool sendCmdMessage(char command, std::string &message);
+	bool sendCmdMessage(char command, std::string &strMessage);
 
 	/** Metodo que sirve para procesar la respuesta que le envia el servidor.
 	 *

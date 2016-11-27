@@ -59,19 +59,15 @@ int Proxy::receive() {
 	char command;
 	s = serverSocket.receive(&command, sizeof(char));
 
-	char *message = new char[len + 1];
-	serverSocket.receive(message, len);
-	message[len] = '\0';
+	char *strMessage = new char[len + 1];
+	serverSocket.receive(strMessage, len);
+	strMessage[len] = '\0';
 
-	clientMessage.setLength(len);
-	clientMessage.setCommand(command);
-	clientMessage.setMessage(message);
+	message.setLength(len);
+	message.setCommand(command);
+	message.setMessage(strMessage);
 
-	std::cout << "receive()" << std::endl;
-	std::cout << "len = " << len << std::endl << " command = " << command
-			<< std::endl << " message = " << message << std::endl << std::endl;
-
-	delete[] message;
+    delete[] strMessage;
 	delete[] strLen;
 	return s;
 }
