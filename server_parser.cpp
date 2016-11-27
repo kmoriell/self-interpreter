@@ -188,6 +188,7 @@ Object * Parser::unaryMessage() {
 
 Object * Parser::receiveMessage(Object* obj, std::string &strName,
         std::vector<Object*> &args) {
+    Object* objMessage;
     if (flagExecute == 1) {
         if (!obj->isDataObject(strName)) {
             //El objeto mensaje es un method object
@@ -197,18 +198,21 @@ Object * Parser::receiveMessage(Object* obj, std::string &strName,
             if (strName == ADD_SLOTS_METHOD || strName == REMOVE_SLOTS_METHOD
                     || strName == PRINTOBJ_METHOD || strName == PRINT_METHOD
                     || strName == CLONE_METHOD || strName == COLLECT_METHOD) {
-                obj = obj->recvMessage(strName, args, false);
-                return obj;
+                objMessage = obj->recvMessage(strName, args, false);
+            } else {
+                objMessage = obj->recvMessage(strName, args, true);
             }
 
-            Object* objMessage = obj->recvMessage(strName, args, true);
             std::string code = objMessage->getCodeSegment();
-
-            Parser unParser(vm, objMessage);
-            objMessage->addSlot(SELF, obj, true, true, false);
-            std::vector<Object*> _vector = unParser.parse(code);
-            objMessage->removeSlot(SELF);
-            obj = _vector[_vector.size() - 1];
+            if (code.size() == 0)
+                obj = objMessage;
+            else {
+                Parser unParser(vm, objMessage);
+                objMessage->addSlot(SELF, obj, true, true, false);
+                std::vector<Object*> _vector = unParser.parse(code);
+                objMessage->removeSlot(SELF);
+                obj = _vector[_vector.size() - 1];
+            }
         } else {
             //El mensaje no será clonado por ser un data object.
             obj = obj->recvMessage(strName, args, false);
