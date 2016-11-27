@@ -18,7 +18,7 @@ Workspace::~Workspace() {
 uint32_t Workspace::receive(Object* context, std::string &code) {
     Parser parser(vm);
     parser.setContext(context);
-    std::vector<Object*> objs = parser.run(code);
+    std::vector<Object*> objs = parser.parse(code);
     int size = objs.size() - 1;
     if (size >= 0) {
         return objs[size]->getId();

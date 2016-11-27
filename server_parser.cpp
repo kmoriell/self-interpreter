@@ -16,7 +16,7 @@ Parser::Parser(VirtualMachine &vm) :
     this->context = nullptr;
 }
 
-std::vector<Object*> Parser::run(std::string &cad) {
+std::vector<Object*> Parser::parse(std::string &cad) {
     //Si se utiliza el caracter especial de protocolo se lanza excepcion
     if (cad.find(CHAR_SEPARADOR) != std::string::npos) {
         std::stringstream ss;
@@ -234,7 +234,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
             Parser unParser(vm);
             unParser.setContext(objMessage);
             objMessage->addSlot(SELF, obj, true, true, false);
-            std::vector<Object*> _vector = unParser.run(code);
+            std::vector<Object*> _vector = unParser.parse(code);
             objMessage->removeSlot(SELF);
             obj = _vector[_vector.size() - 1];
         } else {

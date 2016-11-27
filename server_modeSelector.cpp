@@ -31,7 +31,6 @@ ModeSelector::ModeSelector(std::string filename) {
 
     std::cout << script << std::endl;
     workspace.receive(workspace.getLobby(), script);
-
 }
 
 void ModeSelector::exitRoutine(Accepter* accepter) {

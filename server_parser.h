@@ -18,13 +18,20 @@ private:
 public:
     Parser(VirtualMachine &vm);
 
+    /** Constructor por copia deshabilitado
+     */
     Parser(const Parser&) = delete;
+    /** Constructor por movimiento deshabilitado
+     */
     Parser(Parser&&) = delete;
-
+    /** Operador de asignacion deshabilitado
+     */
     Parser& operator=(const Parser&) = delete;
+    /** Operador de asignacion por moviemiento deshabilitado
+     */
     Parser& operator=(Parser&&) = delete;
 
-    std::vector<Object*> run(std::string &cad);
+    std::vector<Object*> parse(std::string &cad);
     void setContext(Object* context);
 
 private:
