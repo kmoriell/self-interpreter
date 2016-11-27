@@ -36,17 +36,39 @@ public:
      * En la segunda un booleano que indica si esta habilitado o no.
      */
     typedef std::tuple<delegate, bool> fpointTuple;
+
 private:
+    /// Representa los slots del objeto
     slot_map slots;
+
+    /// Nombre del objeto
     std::string name;
+
+    /// Representa el code segment del objeto
     std::string codeSegment;
+
+    /// Diccionario con los metodos nativos. La clave es el nombre y el
+    // valor el puntero a la funcion.
     std::map<std::string, fpointTuple> nativeMethods;
+
+    /// Puntero al objeto lobby
     Object* lobby;
 
+    /// id numerico (y unico) del objeto.
     uint32_t id = 0;
+
+    /// Contador de objetos
     uint32_t idCounter = 1;
+
+    /// Tupla con un puntero a objeto y un booleano indicando
+    // si se recorrio o no (sirve para el algoritmo del GC)
     typedef std::tuple<Object*, bool> tuple_createdObjects;
+
+    /// Diccionario con todos los objetos creados.
     std::map<uint32_t, tuple_createdObjects> createdObjects;
+
+    /// Indica si el objeto es de un tipo primitivo.
+    bool isPrimitive = false;
 
 private:
     /** Devuelve los parent slots que tiene el objeto.
@@ -83,8 +105,10 @@ private:
 
 public:
 
+    /// Constructor que sirve para construir el objeto lobby.
     Object();
-    /// Constructor
+
+    /// Constructor de los objetos que no son Lobby.
     Object(Object* lobby);
 
     /// Destructor
@@ -108,12 +132,13 @@ public:
      */
     Object& operator=(Object&&) = delete;
 
-    /** Devuelve todos los slots que tiene el objeto.
+    /** Devuelve todos los slots que tiene el objeto en forma de diccionario.
      *
      */
     slot_map getSlots() const;
 
-    /** Devuelve todo los metodos nativos que tiene el objeto
+    /** Devuelve todo los metodos nativos que tiene el objeto en forma de
+     * diccionario.
      *
      */
     std::map<std::string, fpointTuple> getNativeMethods() const;
@@ -171,6 +196,10 @@ public:
      */
     bool isDataObject(std::string messageName);
 
+    /** Determina si es un metodo nativo.
+     * @param messageName nombre del slot.
+     * \retval true si es un metodo nativo, false si no lo es.
+     */
     bool isNativeMethod(std::string messageName);
 
     /** Metodo principal que sirve para recibir mensajes. Devuelve un Object*
@@ -242,15 +271,36 @@ public:
      */
     void disableNativeMethod(std::string methodName);
 
+    /** Agrega un objeto a la lista de objetos creados.
+     * Solo debe invocarse desde lobby.
+     * @param obj objeto a agregar.
+     */
     void addCreatedObject(Object *obj);
 
+    /** Devuelve un objeto. Solo debe invocarse desde Lobby.
+     * @param id id del objeto a buscar.
+     */
     Object* findObjectById(uint32_t id);
 
+    /** Devuelve el id del objeto.
+     *
+     */
     uint32_t getId() const;
 
+    /** Cambia el atributo de mutabilidad de un slot.
+     * @param slotName nombre del slot a modificar
+     */
     void swapSlotMutability(const std::string& slotName);
 
-    bool isPrimitive = false;
+    /** Cambia el atributo de objeto primitivo.
+     * @param newValue nuevo valor.
+     */
+    void setPrimitive(const bool newValue);
+
+    /** Devuelve un booleano que indica si el objeto es primitivo o no.
+     *
+     */
+    bool getPrimitive() const;
 };
 
 #endif /* COMMON_OBJECT_H_ */

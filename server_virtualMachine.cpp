@@ -15,7 +15,7 @@ void VirtualMachine::setLobby(Object* lobby) {
 
 Object* VirtualMachine::createString(std::string &strString) {
     Object *obj = new Object(lobby);
-    obj->isPrimitive = true;
+    obj->setPrimitive(true);
     obj->setName(STRING_OBJ);
     obj->setCodeSegment(strString + PUNTO);
     obj->enableNativeMethod(PRINT_METHOD);
@@ -28,7 +28,7 @@ Object* VirtualMachine::createString(std::string &strString) {
 
 Object* VirtualMachine::createNumber(float number) {
     Object *obj = new Object(lobby);
-    obj->isPrimitive = true;
+    obj->setPrimitive(true);
     obj->setName(NUMBER_OBJ);
     //todo Casteamos a int porque el parser aun no soporta floats
     obj->setCodeSegment(std::to_string((int) number) + PUNTO);
@@ -45,7 +45,7 @@ Object* VirtualMachine::createNumber(float number) {
 
 Object* VirtualMachine::createNil() {
     Object *obj = new Object(lobby);
-    obj->isPrimitive = true;
+    obj->setPrimitive(true);
     obj->setName(NIL_OBJ);
     obj->setCodeSegment(NIL + PUNTO);
     obj->enableNativeMethod(PRINT_METHOD);
@@ -64,6 +64,7 @@ Object* VirtualMachine::createEmptyObject() {
 
 Object* VirtualMachine::createBoolean(bool value) {
     Object *obj = new Object(lobby);
+    obj->setPrimitive(true);
     obj->setName(BOOLEAN_OBJ);
     obj->enableNativeMethod(PRINT_METHOD);
     if (value)
