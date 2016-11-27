@@ -7,46 +7,6 @@ Proxy::Proxy(Socket &socket) :
     _interrupt = false;
 }
 
-/*
- void ProxyClient::loadWorkspace(std::string name) {
- std::string code = server.loadWorkspace(name);
- workspace = new Workspace(name);
- try {
- workspace->receive(code);
- } catch (const std::runtime_error &e) {
- delete workspace;
- throw e;
- }
- }
-
- void ProxyClient::availableWorkspace() {
- std::vector<std::string> avlWorkspaces = server.availableWorkspace();
- std::string strWorkspaces;
- for (auto str : avlWorkspaces) {
- strWorkspaces += str;
- }
-
- command_t response(strWorkspaces.size() + 1,0x01, strWorkspaces);
- send(response);
- }
-
- void ProxyClient::newWorkspace(std::string name) {
- server.newWorkspace(name);
- sendOK();
- }
-
- void ProxyClient::closeWorkspace(std::string name) {
- server.closeWorkspace(name);
- sendOK();
-
- }
-
- void ProxyClient::deleteWorkspace(std::string name) {
- server.deleteWorkspace(name);
- sendOK();
- }
- */
-
 int Proxy::receive() {
     char *strLen = new char[sizeof(int)];
     memset(strLen, 0, sizeof(int));

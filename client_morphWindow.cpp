@@ -354,6 +354,7 @@ void MorphWindow::cellDelete_toggled(const Glib::ustring &path) {
 
         std::string slotName = iter->get_value(m_Columns.m_col_slotName);
         if (slotName.find("(*)") != std::string::npos) {
+            iter->set_value(m_Columns.m_col_delete, false);
             return;
         }
 

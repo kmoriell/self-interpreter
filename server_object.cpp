@@ -8,7 +8,6 @@
 Object::Object(Object* lobby) {
 
     this->lobby = lobby;
-    //this->lobby->createdObjects.insert(std::make_pair(this, false));
     configureNativeMethods();
 }
 
@@ -19,6 +18,7 @@ Object::Object() {
 
 Object::Object(const Object& __object) {
     this->lobby = __object.lobby;
+
     // Recorro los slots de __object
     for (auto it = __object.slots.begin(); it != __object.slots.end(); ++it) {
         std::string name = it->first;
@@ -32,11 +32,9 @@ Object::Object(const Object& __object) {
             Object tmpObj = *(Object*) std::get<0>(tuple);
             obj = new Object(tmpObj);
 
-            /*Object *lobby = nullptr;
-             delegate fpointer = nullptr;
-             __object.findObject("lobby", lobby, fpointer);*/
-
             auto tuple = std::make_tuple(obj, false);
+            // Creo una tupla con el nuevo objeto creado
+            // Despues lo inserto en la lista de objetos creados de lobby.
             lobby->createdObjects.insert(
                     std::make_pair(lobby->idCounter, tuple));
             id = lobby->idCounter;
@@ -54,7 +52,6 @@ Object::Object(const Object& __object) {
 }
 
 Object::~Object() {
-    //collect(std::vector<Object*> { });
     slots.clear();
     nativeMethods.clear();
 
@@ -114,38 +111,11 @@ std::map<std::string, Object::fpointTuple> Object::getNativeMethods() const {
     return nativeMethods;
 }
 
-//todo hay que hacer que el addSlots reciba un unico objeto
-//y transpase los slots (y sus punteros) del objeto recibido por parametro al objeto propio
-Object* Object::_AddSlots(const std::vector<Object*>& args) {
-    //Recorro obj y agrego sus slots
-    Object *obj = args[0];
-
-    for (auto it = obj->slots.begin(); it != obj->slots.end(); ++it) {
-        this->slots.insert(std::make_pair(it->first, it->second));
-    }
-    return this;
-}
-
 Object* Object::addSlot(std::string name, Object* obj, bool _mutable,
         bool isParentSlot, bool isArgument) {
     this->slots.insert(
             std::make_pair(name,
                     std::make_tuple(obj, _mutable, isParentSlot, isArgument)));
-    return this;
-}
-
-Object* Object::_RemoveSlots(const std::vector<Object*>& args) {
-    Object *obj = args[0];
-
-    for (auto it = obj->slots.begin(); it != obj->slots.end(); ++it) {
-        std::string name = it->first;
-        auto _it = slots.find(name);
-        if (_it != slots.end()) {
-            slots.erase(_it);
-        } else
-            throw std::runtime_error("No existe el slot que se quiere borrar.");
-    }
-
     return this;
 }
 
@@ -156,16 +126,6 @@ Object* Object::removeSlot(std::string name) {
     } else
         throw std::runtime_error("No existe el slot que se quiere borrar.");
     return this;
-}
-
-Object* Object::clone(const std::vector<Object *> &args) {
-    Object* obj = new Object(*this);
-
-    auto tuple = std::make_tuple(obj, false);
-    lobby->createdObjects.insert(std::make_pair(lobby->idCounter, tuple));
-    id = lobby->idCounter;
-    lobby->idCounter++;
-    return obj;
 }
 
 std::string Object::getCodeSegment() const {
@@ -186,6 +146,14 @@ void Object::setName(const std::string name) {
 
 uint32_t Object::getId() const {
     return id;
+}
+
+void Object::setPrimitive(const bool newValue) {
+    isPrimitive = newValue;
+}
+
+bool Object::getPrimitive() const {
+    return isPrimitive;
 }
 
 bool Object::findObject(std::string name, Object* &returnValue,
@@ -223,10 +191,6 @@ bool Object::findObject(std::string name, Object* &returnValue,
             return true;
         }
     }
-
-    // No encontre el metodo nativo
-    // Entonces le pregunto a mis parents slots por el slot
-    // buscado.
 
     return false;
 }
@@ -444,6 +408,41 @@ void Object::swapSlotMutability(const std::string& slotName) {
 }
 
 // Funciones nativas
+Object* Object::_AddSlots(const std::vector<Object*>& args) {
+    //Recorro obj y agrego sus slots
+    Object *obj = args[0];
+
+    for (auto it = obj->slots.begin(); it != obj->slots.end(); ++it) {
+        this->slots.insert(std::make_pair(it->first, it->second));
+    }
+    return this;
+}
+
+Object* Object::_RemoveSlots(const std::vector<Object*>& args) {
+    Object *obj = args[0];
+
+    for (auto it = obj->slots.begin(); it != obj->slots.end(); ++it) {
+        std::string name = it->first;
+        auto _it = slots.find(name);
+        if (_it != slots.end()) {
+            slots.erase(_it);
+        } else
+            throw std::runtime_error("No existe el slot que se quiere borrar.");
+    }
+
+    return this;
+}
+
+Object* Object::clone(const std::vector<Object *> &args) {
+    Object* obj = new Object(*this);
+
+    auto tuple = std::make_tuple(obj, false);
+    lobby->createdObjects.insert(std::make_pair(lobby->idCounter, tuple));
+    id = lobby->idCounter;
+    lobby->idCounter++;
+    return obj;
+}
+
 Object* Object::collect(const std::vector<Object*>& args) {
     collect_internal();
 
