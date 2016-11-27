@@ -121,7 +121,7 @@ Object * Parser::keywordMessage() {
     if ((obj = receiver()) != nullptr and lowerKeyword(strLowerKeyword)
             and isString(OP_ARG) and (arg = expressionCP()) != nullptr) {
         std::vector<Object*> args = { arg };
-        obj = recibirMensaje(obj, strLowerKeyword, args);
+        obj = receiveMessage(obj, strLowerKeyword, args);
         if (obj != nullptr)
             return obj;
     }
@@ -130,7 +130,7 @@ Object * Parser::keywordMessage() {
     if (lowerKeyword(strLowerKeyword) and isString(OP_ARG) and (arg =
             expressionCP()) != nullptr) {
         std::vector<Object*> args = { arg };
-        obj = recibirMensaje(context, strLowerKeyword, args);
+        obj = receiveMessage(context, strLowerKeyword, args);
         if (obj != nullptr)
             return obj;
     }
@@ -151,7 +151,7 @@ Object * Parser::binaryMessage() {
     if ((obj = receiver()) != nullptr and operador(strOp) and (arg =
             expressionCP()) != nullptr) {
         std::vector<Object*> args = { arg };
-        obj = recibirMensaje(obj, strOp, args);
+        obj = receiveMessage(obj, strOp, args);
         if (obj != nullptr)
             return obj;
     }
@@ -171,7 +171,7 @@ Object * Parser::unaryMessage() {
     //Probamos "receiver name"
     if ((obj = receiver()) != nullptr and name(strName)) {
         std::vector<Object*> args = { };
-        obj = recibirMensaje(obj, strName, args);
+        obj = receiveMessage(obj, strName, args);
         if (obj != nullptr)
             return obj;
     }
@@ -186,36 +186,9 @@ Object * Parser::unaryMessage() {
     return nullptr;
 }
 
-Object * Parser::recibirMensaje(Object* obj, std::string strName,
+Object * Parser::receiveMessage(Object* obj, std::string &strName,
         std::vector<Object*> &args) {
     if (flagExecute == 1) {
-//La asignacion se realiza en el recv_message cuando se le pasa un argumento a un objeto sin argumentos
-        /* El recv message lo que hace es lo siguiente:
-         * Si el objeto strName encontrado es un data object devuelve el mismo objeto.
-         * Si es una funcion nativa la ejecuta y retorna el objeto resultado.
-         * Si es un method object devuelve el method object con los argumentos pisados (es decir no ejecuto el codigo).
-
-         Lo primero que se debe hacer es verificar si es un data object o un method object.
-         * Si es un objeto primitivo ya lo consideramos data object por mas que tenga codeSegment.
-         * Ya que la informacion de los objetos primitivos la guardamos en el codeSegment.
-         * Si no era objeto primitivo miramos el codeSegment, si tiene codeSegment es un
-         * method object, sino es un data object.
-         *
-         * Si el objeto que recibimos es un data object:
-         * le aplicamos al dataObject el recv_message con
-         * obj->recvMessage(strName, args);
-         * Y luego devolvemos obj.
-         * Ejemplo de esto seria cuando hacen: lobby x.   //x = 3.
-         * x es un data object ya que el objeto 3 es primitivo, entonces se devuelve el objeto x.
-         *
-         * Si el objeto que recibimos es un method object: le aplicamos el recv_message.
-         * objMensaje = obj->recvMessage(strName, args);
-         * Ahora vamos a tener los atributos seteados
-         * Luego ejecutamos el codeSegment.
-         Podemos hacerlo analizando el codeSegment (y habria que validar si es un tipo de dato primitivo)
-         Hay que crear un atributo en object que indique si es un objeto primitivo.
-         Si el objeto que recibimos es un data object (ejemplo lobby)*/
-
         if (!obj->isDataObject(strName)) {
             //El objeto mensaje es un method object
 
@@ -240,12 +213,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
             //El mensaje no será clonado por ser un data object.
             obj = obj->recvMessage(strName, args, false);
         }
-        //obj->printObj(std::vector<Object*>{});
     }
-    // Si no pudo ejecutar el codigo del objeto mensaje devuelve el objeto mensaje.
-    //todo verificar si esto esta bien o si se deberia devolver un nilObjk()
-    //std::cout << std::endl << "Objeto que sale de Recibido: " << std::endl;
-    //obj->printObj(std::vector<Object*>{});
     return obj;
 }
 
@@ -470,14 +438,12 @@ Object * Parser::objectObj() {
         obj->setCodeSegment(cad.substr(inicioScript, finScript - inicioScript));
         return obj;
     } else {
-        //todo destruir objeto creado
         pCad = _pCad;
         return nullptr;
     }
     return obj;
 }
 
-//todo
 bool Parser::slotList(Object* objContenedor) {
     if (debug)
         std::cout << "slotList pos: " << pCad << std::endl;
@@ -509,7 +475,7 @@ bool Parser::slotList(Object* objContenedor) {
         } else {
             pCad = pLastSlot;
             if (slotNameExtended(tipoSlot, strName) and isString(PUNTO)) {
-                objSlot = vm.createNil(); //todo: si se usa la expression() se pierde esta ref y se likea
+                objSlot = vm.createNil();
                 bool esMutable = true;
                 bool esParent = false;
                 bool esArgument = false;
@@ -738,7 +704,7 @@ Object * Parser::nameObj(Object* &context) {
     if (name(strName)) {
         if (flagExecute == 1) {
             std::vector<Object*> args = { };
-            obj = recibirMensaje(context, strName, args);
+            obj = receiveMessage(context, strName, args);
         } else {
             //Se utiliza cuando no se debe ejecutar el codigo
             //Pero se debe devolver algo válido.

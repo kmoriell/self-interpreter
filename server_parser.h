@@ -40,7 +40,7 @@ private:
     Object* expressionP();
     Object* keywordMessage();
     Object* binaryMessage();
-    Object * recibirMensaje(Object* obj, std::string strName,
+    Object* receiveMessage(Object* obj, std::string &strName,
             std::vector<Object*> &args);
     Object* unaryMessage();
     Object* receiver();
