@@ -16,8 +16,7 @@ Workspace::~Workspace() {
 }
 
 uint32_t Workspace::receive(Object* context, std::string &code) {
-    Parser parser(vm);
-    parser.setContext(context);
+    Parser parser(vm, context);
     std::vector<Object*> objs = parser.parse(code);
     int size = objs.size() - 1;
     if (size >= 0) {

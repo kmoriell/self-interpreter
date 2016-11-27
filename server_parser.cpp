@@ -9,11 +9,11 @@
 #include "server_object.h"
 #include "common_define.h"
 
-Parser::Parser(VirtualMachine &vm) :
+Parser::Parser(VirtualMachine &vm, Object* context) :
         vm(vm) {
     this->pCad = 0;
     this->flagExecute = 0;
-    this->context = nullptr;
+    this->context = context;
 }
 
 std::vector<Object*> Parser::parse(std::string &cad) {
@@ -231,8 +231,7 @@ Object * Parser::recibirMensaje(Object* obj, std::string strName,
             Object* objMessage = obj->recvMessage(strName, args, true);
             std::string code = objMessage->getCodeSegment();
 
-            Parser unParser(vm);
-            unParser.setContext(objMessage);
+            Parser unParser(vm, objMessage);
             objMessage->addSlot(SELF, obj, true, true, false);
             std::vector<Object*> _vector = unParser.parse(code);
             objMessage->removeSlot(SELF);
@@ -749,8 +748,4 @@ Object * Parser::nameObj(Object* &context) {
         pCad = _pCad;
 
     return obj;
-}
-
-void Parser::setContext(Object* context) {
-    this->context = context;
 }

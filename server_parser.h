@@ -16,7 +16,7 @@ private:
     VirtualMachine &vm;
 
 public:
-    Parser(VirtualMachine &vm);
+    Parser(VirtualMachine &vm, Object* context);
 
     /** Constructor por copia deshabilitado
      */
@@ -32,7 +32,6 @@ public:
     Parser& operator=(Parser&&) = delete;
 
     std::vector<Object*> parse(std::string &cad);
-    void setContext(Object* context);
 
 private:
     std::vector<Object*> script();
