@@ -354,7 +354,12 @@ void MorphWindow::cellDelete_toggled(const Glib::ustring &path) {
   if (model) {
     iter = model->get_iter(path);
 
+
     std::string slotName = iter->get_value(m_Columns.m_col_slotName);
+    if (slotName.find("(*)") != std::string::npos) {
+      return;
+    }
+
     Gtk::MessageDialog dialog(*this, "Confirmar", false, Gtk::MESSAGE_QUESTION,
                               Gtk::BUTTONS_YES_NO);
     dialog.set_secondary_text("¿Desea borrar el slot " + slotName + "?");

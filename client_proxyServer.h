@@ -13,28 +13,39 @@
 
 class ProxyServer: public Proxy {
 private:
+  /// Morph interno de la clase
 	Morph &morph;
+
+	/// Lista de nombres de workspaces
 	std::vector<std::string> &workspaces;
-	//Este flag le indica al proxy que debe ejecutar un comando.
+
+	///Este flag le indica al proxy que debe ejecutar un comando.
 	bool flag;
+
+	/// Mensaje de error si es que hay.
 	std::string errorMsg;
+
+private:
+  /** Envia el mensaje que esta guardado en message al servidor
+   *
+   */
+  virtual void sendCMDMessage();
+
 public:
 	/** Constructor
 	 * @param hostname std::string con el nombre del host a conectarse
-	 * @papram port uint32_t con el puerto a conectarse
-	 * @param morph, Morph que procesa los datos para luego mostrarlos por pantalla
+	 * @papram port puerto a conectarse
+	 * @param morph procesa los datos para luego mostrarlos por pantalla
 	 */
 	ProxyServer(Socket &socket, Morph& morph, std::vector<std::string> &workspaces);
 
 	/** Envia un mensaje para ejecutar codigo self
-	 * @command, char con el comando a ejecutar
-	 * @message std::string con el mensaje a ejecutar
+	 * @param comando a enviar
+	 * @param mensaje a enviar
 	 */
 	bool sendCmdMessage(char command, std::string &message);
 
-	virtual void sendCMDMessage();
-
-	/** Metodo que sirve para
+	/** Metodo que sirve para procesar la respuesta que le envia el servidor.
 	 *
 	 */
 	void run();
@@ -46,7 +57,7 @@ public:
 	 */
 	bool getFlag() const;
 
-	/** Indica si hubo errores o no informados por el servidor.
+	/** Indica si hubo o no errores informados por el servidor.
 	 *
 	 */
 	bool areThereErrors() const;

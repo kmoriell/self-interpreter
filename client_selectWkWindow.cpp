@@ -78,13 +78,17 @@ void SelectWkWindow::drawWorkspaces() {
   }
 }
 
+void SelectWkWindow::updateList() {
+  std::string empty = "";
+  proxyServer.sendCmdMessage(AVAILABLE_WKS, empty);
+  while (proxyServer.getFlag()) {
+  }
+}
+
 // Eventos
 void SelectWkWindow::btnRefreshWk_clicked() {
-    std::string empty = "";
-    proxyServer.sendCmdMessage(AVAILABLE_WKS, empty);
-    while (proxyServer.getFlag()) {
-    }
-    drawWorkspaces();
+  updateList();
+  drawWorkspaces();
 }
 
 void SelectWkWindow::btnNewWk_clicked() {
@@ -96,37 +100,33 @@ void SelectWkWindow::btnNewWk_clicked() {
     dialog.set_secondary_text(
         "No se indico un nombre para el nuevo Workspace.");
     dialog.run();
-    pTxtNewWk->set_text("");
-    return;
-  }
-
-  if (wkName.find(CHAR_SEPARADOR) != std::string::npos) {
+    updateList();
+  } else if (wkName.find(CHAR_SEPARADOR) != std::string::npos) {
     Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
                               Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
     std::stringstream ss;
-	std::string s;
-	char c = CHAR_SEPARADOR;
-	ss << c;
-	ss >> s;
+    std::string s;
+    char c = CHAR_SEPARADOR;
+    ss << c;
+    ss >> s;
     dialog.set_secondary_text(
-        "El caracter especial " + s
-				+ " está prohibido por protocolo.");
+        "El caracter especial " + s + " está prohibido por protocolo.");
     dialog.run();
-    pTxtNewWk->set_text("");
-    return;
+    updateList();
+  } else {
 
-  }
+    proxyServer.sendCmdMessage(NEW_WK, wkName);
+    while (proxyServer.getFlag()) {
+    }
 
-  proxyServer.sendCmdMessage(NEW_WK, wkName);
-  while (proxyServer.getFlag()) {}
-
-  if (proxyServer.areThereErrors()) {
+    if (proxyServer.areThereErrors()) {
       Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
                                 Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
-      dialog.set_secondary_text(proxyServer.getErrors());
+      dialog.set_secondary_text(proxyServer.getErrors() + '\n' +
+                                "Se actualizara la lista.");
       dialog.run();
-      pTxtNewWk->set_text("");
-      return;
+      updateList();
+    }
   }
   drawWorkspaces();
   pTxtNewWk->set_text("");
@@ -147,18 +147,19 @@ void SelectWkWindow::treeView_toggled(const Glib::ustring &path) {
 
     if (resp == Gtk::RESPONSE_NO) {
       iter->set_value(m_Columns.m_col_delete, false);
-      return;
-    }
+      updateList();
+    } else {
 
-    proxyServer.sendCmdMessage(DELETE_WK, wkName);
-    while (proxyServer.getFlag()) {
-    }
-    if (proxyServer.areThereErrors()) {
-      Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
-                                Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
-      dialog.set_secondary_text(proxyServer.getErrors());
-      dialog.run();
-      return;
+      proxyServer.sendCmdMessage(DELETE_WK, wkName);
+      while (proxyServer.getFlag()) {
+      }
+      if (proxyServer.areThereErrors()) {
+        Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+                                  Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+        dialog.set_secondary_text(proxyServer.getErrors());
+        dialog.run();
+        updateList();
+      }
     }
     drawWorkspaces();
   }
@@ -169,10 +170,6 @@ void SelectWkWindow::treeView_on_row_activated(const Gtk::TreeModel::Path& path,
   Gtk::TreeModel::iterator iter = m_refTreeModel->get_iter(path);
   if (iter) {
     Gtk::TreeModel::Row row = *iter;
-    std::cout << "Row activated: Slot name=" << row[m_Columns.m_col_wkName] <<
-    //", Name="
-        /*  << row[m_Columns.m_col_name] << */std::endl;
-
     Glib::ustring text = row[m_Columns.m_col_wkName];
     std::string sText = std::string(text.c_str());
 

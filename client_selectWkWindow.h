@@ -40,6 +40,7 @@ class SelectWkWindow : public Gtk::Window {
    void addWidgets();
    void configureTreeView();
    void drawWorkspaces();
+   void updateList();
 
  public:
    SelectWkWindow(Morph &morph, std::vector<std::string> &workspaces, ProxyServer &proxyServer);

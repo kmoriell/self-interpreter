@@ -225,9 +225,9 @@ void ProxyClient::run() {
 
       std::string cad = "";
       //std::cout << "idObjEnVista por el cliente: " << idObj << std::endl;
-      switch (this->clientMessage.getCommand()) {
+      switch (this->message.getCommand()) {
         case EXEC_LOBBY_CMD: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           execLobbyCMD(cad);
           break;
         }
@@ -240,46 +240,46 @@ void ProxyClient::run() {
           break;
         }
         case EXEC_LOCAL_CMD: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           execLocalCMD(cad);
           break;
         }
         case ADD_SLOT: {
           cad += ADD_SLOTS_METHOD + OP_ARG + P_LEFT + SLOT_LIST_SEP;
-          cad += clientMessage.getMessage();
+          cad += message.getMessage();
           cad += SLOT_LIST_SEP + P_RIGHT + PUNTO;
           execLocalCMD(cad);
           break;
         }
         case REMOVE_SLOT: {
           cad += REMOVE_SLOTS_METHOD + OP_ARG + P_LEFT + SLOT_LIST_SEP;
-          cad += clientMessage.getMessage();
+          cad += message.getMessage();
           cad += PUNTO + SLOT_LIST_SEP + P_RIGHT + PUNTO;
           execLocalCMD(cad);
           break;
         }
         case SET_OBJ_NAME: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           setObjName(cad);
           break;
         }
         case SET_CODESEGMENT: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           setCodeSegment(cad);
           break;
         }
         case GET_SLOT_OBJ: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           getSlotObj(cad);
           break;
         }
         case SWAP_MUTABILITY: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           swapMutability(cad);
           break;
         }
         case GO_BACK: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           goBack();
           break;
         }
@@ -288,22 +288,22 @@ void ProxyClient::run() {
           break;
         }
         case LOAD_WK: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           loadWks(cad);
           break;
         }
         case NEW_WK: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           newWks(cad);
           break;
         }
         case DELETE_WK: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           deleteWks(cad);
           break;
         }
         case CLOSE_WK: {
-          cad = clientMessage.getMessage();
+          cad = message.getMessage();
           closeWks();
           break;
         }

@@ -42,24 +42,25 @@ public:
 	 */
 	bool is_finished();
 
-	/** Interrumpida la ejecucion del proxy.
+	/** Interrumpe la ejecucion del proxy.
 	 *
 	 */
 	void interrupt();
 
 protected:
+	/// Socket interno
 	Socket &serverSocket;
-	//Workspace *workspace = nullptr;
-	bool _interrupt;
-	bool finished;
-	command_t clientMessage;
 
-	/*void loadWorkspace(std::string name);
-	 void availableWorkspace();
-	 void newWorkspace(std::string name);
-	 void closeWorkspace(std::string name);
-	 void deleteWorkspace(std::string name);*/
-	//virtual void sendCMDMessage() = 0;
+	/// Flag que indica si hay que interrumpir la recepcion de mensajes.
+	bool _interrupt;
+
+	/// Flag que indica si finalizo
+	bool finished;
+
+	/// Mensaje recibido
+	command_t message;
+
+
 	/** Envia un mensaje
 	 * @message del tipo command_t con el mensaje
 	 */

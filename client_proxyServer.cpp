@@ -4,8 +4,6 @@ ProxyServer::ProxyServer(Socket &socket, Morph &morph, std::vector<std::string> 
 		Proxy(socket), morph(morph), workspaces(workspaces) {
 	this->serverSocket.connect();
 	this->flag = false;
-	//this->command = ERRORMESSAGE;
-	//this->message = "";
 }
 
 bool ProxyServer::sendCmdMessage(char command, std::string &message) {
@@ -15,24 +13,26 @@ bool ProxyServer::sendCmdMessage(char command, std::string &message) {
 		morph.clear();
 		std::cout << "comando a enviar: " << command << std::endl;
 		std::cout << "mensaje a enviar: " << message << std::endl;
-		clientMessage.setCommand(command);
-		clientMessage.setMessage(message.c_str());
-		clientMessage.setLength(message.size());
+		message.setCommand(command);
+		message.setMessage(message.c_str());
+		message.setLength(message.size());
 		this->flag = true;
 		return true;
 	}
 }
 
 void ProxyServer::sendCMDMessage() {
-	this->send(clientMessage);
+	this->send(message);
 }
 
 void ProxyServer::run() {
 	while (!_interrupt) {
 		if (flag) {
 			try {
-				//Envio el mensaje al servidor
+
+			  //Envio el mensaje al otro extremo de la comunicacion
 				sendCMDMessage();
+
 				//Recibo el resultado del mensaje enviado
 				int s = receive();
 				if (s == 0) {
@@ -42,21 +42,21 @@ void ProxyServer::run() {
 
 				std::string mensajeRecibido;
 
-				switch (clientMessage.getCommand()) {
+				switch (message.getCommand()) {
 				case ERRORMESSAGE: {
 					std::cout << "El servidor devolvio error." << std::endl;
-					errorMsg = clientMessage.getMessage();
+					errorMsg = message.getMessage();
 					break;
 				}
 				case OK_MSG_MORPH: {
 					std::cout << "Se recibio un mensaje OK" << std::endl;
-					mensajeRecibido = clientMessage.getMessage();
+					mensajeRecibido = message.getMessage();
 					ParserProtocoloMorph parser(morph, mensajeRecibido);
 					break;
 				}
 				case OK_MSG_SELECT_WKS: {
 					std::cout << "Se recibio un mensaje OK de WKS" << std::endl;
-					mensajeRecibido = clientMessage.getMessage();
+					mensajeRecibido = message.getMessage();
 					ParserProtocoloWorkspaces parser(workspaces, mensajeRecibido);
 					break;
 				}
@@ -73,12 +73,15 @@ void ProxyServer::run() {
 		}
 	}
 }
+
 bool ProxyServer::getFlag() const {
 	return flag;
 }
+
 bool ProxyServer::areThereErrors() const {
 	return (errorMsg.size() > 0);
 }
+
 std::string ProxyServer::getErrors() {
 	std::string copy = errorMsg;
 	errorMsg.clear();
