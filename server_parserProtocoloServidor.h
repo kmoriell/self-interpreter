@@ -6,16 +6,16 @@
 
 class ParserProtocoloServidor {
 private:
-	Object* obj;
+    Object* obj;
 
 public:
-	ParserProtocoloServidor(Object* obj);
-	ParserProtocoloServidor(const ParserProtocoloServidor&);
-	ParserProtocoloServidor(ParserProtocoloServidor&&);
+    ParserProtocoloServidor(Object* obj);
+    ParserProtocoloServidor(const ParserProtocoloServidor&);
+    ParserProtocoloServidor(ParserProtocoloServidor&&);
 
-	ParserProtocoloServidor& operator=(const ParserProtocoloServidor&);
-	ParserProtocoloServidor& operator=(ParserProtocoloServidor&&);
-	std::string getString();
+    ParserProtocoloServidor& operator=(const ParserProtocoloServidor&);
+    ParserProtocoloServidor& operator=(ParserProtocoloServidor&&);
+    std::string getString();
 };
 
 #endif /* PARSER_PROTOCOLO_SERVIDOR_H_ */

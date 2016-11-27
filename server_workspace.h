@@ -9,34 +9,34 @@
 
 class Workspace {
 private:
-	Object *lobby;
-	std::string selfInstr;
-	VirtualMachine vm;
+    Object *lobby;
+    std::string selfInstr;
+    VirtualMachine vm;
 
 public:
-	/// Constructor
-	Workspace();
+    /// Constructor
+    Workspace();
 
-	Workspace(const Workspace&) = delete;
-	Workspace(Workspace&&) = delete;
+    Workspace(const Workspace&) = delete;
+    Workspace(Workspace&&) = delete;
 
-	Workspace& operator=(const Workspace&) = delete;
-	Workspace& operator=(Workspace&&) = delete;
+    Workspace& operator=(const Workspace&) = delete;
+    Workspace& operator=(Workspace&&) = delete;
 
-	/// Destructor
-	~Workspace();
+    /// Destructor
+    ~Workspace();
 
-	/** Recibe codigo self y lo ejecuta.
-	 * @param code [std::string] codigo que recibe
-	 * @return Devuelve un Object* con el resultado de la ejecucion
-	 *
-	 */
-	uint32_t receive(Object* context, std::string &code);
+    /** Recibe codigo self y lo ejecuta.
+     * @param code [std::string] codigo que recibe
+     * @return Devuelve un Object* con el resultado de la ejecucion
+     *
+     */
+    uint32_t receive(Object* context, std::string &code);
 
-	/// Devuelve el objeto lobby.
-	Object* getLobby();
+    /// Devuelve el objeto lobby.
+    Object* getLobby();
 
-	Object* findObjectById(uint32_t id);
+    Object* findObjectById(uint32_t id);
 };
 
 #endif /* SERVER_WORKSPACE_H_ */

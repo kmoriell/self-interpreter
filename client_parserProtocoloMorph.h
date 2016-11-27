@@ -11,39 +11,39 @@
  */
 class ParserProtocoloMorph {
 private:
-	Morph &morph;
-	std::string &cad;
-	int pCad = 0;
+    Morph &morph;
+    std::string &cad;
+    int pCad = 0;
 
 public:
-	/** Constructor
-	 * @param morph Objeto que contiene la información para dibujar
-	 * en la ventana MorphWindow.
-	 * @param cad cadena que se va a parsear según protocolo
-	 */
-	ParserProtocoloMorph(Morph &morph, std::string &cad);
+    /** Constructor
+     * @param morph Objeto que contiene la información para dibujar
+     * en la ventana MorphWindow.
+     * @param cad cadena que se va a parsear según protocolo
+     */
+    ParserProtocoloMorph(Morph &morph, std::string &cad);
 
-	/** Constructor por copia deshabilitado
-	 */
-	ParserProtocoloMorph(const ParserProtocoloMorph&) = delete;
+    /** Constructor por copia deshabilitado
+     */
+    ParserProtocoloMorph(const ParserProtocoloMorph&) = delete;
 
-	/** Constructor por movimiento deshabilitado
-	 */
-	ParserProtocoloMorph(ParserProtocoloMorph&&) = delete;
+    /** Constructor por movimiento deshabilitado
+     */
+    ParserProtocoloMorph(ParserProtocoloMorph&&) = delete;
 
-	/** Operador de asignacion deshabilitado
-	 */
-	ParserProtocoloMorph& operator=(const ParserProtocoloMorph&) = delete;
+    /** Operador de asignacion deshabilitado
+     */
+    ParserProtocoloMorph& operator=(const ParserProtocoloMorph&) = delete;
 
-	/** Operador de asignacion por moviemiento deshabilitado
-	 */
-	ParserProtocoloMorph& operator=(ParserProtocoloMorph&&) = delete;
+    /** Operador de asignacion por moviemiento deshabilitado
+     */
+    ParserProtocoloMorph& operator=(ParserProtocoloMorph&&) = delete;
 
 private:
-	/** Captura el siguiente campo de la cadena cad utilizando como separador
-	 * el caracter especial de protocolo CHAR_SEPARADOR
-	 */
-	std::string getCampo();
+    /** Captura el siguiente campo de la cadena cad utilizando como separador
+     * el caracter especial de protocolo CHAR_SEPARADOR
+     */
+    std::string getCampo();
 };
 
 #endif /* PARSE_RPROTOCOLO_MORPH_H_ */
