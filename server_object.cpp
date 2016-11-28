@@ -573,12 +573,12 @@ Object* Object::print(const std::vector<Object*>& args) {
 //TODO: refactor para no repetir tanto codigo
 Object* Object::operator*(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
-    std::string codeSegment = this->codeSegment.substr(0,
+    std::string strCodeSegment = this->codeSegment.substr(0,
             codeSegment.size() - 1);
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
 
-    float number = std::stof(codeSegment);
+    float number = std::stof(strCodeSegment);
     float operand = std::stof(argCodeSegment);
     codeSegment = std::to_string((int) (number * operand)) + PUNTO;
     return this;
@@ -586,32 +586,32 @@ Object* Object::operator*(const std::vector<Object*>& args) {
 
 Object* Object::operator+(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
-    std::string codeSegment = this->codeSegment.substr(0,
+    std::string strCodeSegment = this->codeSegment.substr(0,
             codeSegment.size() - 1);
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
 
-    if (codeSegment.front() == '\'' && codeSegment.back() == '\''
+    if (strCodeSegment.front() == '\'' && strCodeSegment.back() == '\''
             && argCodeSegment.front() == '\''
             && argCodeSegment.back() == '\'') {
-        codeSegment = this->codeSegment.substr(0, codeSegment.size() - 1);
-        codeSegment += argCodeSegment.substr(1);
+        strCodeSegment = this->codeSegment.substr(0, codeSegment.size() - 1);
+        strCodeSegment += argCodeSegment.substr(1);
     } else {
-        float number = std::stof(codeSegment);
+        float number = std::stof(strCodeSegment);
         float operand = std::stof(argCodeSegment);
-        codeSegment = std::to_string((int) (number + operand)) + PUNTO;
+        this->codeSegment = std::to_string((int) (number + operand)) + PUNTO;
     }
     return this;
 }
 
 Object* Object::operator-(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
-    std::string codeSegment = this->codeSegment.substr(0,
+    std::string strCodeSegment = this->codeSegment.substr(0,
             codeSegment.size() - 1);
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
 
-    float number = std::stof(codeSegment);
+    float number = std::stof(strCodeSegment);
     float operand = std::stof(argCodeSegment);
     codeSegment = std::to_string((int) (number - operand)) + PUNTO;
     return this;
@@ -619,12 +619,12 @@ Object* Object::operator-(const std::vector<Object*>& args) {
 
 Object* Object::operator/(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
-    std::string codeSegment = this->codeSegment.substr(0,
+    std::string strCodeSegment = this->codeSegment.substr(0,
             codeSegment.size() - 1);
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
 
-    float number = std::stof(codeSegment);
+    float number = std::stof(strCodeSegment);
     float operand = std::stof(argCodeSegment);
     codeSegment = std::to_string((int) (number / operand)) + PUNTO;
     return this;
