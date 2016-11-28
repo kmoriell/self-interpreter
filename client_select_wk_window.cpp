@@ -6,7 +6,7 @@ SelectWkWindow::SelectWkWindow(Morph &morph,
         morph(morph), workspaces(workspaces), proxyServer(proxyServer), m(m) {
     refBuilder = Gtk::Builder::create();
     try {
-        refBuilder->add_from_file("mainWindow.glade");
+        refBuilder->add_from_file(GLADE_FILE);
     } catch (...) {
         throw std::runtime_error("No se puede crear la ventana");
     }

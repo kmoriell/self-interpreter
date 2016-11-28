@@ -79,6 +79,9 @@ const std::string ADD_SLOTS_METHOD = "_AddSlots";
 const std::string REMOVE_SLOTS_METHOD = "_RemoveSlots";
 const std::string COLLECT_METHOD = "collect";
 
+//Nombre del archivo glade
+const std::string GLADE_FILE = "./windows.glade";
+
 //Server
 #define SERVER_QUIT_CHAR 'q'
 

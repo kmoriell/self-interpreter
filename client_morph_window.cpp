@@ -4,7 +4,7 @@ MorphWindow::MorphWindow(Morph &morph, ProxyServer &proxyServer, std::mutex &m) 
         morph(morph), proxyServer(proxyServer), m(m) {
     refBuilder = Gtk::Builder::create();
     try {
-        refBuilder->add_from_file("mainWindow.glade");
+        refBuilder->add_from_file(GLADE_FILE);
     } catch (...) {
         throw std::runtime_error("No se puede crear la ventana");
     }
