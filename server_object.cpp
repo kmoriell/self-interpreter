@@ -632,19 +632,19 @@ Object* Object::operator/(const std::vector<Object*>& args) {
 
 Object* Object::operator==(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
-    std::string codeSegment = this->codeSegment.substr(0,
+    std::string strCodeSegment = this->codeSegment.substr(0,
             codeSegment.size() - 1);
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
 
     bool retVal = true;
 
-    if (codeSegment.front() == '\'' && codeSegment.back() == '\''
+    if (strCodeSegment.front() == '\'' && strCodeSegment.back() == '\''
             && argCodeSegment.front() == '\''
             && argCodeSegment.back() == '\'') {
-        retVal = (codeSegment == argCodeSegment);
+        retVal = (strCodeSegment == argCodeSegment);
     } else {
-        float number = std::stof(codeSegment);
+        float number = std::stof(strCodeSegment);
         float operand = std::stof(argCodeSegment);
         retVal = (number == operand);
     }
@@ -660,15 +660,15 @@ Object* Object::operator==(const std::vector<Object*>& args) {
 
 Object* Object::operator!=(const std::vector<Object*>& args) {
     Object* obj = this->operator==(args);
-    std::string codeSegment = obj->codeSegment.substr(0,
+    std::string strCodeSegment = obj->codeSegment.substr(0,
             codeSegment.size() - 1);
 
-    if (obj->codeSegment == TRUE_STR)
+    if (strCodeSegment == TRUE_STR)
         obj->codeSegment = FALSE_STR;
     else
         obj->codeSegment = TRUE_STR;
 
     obj->codeSegment += PUNTO;
+
     return obj;
-    return this;
 }
