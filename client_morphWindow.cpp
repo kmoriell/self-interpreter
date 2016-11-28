@@ -240,8 +240,6 @@ void MorphWindow::on_row_activated(const Gtk::TreeModel::Path& path,
         Gtk::TreeViewColumn* column) {
     Gtk::TreeModel::iterator iter = m_refTreeModel->get_iter(path);
     if (iter) {
-        Gtk::TreeModel::Row row = *iter;
-
         int rowId = path[0];
 
         Glib::ustring text = morph.getSlotName(rowId);
@@ -320,9 +318,9 @@ void MorphWindow::cellMutable_toggled(const Glib::ustring &path) {
         bool checked = iter->get_value(m_Columns.m_col_mutable);
         std::string text = iter->get_value(m_Columns.m_col_slotName);
 
+        int rowId = atoi(path.c_str());
         // Antes de enviar el comando al servidor, verifico que sea objeto nativo
-        std::string slotName = iter->get_value(m_Columns.m_col_slotName);
-        if (slotName.find("(*)") != std::string::npos) {
+        if (morph.isNativeMethodSlot(rowId)) {
             iter->set_value(m_Columns.m_col_mutable, false);
             return;
         }
