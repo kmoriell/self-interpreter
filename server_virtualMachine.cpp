@@ -17,7 +17,6 @@ Object* VirtualMachine::createString(std::string &strString) {
     obj->setName(STRING_OBJ);
     obj->setCodeSegment(strString + PUNTO);
     obj->enableNativeMethod(PRINT_METHOD);
-    obj->enableNativeMethod(OP_SUMA);
     obj->enableNativeMethod(OP_IGUAL);
     obj->enableNativeMethod(OP_DISTINTO);
     lobby->addCreatedObject(obj);

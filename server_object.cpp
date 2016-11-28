@@ -591,16 +591,9 @@ Object* Object::operator+(const std::vector<Object*>& args) {
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
 
-    if (strCodeSegment.front() == '\'' && strCodeSegment.back() == '\''
-            && argCodeSegment.front() == '\''
-            && argCodeSegment.back() == '\'') {
-        strCodeSegment = this->codeSegment.substr(0, codeSegment.size() - 1);
-        strCodeSegment += argCodeSegment.substr(1);
-    } else {
-        float number = std::stof(strCodeSegment);
-        float operand = std::stof(argCodeSegment);
-        this->codeSegment = std::to_string((int) (number + operand)) + PUNTO;
-    }
+    float number = std::stof(strCodeSegment);
+    float operand = std::stof(argCodeSegment);
+    codeSegment = std::to_string((int) (number + operand)) + PUNTO;
     return this;
 }
 
