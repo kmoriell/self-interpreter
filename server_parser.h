@@ -8,14 +8,26 @@
 
 class Parser {
 private:
+    /// Objeto sobre el que se ejecuta el script.
     Object* context;
+    /// String del script a ejecutar
     std::string cad;
+    /// Posicion de la cadena cad sobre la que está analizando el parser.
     uint32_t pCad;
+    /// Modo debug
     bool debug = false;
+    /// Cuando vale 1 se ejecuta el metodo receiveMessage
+    /// Cada vez que se ingresa a un nuevo script incrementa en 1.
     int flagExecute;
+    /// Máquina virtual del workspace
     VirtualMachine &vm;
 
 public:
+    /** Constructor
+     * @param vm Máquina virtual
+     * @param context Objeto sobre el que se ejecuta el script.
+     *
+     */
     Parser(VirtualMachine &vm, Object* context);
 
     /** Constructor por copia deshabilitado

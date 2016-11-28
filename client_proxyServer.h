@@ -37,16 +37,17 @@ private:
 
 public:
     /** Constructor
-     * @param hostname std::string con el nombre del host a conectarse
-     * @papram port puerto a conectarse
-     * @param morph procesa los datos para luego mostrarlos por pantalla
+     * @param socket
+     * @papram morph
+     * @param workspaces lista de nombres de los workspaces
+     * @param m mutex
      */
     ProxyServer(Socket &socket, Morph& morph,
             std::vector<std::string> &workspaces, std::mutex &m);
 
     /** Envia un mensaje para ejecutar codigo self
-     * @param comando a enviar
-     * @param mensaje a enviar
+     * @param command comando a enviar
+     * @param strMessage mensaje a enviar
      */
     bool sendCmdMessage(char command, std::string &strMessage);
 
@@ -73,8 +74,10 @@ public:
      */
     std::string getErrors();
 
+    /** Setea el flag que indica si se esta esperando una respuesta del servidor.
+     * @param newValue nuevo valor del flag
+     */
     void setFlag(const bool newValue);
-
 };
 
 #endif /* CLIENT_PROXYSERVER_H_ */

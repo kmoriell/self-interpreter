@@ -27,6 +27,7 @@ lobby printObj. '\n' print.
 '>>> _RemoveSlots: (|n1.|).' print. '\n' print. 
 '>>> lobby printObj. ' print. '\n' print. 
 _RemoveSlots: (|n1.|).
+_RemoveSlots: (|_AddSlots.|).
 lobby printObj. '\n' print.
 
 

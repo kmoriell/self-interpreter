@@ -12,7 +12,7 @@ class Morph {
 public:
     /** Slot del objeto Morph.
      * Elementos de slot_t
-     * pos	tipo		variable
+     * pos	    tipo		variable
      * 0	    std::string	nombreSlot
      * 1	    bool		esMetodoNativo
      * 2	    bool		esMutable
