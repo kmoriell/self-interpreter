@@ -8,6 +8,9 @@
 #include "client_columnRecordWk.h"
 #include "client_morphWindow.h"
 
+/** Se encarga de dibujar la ventana selectora de workspaces.
+ *
+ */
 class SelectWkWindow: public Gtk::Window {
 private:
     Morph &morph;

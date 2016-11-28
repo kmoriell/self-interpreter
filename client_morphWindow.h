@@ -13,6 +13,10 @@
 #define COL_MUTABLE 2
 #define MAX_PREVIEW_LEN 20
 
+/** Se encarga de dibujar la ventana que representa al Morphic de Self
+ * Permite visualizar la información de un objeto de por vez.
+ *
+ */
 class MorphWindow: public Gtk::Window {
 private:
     Glib::RefPtr<Gtk::Builder> refBuilder;

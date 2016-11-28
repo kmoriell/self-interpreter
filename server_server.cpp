@@ -109,7 +109,6 @@ std::string Server::receiveCode(const std::string &idWk, uint32_t &idObj,
     try {
         m.lock();
         Workspace* wk = getWorkspace(idWk);
-        wk->findObjectById(idObj)->printObj(std::vector<Object*> { });
         Object *context = wk->findObjectById(idObj);
         uint32_t idRet;
         idRet = wk->receive(context, code);
@@ -134,9 +133,6 @@ std::string Server::getObj(const std::string &idWk, uint32_t &idObj) {
     Object* objRet;
     try {
         wk = getWorkspace(idWk);
-        wk->findObjectById(idObj)->printObj(
-            std::vector<Object*> { });
-
         objRet = wk->findObjectById(idObj);
     } catch(...) {
         m.unlock();
@@ -151,8 +147,6 @@ std::string Server::setObjName(const std::string &idWk, uint32_t &idObj,
     Object* objRet;
     try {
         wk = getWorkspace(idWk);
-        wk->findObjectById(idObj)->printObj(
-            std::vector<Object*> { });
         objRet = wk->findObjectById(idObj);
         objRet->setName(cad);
     } catch(...) {
@@ -168,8 +162,6 @@ std::string Server::setCodeSegment(const std::string &idWk, uint32_t &idObj,
     Object* objRet;
     try {
     wk = getWorkspace(idWk);
-    wk->findObjectById(idObj)->printObj(std::vector<Object*> { });
-
     objRet = wk->findObjectById(idObj);
     objRet->setCodeSegment(cad);
     } catch(...) {
@@ -186,7 +178,6 @@ std::string Server::getSlotObj(const std::string &idWk, uint32_t &idObj,
     m.lock();
     try {
         wk = getWorkspace(idWk);
-        wk->findObjectById(idObj)->printObj(std::vector<Object*> { });
         obj = wk->findObjectById(idObj);
     } catch(...) {
         m.unlock();
@@ -219,8 +210,6 @@ std::string Server::swapMutability(const std::string &idWk, uint32_t &idObj,
     m.lock();
     try {
         wk = getWorkspace(idWk);
-        wk->findObjectById(idObj)->printObj(std::vector<Object*> { });
-
         obj = wk->findObjectById(idObj);
         obj->swapSlotMutability(cad);
     } catch(...) {
