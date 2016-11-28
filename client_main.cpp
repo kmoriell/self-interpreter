@@ -14,7 +14,7 @@
 
 int main(int argc, char **argv) {
     try {
-        if (argc != 4) {
+        if (argc != CLIENT_PARAMS) {
             std::cout << "Argumentos: >>> .\\client <serverIP> <puerto>."
                     << std::endl;
             return RET_NOK;
