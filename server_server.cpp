@@ -94,9 +94,7 @@ void Server::deleteWorkspace(std::string name) {
 }
 
 Workspace* Server::getWorkspace(const std::string &idWk) {
-    m.lock();
     auto it = workspaces.find(idWk);
-    m.unlock();
     if (it == workspaces.end()) {
         std::string error = "El workspace " + idWk + " no existe";
         throw std::runtime_error(error);
@@ -107,16 +105,11 @@ Workspace* Server::getWorkspace(const std::string &idWk) {
 
 std::string Server::receiveCode(const std::string &idWk, uint32_t &idObj,
         std::string &code) {
-    Workspace* wk = getWorkspace(idWk);
-
-    m.lock();
-    wk->findObjectById(idObj)->printObj(
-            std::vector<Object*> { });
-    m.unlock();
-
     std::string msg = "";
     try {
         m.lock();
+        Workspace* wk = getWorkspace(idWk);
+        wk->findObjectById(idObj)->printObj(std::vector<Object*> { });
         Object *context = wk->findObjectById(idObj);
         uint32_t idRet;
         idRet = wk->receive(context, code);
@@ -137,64 +130,104 @@ std::string Server::getLobby(const std::string &idWk, uint32_t &idObj) {
 }
 
 std::string Server::getObj(const std::string &idWk, uint32_t &idObj) {
-    Workspace* wk = getWorkspace(idWk);
-    wk->findObjectById(idObj)->printObj(
+    Workspace* wk;
+    Object* objRet;
+    try {
+        wk = getWorkspace(idWk);
+        wk->findObjectById(idObj)->printObj(
             std::vector<Object*> { });
 
-    Object* objRet = wk->findObjectById(idObj);
+        objRet = wk->findObjectById(idObj);
+    } catch(...) {
+        m.unlock();
+        throw;
+    }
     return ParserProtocoloServidor(objRet).getString();
 }
 
 std::string Server::setObjName(const std::string &idWk, uint32_t &idObj,
         const std::string &cad) {
-    Workspace* wk = getWorkspace(idWk);
-    wk->findObjectById(idObj)->printObj(
+    Workspace* wk;
+    Object* objRet;
+    try {
+        wk = getWorkspace(idWk);
+        wk->findObjectById(idObj)->printObj(
             std::vector<Object*> { });
-
-    Object* objRet = wk->findObjectById(idObj);
-    objRet->setName(cad);
+        objRet = wk->findObjectById(idObj);
+        objRet->setName(cad);
+    } catch(...) {
+        m.unlock();
+        throw;
+    }
     return ParserProtocoloServidor(objRet).getString();
 }
 
 std::string Server::setCodeSegment(const std::string &idWk, uint32_t &idObj,
         const std::string &cad) {
-    getWorkspace(idWk)->findObjectById(idObj)->printObj(
-            std::vector<Object*> { });
+    Workspace* wk;
+    Object* objRet;
+    try {
+    wk = getWorkspace(idWk);
+    wk->findObjectById(idObj)->printObj(std::vector<Object*> { });
 
-    Object* objRet = getWorkspace(idWk)->findObjectById(idObj);
+    objRet = wk->findObjectById(idObj);
     objRet->setCodeSegment(cad);
+    } catch(...) {
+        m.unlock();
+        throw;
+    }
     return ParserProtocoloServidor(objRet).getString();
 }
 
 std::string Server::getSlotObj(const std::string &idWk, uint32_t &idObj,
         const std::string &cad) {
-
-    getWorkspace(idWk)->findObjectById(idObj)->printObj(
-            std::vector<Object*> { });
-
-    Object* obj = getWorkspace(idWk)->findObjectById(idObj);
+    Workspace* wk;
+    Object* obj;
+    m.lock();
+    try {
+        wk = getWorkspace(idWk);
+        wk->findObjectById(idObj)->printObj(std::vector<Object*> { });
+        obj = wk->findObjectById(idObj);
+    } catch(...) {
+        m.unlock();
+        throw;
+    }
+    std::string retVal;
     auto slots = obj->getSlots();
     auto it = slots.find(cad);
     if (it != slots.end()) {
         Object* objRet = std::get<0>(it->second);
         if (!objRet) {
+            m.unlock();
             throw std::runtime_error("El slot tiene un puntero nulo");
         } else {
             idObj = objRet->getId();
-            return ParserProtocoloServidor(objRet).getString();
+            retVal = ParserProtocoloServidor(objRet).getString();
         }
     } else {
+        m.unlock();
         throw std::runtime_error("El slot buscado no existe");
     }
+    m.unlock();
+    return retVal;
 }
 
 std::string Server::swapMutability(const std::string &idWk, uint32_t &idObj,
         const std::string &cad) {
-    getWorkspace(idWk)->findObjectById(idObj)->printObj(
-            std::vector<Object*> { });
+    Workspace* wk;
+    Object* obj;
+    m.lock();
+    try {
+        wk = getWorkspace(idWk);
+        wk->findObjectById(idObj)->printObj(std::vector<Object*> { });
 
-    Object* obj = getWorkspace(idWk)->findObjectById(idObj);
-    obj->swapSlotMutability(cad);
+        obj = wk->findObjectById(idObj);
+        obj->swapSlotMutability(cad);
+    } catch(...) {
+        m.unlock();
+        throw;
+    }
     idObj = obj->getId();
+    m.unlock();
     return ParserProtocoloServidor(obj).getString();
-}
+}	

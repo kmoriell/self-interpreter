@@ -1,6 +1,5 @@
 #include "server_proxyClient.h"
 #include <string>
-#include <iostream>
 #include <vector>
 
 ProxyClient::ProxyClient(Socket &socket, Server &server) :
@@ -223,7 +222,6 @@ void ProxyClient::run() {
             }
 
             std::string cad = "";
-            //std::cout << "idObjEnVista por el cliente: " << idObj << std::endl;
             switch (this->message.getCommand()) {
             case EXEC_LOBBY_CMD: {
                 cad = message.getMessage();

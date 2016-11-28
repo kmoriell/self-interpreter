@@ -3,6 +3,7 @@
 
 #include "server_accepter.h"
 #include "common_define.h"
+#include <fstream>
 
 /** Es la clase selectora para los dos modos del servidor.
  * El modo servidor propiamente dicho y el modo para levantar

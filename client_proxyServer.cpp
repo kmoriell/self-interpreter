@@ -42,12 +42,10 @@ void ProxyServer::run() {
 
                 switch (message.getCommand()) {
                 case ERRORMESSAGE: {
-                    std::cout << "El servidor devolvio error." << std::endl;
                     errorMsg = message.getMessage();
                     break;
                 }
                 case OK_MSG_MORPH: {
-                    std::cout << "Se recibio un mensaje OK" << std::endl;
                     mensajeRecibido = message.getMessage();
                     m.lock();
                     ParserProtocoloMorph(morph, mensajeRecibido);
@@ -55,7 +53,6 @@ void ProxyServer::run() {
                     break;
                 }
                 case OK_MSG_SELECT_WKS: {
-                    std::cout << "Se recibio un mensaje OK de WKS" << std::endl;
                     mensajeRecibido = message.getMessage();
                     m.lock();
                     ParserProtocoloWorkspaces(workspaces,
@@ -64,7 +61,7 @@ void ProxyServer::run() {
                     break;
                 }
                 default:
-                    std::cout << "no se que mandaste" << std::endl;
+                    std::cerr << "Mensaje desconocido." << std::endl;
                     break;
                 }
 

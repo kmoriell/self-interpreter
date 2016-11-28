@@ -1,7 +1,5 @@
 #include "server_accepter.h"
-
 #include <stdexcept>
-#include <iostream>
 #include <vector>
 
 Accepter::Accepter(uint32_t port, Server &server) :

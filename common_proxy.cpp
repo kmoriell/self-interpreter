@@ -1,5 +1,4 @@
 #include "common_proxy.h"
-#include <iostream>
 
 Proxy::Proxy(Socket &socket) :
         serverSocket(socket) {
@@ -40,11 +39,6 @@ void Proxy::send(Message &response) {
 
     char *strLen = new char[sizeof(int)];
     memcpy(strLen, &len, sizeof(int));
-
-    std::cout << "send()" << std::endl;
-    std::cout << "len = " << ntohl(len) << std::endl << " command = " << command
-            << std::endl << " message = " << response.getMessage() << std::endl
-            << std::endl;
 
     this->serverSocket.send(strLen, sizeof(int));
     this->serverSocket.send(&command, sizeof(char));

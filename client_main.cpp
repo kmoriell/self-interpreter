@@ -60,7 +60,5 @@ int main(int argc, char **argv) {
 
     proxyServer.interrupt();
     proxyServer.join();
-    std::cout << "JOIN." << std::endl;
-    std::cout << "SALIMOS." << std::endl;
     return 0;
 }

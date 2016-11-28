@@ -7,7 +7,6 @@
 #include "client_parserProtocoloMorph.h"
 #include "client_parserProtocoloWorkspaces.h"
 #include "common_define.h"
-#include <iostream>
 #include <vector>
 #include <string>
 #include <mutex>

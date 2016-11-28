@@ -1,10 +1,9 @@
 #ifndef SERVER_ACCEPTER_H_
 #define SERVER_ACCEPTER_H_
 
-#include "common_socket.h"
 #include <stdexcept>
 #include <vector>
-
+#include "common_socket.h"
 #include "server_proxyClient.h"
 #include "common_thread.h"
 #include "server_server.h"

@@ -215,7 +215,8 @@ void MorphWindow::btnGoBack_clicked() {
     doAction(GO_BACK, empty);
 }
 void MorphWindow::btnRefresh_clicked() {
-
+    std::string empty;
+    doAction(EXEC_REFRESH, empty);
 }
 
 void MorphWindow::btnApply_clicked() {
