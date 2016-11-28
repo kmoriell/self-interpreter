@@ -134,7 +134,7 @@ std::string Server::getObj(const std::string &idWk, uint32_t &idObj) {
     try {
         wk = getWorkspace(idWk);
         objRet = wk->findObjectById(idObj);
-    } catch(...) {
+    } catch (...) {
         m.unlock();
         throw;
     }
@@ -149,7 +149,7 @@ std::string Server::setObjName(const std::string &idWk, uint32_t &idObj,
         wk = getWorkspace(idWk);
         objRet = wk->findObjectById(idObj);
         objRet->setName(cad);
-    } catch(...) {
+    } catch (...) {
         m.unlock();
         throw;
     }
@@ -161,10 +161,10 @@ std::string Server::setCodeSegment(const std::string &idWk, uint32_t &idObj,
     Workspace* wk;
     Object* objRet;
     try {
-    wk = getWorkspace(idWk);
-    objRet = wk->findObjectById(idObj);
-    objRet->setCodeSegment(cad);
-    } catch(...) {
+        wk = getWorkspace(idWk);
+        objRet = wk->findObjectById(idObj);
+        objRet->setCodeSegment(cad);
+    } catch (...) {
         m.unlock();
         throw;
     }
@@ -179,7 +179,7 @@ std::string Server::getSlotObj(const std::string &idWk, uint32_t &idObj,
     try {
         wk = getWorkspace(idWk);
         obj = wk->findObjectById(idObj);
-    } catch(...) {
+    } catch (...) {
         m.unlock();
         throw;
     }
@@ -212,11 +212,11 @@ std::string Server::swapMutability(const std::string &idWk, uint32_t &idObj,
         wk = getWorkspace(idWk);
         obj = wk->findObjectById(idObj);
         obj->swapSlotMutability(cad);
-    } catch(...) {
+    } catch (...) {
         m.unlock();
         throw;
     }
     idObj = obj->getId();
     m.unlock();
     return ParserProtocoloServidor(obj).getString();
-}	
+}

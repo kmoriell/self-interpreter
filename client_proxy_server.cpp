@@ -55,8 +55,7 @@ void ProxyServer::run() {
                 case OK_MSG_SELECT_WKS: {
                     mensajeRecibido = message.getMessage();
                     m.lock();
-                    ParserProtocoloWorkspaces(workspaces,
-                            mensajeRecibido);
+                    ParserProtocoloWorkspaces(workspaces, mensajeRecibido);
                     m.unlock();
                     break;
                 }

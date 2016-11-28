@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
                 int port = 0;
                 try {
                     port = std::stoi(*(argv + 2));
-                } catch(...) {
+                } catch (...) {
                     throw std::runtime_error("puerto invalido.");
                 }
                 ModeSelector modeSelector(port);
@@ -28,8 +28,7 @@ int main(int argc, char **argv) {
                 std::string filename = std::string(*(argv + 2));
                 ModeSelector modeSelector(filename);
             } else {
-                std::cerr
-                        << "Forma de uso: >>> ./server <modo s|f> <port|file>"
+                std::cerr << "Forma de uso: >>> ./server <modo s|f> <port|file>"
                         << std::endl;
             }
         } else {

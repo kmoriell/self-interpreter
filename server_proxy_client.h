@@ -57,78 +57,78 @@ public:
      */
     virtual void run();
 private:
-     /** Le pide al servidor que ejecute un script de código self con el
+    /** Le pide al servidor que ejecute un script de código self con el
      * entorno/contexto de lobby y le retorna al cliente la respuesta.
      * @param cad script a procesar por el servidor.
      */
     void execLobbyCMD(std::string &cad);
     /** Le pide al servidor que ejecute un script de código self con el
-    * entorno/contexto del objeto que ve el cliente y le retorna al cliente
-    *  la respuesta.
-    * @param cad script a procesar por el servidor.
-    */
+     * entorno/contexto del objeto que ve el cliente y le retorna al cliente
+     *  la respuesta.
+     * @param cad script a procesar por el servidor.
+     */
     void execLocalCMD(std::string &cad);
     /** Le pide al servidor la cadena que representa por protocolo a lobby
      *  y le retorna al cliente la respuesta.
-    */
+     */
     void showLobby();
     /** Le pide al servidor la cadena que representa por protocolo al
-    * objeto que esta viendo el cliente para actualizar las novedades
-    * y le retorna al cliente la respuesta.
-    */
+     * objeto que esta viendo el cliente para actualizar las novedades
+     * y le retorna al cliente la respuesta.
+     */
     void execRefresh();
     /** Le pide al servidor que le setee el nombre al objeto que ve el cliente.
-    * Retorna al cliente la respuesta con el objeto modificado.
-    * @param cad nuevo nombre.
-    */
+     * Retorna al cliente la respuesta con el objeto modificado.
+     * @param cad nuevo nombre.
+     */
     void setObjName(const std::string &cad);
     /** Le pide al servidor que le setee el bloque de código al objeto que ve
-    * el cliente y retorna al cliente la respuesta con el objeto modificado.
-    * @param cad nuevo bloque de codigo.
-    */
+     * el cliente y retorna al cliente la respuesta con el objeto modificado.
+     * @param cad nuevo bloque de codigo.
+     */
     void setCodeSegment(const std::string &cad);
     /** Le pide al servidor el objeto contenido en el slot del objeto que el
-    * cliente está viendo.
-    * @param cad nombre del slot en el objeto que ve el cliente.
-    */
+     * cliente está viendo.
+     * @param cad nombre del slot en el objeto que ve el cliente.
+     */
     void getSlotObj(const std::string &cad);
     /** Le pide al servidor cambiar la mutabilidad del slot del objeto que el
-    * cliente está viendo.
-    * @param cad nombre del slot en el objeto que ve el cliente.
-    */
+     * cliente está viendo.
+     * @param cad nombre del slot en el objeto que ve el cliente.
+     */
     void swapMutability(const std::string &cad);
     /** Le pide al servidor el objeto anterior de la pila seenObj
-    * y se lo devuelve al cliente.
-    */
+     * y se lo devuelve al cliente.
+     */
     void goBack();
     /** Le pide al servidor una lista de workspaces existentes
-    * y le devuelve esa lista al cliente.
-    */
+     * y le devuelve esa lista al cliente.
+     */
     void availableWks();
     /** Le indica al servidor que un cliente va a entrar a un workspace
-    * por lo que el servidor le debe retornar el lobby de ese workspace
-    * para devolverselo al cliente.
-    * @param cad nombre del workspace a cargar.
-    */
+     * por lo que el servidor le debe retornar el lobby de ese workspace
+     * para devolverselo al cliente.
+     * @param cad nombre del workspace a cargar.
+     */
     void loadWks(const std::string &cad);
     /** Le indica al servidor que se debe crear un nuevo workspace
      * y le retorna al cliente el lobby que le devolvi el server.
-    * @param cad nombre del nuevo workspace.
-    */
+     * @param cad nombre del nuevo workspace.
+     */
     void newWks(const std::string &cad);
     /** Le indica al servidor que se debe eliminar un workspace
      * y le retorna al cliente la nueva lista de workspace disponibles.
-    * @param cad nombre del workspacer a eliminar.
-    */
+     * @param cad nombre del workspacer a eliminar.
+     */
     void deleteWks(const std::string &cad);
     /** Le indica al servidor que el cliente se desconecta del workspace
-    *  actual.
-    */
+     *  actual.
+     */
     void closeWks();
 
     /** Devuelve el ID del objeto que está mas arriba en la pila de seenObj.
      * Es decir de los objetos vistos por el cliente hasta el momento.
-    */
+     */
     uint32_t topObj();
 };
 

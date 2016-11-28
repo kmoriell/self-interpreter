@@ -5,8 +5,8 @@
 #include <tuple>
 #include <vector>
 
- /** Este objeto contiene la información que ve el cliente desde la GUI
-  * y representa al objeto que está visualizando.
+/** Este objeto contiene la información que ve el cliente desde la GUI
+ * y representa al objeto que está visualizando.
  */
 class Morph {
 public:
