@@ -8,6 +8,9 @@
 #include <vector>
 #include <stack>
 
+/** Representa un objeto del lenguaje Self.
+ *
+ */
 class Object {
 public:
     /** Definicion del tipo delegate que es un puntero a funcion

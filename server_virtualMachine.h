@@ -4,8 +4,8 @@
 #include <stack>
 #include "server_object.h"
 
-/** Es la encargada de crear y almacenar todos los objetos del workspaces
- * excepto los clonados que se almacenan en una pila en el objeto lobby.
+/** Es la encargada de crear y almacenarlos en una pila en el objeto lobby.
+ * Tanto la maquina virtual como el objeto lobby son unicos por workspace.
  *
  */
 class VirtualMachine {

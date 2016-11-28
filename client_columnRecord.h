@@ -1,6 +1,10 @@
 #include <string>
 #include <gtkmm-3.0/gtkmm.h>
 
+/** Esta clase represanta el modelo de columnas que se va
+ * a utilizar en el TreeView de los slots.
+ *
+ */
 class ColumnRecord: public Gtk::TreeModel::ColumnRecord {
 public:
     ColumnRecord() {

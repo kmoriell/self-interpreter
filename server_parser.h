@@ -6,8 +6,9 @@
 #include "server_object.h"
 #include "server_virtualMachine.h"
 
-/** Es la clase encargada de parsear scripts en código self y de indicarle a la vm
- * que objetos y mensajes se deben emitir en consecuencia.
+/** Es la clase encargada de parsear scripts en código self y de indicarle
+ * a la maquina virtual (VM) que objetos y mensajes se deben emitir
+ * en consecuencia.
  */
 class Parser {
 private:

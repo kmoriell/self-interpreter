@@ -15,6 +15,10 @@
 #include "common_define.h"
 #include "server_parserProtocoloServidor.h"
 
+/** Representa el modelo de negocio. Resuelve las peticiones de los
+ * ProxyClient's y administra los recursos que se deben proteger.
+ *
+ */
 class Server {
 private:
     std::mutex m;

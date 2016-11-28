@@ -3,13 +3,17 @@
 
 #include "common_socket.h"
 #include "common_thread.h"
-#include "common_types.h"
+#include "common_message.h"
 #include "common_define.h"
 #include "server_server.h"
 #include "server_object.h"
 #include <string>
 #include <vector>
 
+/** Esta clase es la base para las clases ProxyClient y ProxyServer.
+ * Contiene los metodos y atributos comunes a ambos.
+ *
+ */
 class Proxy: public Thread {
 public:
     /** Constructor.
@@ -58,12 +62,12 @@ protected:
     bool finished;
 
     /// Mensaje recibido
-    command_t message;
+    Message message;
 
     /** Envia un mensaje
      * @message del tipo command_t con el mensaje
      */
-    void send(command_t &message);
+    void send(Message &message);
 
     /** Recibe datos. Una vez que recibe los datos los guarda
      * internamente.

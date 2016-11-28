@@ -11,7 +11,7 @@
 #include "server_workspace.h"
 
 /** Es el encargado de aceptar nuevos clientes abriendo
- * proxys en nuevos hilos.
+ * proxys en nuevos hilos. Un hilo por cada cliente conectado.
  *
  */
 class Accepter: public Thread {

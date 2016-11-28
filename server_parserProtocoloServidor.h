@@ -4,9 +4,9 @@
 #include <string>
 #include "server_object.h"
 
-/** Esta clase se encarga de generar una cadena con el formato por protocolo
- * en funcion de un objeto dado por el servidor para que la misma sea enviada
- * por el ProxyClient al cliente.
+/** Esta clase se encarga de generar una cadena con el formato especificado
+ * por protocolo en funcion de un objeto dado por el servidor para que la
+ * misma sea enviada por el ProxyClient al cliente.
  *
  */
 class ParserProtocoloServidor {

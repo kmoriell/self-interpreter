@@ -3,6 +3,9 @@
 #include <thread>
 #include <utility>
 
+/** Encapsula los metodos para iniciar, correr y joinear hilos.
+ *
+ */
 class Thread {
 private:
     std::thread thread;

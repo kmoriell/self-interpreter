@@ -32,7 +32,7 @@ int Proxy::receive() {
     return s;
 }
 
-void Proxy::send(command_t &response) {
+void Proxy::send(Message &response) {
     char command = response.getCommand();
 
     unsigned int len = response.getLength();
@@ -54,17 +54,17 @@ void Proxy::send(command_t &response) {
 }
 
 void Proxy::sendError(std::string msg) {
-    command_t response(msg.size(), ERRORMESSAGE, msg);
+    Message response(msg.size(), ERRORMESSAGE, msg);
     send(response);
 }
 
 void Proxy::sendOK(std::string msg) {
-    command_t response(msg.size(), OK_MSG_MORPH, msg);
+    Message response(msg.size(), OK_MSG_MORPH, msg);
     send(response);
 }
 
 void Proxy::sendOKWks(std::string msg) {
-    command_t response(msg.size(), OK_MSG_SELECT_WKS, msg);
+    Message response(msg.size(), OK_MSG_SELECT_WKS, msg);
     send(response);
 }
 

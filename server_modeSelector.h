@@ -4,6 +4,11 @@
 #include "server_accepter.h"
 #include "common_define.h"
 
+/** Es la clase selectora para los dos modos del servidor.
+ * El modo servidor propiamente dicho y el modo para levantar
+ * archivos locales con codigo self.
+ *
+ */
 class ModeSelector {
 public:
     /** Constructor del modo server
