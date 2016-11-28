@@ -38,7 +38,7 @@ public:
     /** Constructor
      */
     Server();
-    /** DEstructor
+    /** Destructor
      */
     ~Server();
 

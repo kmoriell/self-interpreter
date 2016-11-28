@@ -20,8 +20,10 @@ private:
     uint32_t pCad;
     /// Modo debug
     bool debug = false;
-    /// Cuando vale 1 se ejecuta el metodo receiveMessage
-    /// Cada vez que se ingresa a un nuevo script incrementa en 1.
+
+    /** Cuando vale 1 se ejecuta el metodo receiveMessage
+     * Cada vez que se ingresa a un nuevo script incrementa en 1.
+     */
     int flagExecute;
     /// Máquina virtual del workspace
     VirtualMachine &vm;

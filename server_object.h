@@ -50,8 +50,9 @@ private:
     /// Representa el code segment del objeto
     std::string codeSegment;
 
-    /// Diccionario con los metodos nativos. La clave es el nombre y el
-    // valor el puntero a la funcion.
+    /** Diccionario con los metodos nativos. La clave es el nombre y el
+     *  valor el puntero a la funcion.
+     */
     std::map<std::string, fpointTuple> nativeMethods;
 
     /// Puntero al objeto lobby
@@ -63,8 +64,9 @@ private:
     /// Contador de objetos
     uint32_t idCounter = 1;
 
-    /// Tupla con un puntero a objeto y un booleano indicando
-    // si se recorrio o no (sirve para el algoritmo del GC)
+    /* Tupla con un puntero a objeto y un booleano indicando
+     * si se recorrio o no (sirve para el algoritmo del GC)
+     */
     typedef std::tuple<Object*, bool> tuple_createdObjects;
 
     /// Diccionario con todos los objetos creados.
@@ -89,19 +91,21 @@ private:
      * @param returnValue puntero a Object devuelto con el
      * puntero al slot.
      * @param function puntero a funcion devuelto si es un metodo
-     *  nativo.
-     *  \retval Devuelve true si encontro el objeto seteando
-     *  el puntero. Si devuelve false, los punteros estan en nullptr.
+     * nativo.
+     * \retval true si encontro el objeto seteando
+     * el puntero.
+     * \retval false, los punteros estan en nullptr.
      */
     bool findObject(std::string name, Object* &returnValue,
             delegate& function) const;
 
-    /**
+    /** Este metodo habilita los metodos nativos comunes a todos
+     * los objetos. Estos son: _AddSlots, _RemoveSlots, clone y printObj.
      *
      */
     void configureNativeMethods();
 
-    /**
+    /** Recorre todos los slots del objeto y va marcando que es accesible
      *
      */
     void collect_internal();
@@ -193,21 +197,24 @@ public:
      */
     std::string getName() const;
 
-    /** Determina si el slot buscado del objetoes un DataObject o un MethodObject.
+    /** Determina si el slot buscado del objeto es un DataObject o un MethodObject.
      * @param messageName nombre del slot.
-     * \retval true si es data object, false si no lo es.
+     * \retval true si es data object
+     * \retval false si no lo es.
      */
     bool isDataObject(std::string messageName);
 
-    /** Determina si es un DataObjecto o un MethodObject.
+    /** Determina si es un DataObject o un MethodObject.
      * @param messageName nombre del slot.
-     * \retval true si es data object, false si no lo es.
+     * \retval true si es data object
+     * \retval false si no lo es.
      */
     bool isDataObject();
 
     /** Determina si es un metodo nativo.
      * @param messageName nombre del slot.
-     * \retval true si es un metodo nativo, false si no lo es.
+     * \retval true si es un metodo nativo
+     * \retval false si no lo es.
      */
     bool isNativeMethod(std::string messageName);
 
