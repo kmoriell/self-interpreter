@@ -12,6 +12,10 @@
 #include <string>
 #include <mutex>
 
+/** Es la encargada de enviar las peticiones generadas desde la GUI
+ * al servidor.
+ *
+ */
 class ProxyServer: public Proxy {
 private:
     /// Morph interno de la clase

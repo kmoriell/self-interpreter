@@ -7,10 +7,13 @@
 #include <string>
 #include <iostream>
 
+/** Representa un ambiente de trabajo (workspace) y es el encargado de crear
+ * el lobby y de llamar al parser para ejecutar los scripts de código self.
+ *
+ */
 class Workspace {
 private:
     Object *lobby;
-    std::string selfInstr;
     VirtualMachine vm;
 
 public:
@@ -36,6 +39,10 @@ public:
     /// Devuelve el objeto lobby.
     Object* getLobby();
 
+    /** Busca el objeto por ID y retorna el objeto real.
+     * @param id id del objeto.
+     *
+     */
     Object* findObjectById(uint32_t id);
 };
 

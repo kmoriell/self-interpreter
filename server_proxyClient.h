@@ -3,6 +3,11 @@
 
 #include "common_proxy.h"
 
+/** El ProxyClient es el encargado de hacerle las peticiones al servidor que le envia
+ * el cliente a travéz del ProxyServer.
+ * El ProxyClient solo conoce los IDs del Workspace y de los objetos con los que trabaja
+ *
+ */
 class ProxyClient: public Proxy {
 private:
     /// Servidor al que el proxy le hace las consultas

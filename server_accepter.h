@@ -10,6 +10,10 @@
 #include "server_server.h"
 #include "server_workspace.h"
 
+/** Es el encargado de aceptar nuevos clientes abriendo
+ * proxys en nuevos hilos.
+ *
+ */
 class Accepter: public Thread {
 private:
     std::vector<ProxyClient*> program_threads;

@@ -4,10 +4,8 @@
 #include <iostream>
 #include "common_define.h"
 
-/*const std::string NIL = "nil";
- const std::string TRUE = "true";
- const std::string FALSE = "false";
- const std::string PUNTO = ".";*/
+VirtualMachine::VirtualMachine() {
+}
 
 void VirtualMachine::setLobby(Object* lobby) {
     this->lobby = lobby;

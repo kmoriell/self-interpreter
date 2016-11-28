@@ -1,5 +1,8 @@
 #include "server_server.h"
-// \file
+
+Server::Server() {
+}
+
 Server::~Server() {
     std::stack<Workspace*> stack;
 
@@ -104,8 +107,6 @@ Workspace* Server::getWorkspace(const std::string &idWk) {
 
 std::string Server::receiveCode(const std::string &idWk, uint32_t &idObj,
         std::string &code) {
-    std::cout << "ID Objeto consultado: " << idObj << std::endl;
-    std::cout << "Objeto consultado: " << std::endl;
     Workspace* wk = getWorkspace(idWk);
 
     m.lock();
@@ -157,8 +158,6 @@ std::string Server::setObjName(const std::string &idWk, uint32_t &idObj,
 
 std::string Server::setCodeSegment(const std::string &idWk, uint32_t &idObj,
         const std::string &cad) {
-    std::cout << "ID Objeto consultado: " << idObj << std::endl;
-    std::cout << "Objeto consultado: " << std::endl;
     getWorkspace(idWk)->findObjectById(idObj)->printObj(
             std::vector<Object*> { });
 
@@ -191,8 +190,6 @@ std::string Server::getSlotObj(const std::string &idWk, uint32_t &idObj,
 
 std::string Server::swapMutability(const std::string &idWk, uint32_t &idObj,
         const std::string &cad) {
-    std::cout << "ID Objeto consultado: " << idObj << std::endl;
-    std::cout << "Objeto consultado: " << std::endl;
     getWorkspace(idWk)->findObjectById(idObj)->printObj(
             std::vector<Object*> { });
 
@@ -200,24 +197,4 @@ std::string Server::swapMutability(const std::string &idWk, uint32_t &idObj,
     obj->swapSlotMutability(cad);
     idObj = obj->getId();
     return ParserProtocoloServidor(obj).getString();
-    /*auto slots = obj->getSlots();
-     auto it = slots.find(cad);
-     if (it != slots.end()) {
-     auto tuple = it->second;
-     std::cout << "Es mutable? " << std::get<1>(tuple) << std::endl;
-     if (std::get<1>(tuple)) {
-     std::get<1>(tuple) = false;
-     it->second = tuple;
-     } else {
-     std::get<1>(tuple) = true;
-     it->second = tuple;
-     }
-
-     std::cout << "Y ahora, es mutable? " << std::get<1>(it->second)
-     << std::endl;
-     idObj = obj->getId();
-     return ParserProtocoloServidor(obj).getString();
-     } else {
-     throw std::runtime_error("El slot buscado no existe");
-     }*/
 }

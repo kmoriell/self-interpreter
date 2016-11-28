@@ -6,6 +6,9 @@
 #include "server_object.h"
 #include "server_virtualMachine.h"
 
+/** Es la clase encargada de parsear scripts en código self y de indicarle a la vm
+ * que objetos y mensajes se deben emitir en consecuencia.
+ */
 class Parser {
 private:
     /// Objeto sobre el que se ejecuta el script.
@@ -43,6 +46,9 @@ public:
      */
     Parser& operator=(Parser&&) = delete;
 
+    /** Inicia la secuencia de parseo del script en código self
+     * @param cad código self
+     */
     std::vector<Object*> parse(std::string &cad);
 
 private:
