@@ -132,7 +132,9 @@ endif
 # REGLAS
 #########
 
-.PHONY: all clean
+prefix=/usr/local
+    
+.PHONY: all clean install uninstall
 
 all: client server
 
@@ -161,3 +163,12 @@ server: $(o_common_files) $(o_server_files)
 clean:
 	$(RM) -f $(o_common_files) $(o_client_files) $(o_server_files) client server
 
+install:
+	install -m 0755 client $(prefix)/bin
+	install -m 0755 server $(prefix)/bin
+	install -m 0755 mainWindow.glade $(prefix)/bin
+
+uninstall:
+	$(RM) $(prefix)/bin/client
+	$(RM) $(prefix)/bin/server
+	$(RM) $(prefix)/bin/mainWindow.glade
