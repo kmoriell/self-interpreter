@@ -25,6 +25,10 @@ ModeSelector::ModeSelector(std::string filename) {
     Workspace workspace;
 
     std::ifstream filein(filename);
+
+    if (!filein.is_open())
+        throw std::runtime_error("No se pudo abrir el archivo.");
+
     std::string script, x;
     while (filein >> x)
         script += x + " ";
