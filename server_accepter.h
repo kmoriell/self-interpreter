@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <vector>
 #include "common_socket.h"
-#include "server_proxyClient.h"
+#include "server_proxy_client.h"
 #include "common_thread.h"
 #include "server_server.h"
 #include "server_workspace.h"

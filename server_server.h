@@ -12,7 +12,7 @@
 #include "common_thread.h"
 #include "server_workspace.h"
 #include "common_define.h"
-#include "server_parserProtocoloServidor.h"
+#include "server_parser_protocolo_servidor.h"
 
 /** Representa el modelo de negocio. Resuelve las peticiones de los
  * ProxyClient's y administra los recursos que se deben proteger.

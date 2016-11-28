@@ -3,7 +3,7 @@
 
 #include "server_object.h"
 #include "server_parser.h"
-#include "server_virtualMachine.h"
+#include "server_virtual_machine.h"
 #include <string>
 #include <iostream>
 

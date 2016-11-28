@@ -10,7 +10,7 @@ const char* SERVER_MODE_FILE = "f";
 #define RET_OK 0
 #define RET_NOK 1
 
-#include "server_modeSelector.h"
+#include "server_mode_selector.h"
 
 int main(int argc, char **argv) {
     try {

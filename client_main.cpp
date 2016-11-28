@@ -4,13 +4,13 @@
 #include <vector>
 #include <string>
 #include <mutex>
-#include "client_proxyServer.h"
+#include "client_proxy_server.h"
 
 #define CLIENT_PARAMS 3
 #define RET_OK 0
 #define RET_NOK 1
 
-#include "client_selectWkWindow.h"
+#include "client_select_wk_window.h"
 
 int main(int argc, char **argv) {
     try {
