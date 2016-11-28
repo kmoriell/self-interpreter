@@ -1,8 +1,9 @@
 #include "client_selectWkWindow.h"
 
 SelectWkWindow::SelectWkWindow(Morph &morph,
-        std::vector<std::string> &workspaces, ProxyServer &proxyServer) :
-        morph(morph), workspaces(workspaces), proxyServer(proxyServer) {
+        std::vector<std::string> &workspaces, ProxyServer &proxyServer,
+        std::mutex &m) :
+        morph(morph), workspaces(workspaces), proxyServer(proxyServer), m(m) {
     refBuilder = Gtk::Builder::create();
     try {
         refBuilder->add_from_file("mainWindow.glade");
@@ -175,7 +176,7 @@ void SelectWkWindow::treeView_on_row_activated(const Gtk::TreeModel::Path& path,
         while (proxyServer.getFlag()) {
         }
 
-        MorphWindow* _window = new MorphWindow(morph, proxyServer);
+        MorphWindow* _window = new MorphWindow(morph, proxyServer, m);
         _window->getWindow()->show();
 
         /*std::string str(text.c_str());

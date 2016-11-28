@@ -1,23 +1,20 @@
 #include "client_proxyServer.h"
 
 ProxyServer::ProxyServer(Socket &socket, Morph &morph,
-        std::vector<std::string> &workspaces) :
-        Proxy(socket), morph(morph), workspaces(workspaces) {
+        std::vector<std::string> &workspaces, std::mutex &m) :
+        Proxy(socket), morph(morph), workspaces(workspaces), m(m) {
     this->serverSocket.connect();
-    this->flag = false;
+    setFlag(false);
 }
 
 bool ProxyServer::sendCmdMessage(char command, std::string &strMessage) {
-    if (flag)
+    if (getFlag())
         return false;
     else {
-        morph.clear();
-        std::cout << "comando a enviar: " << command << std::endl;
-        std::cout << "mensaje a enviar: " << strMessage << std::endl;
         message.setCommand(command);
         message.setMessage(strMessage.c_str());
         message.setLength(strMessage.size());
-        this->flag = true;
+        setFlag(true);
         return true;
     }
 }
@@ -28,7 +25,7 @@ void ProxyServer::sendCMDMessage() {
 
 void ProxyServer::run() {
     while (!_interrupt) {
-        if (flag) {
+        if (getFlag()) {
             try {
 
                 //Envio el mensaje al otro extremo de la comunicacion
@@ -52,14 +49,18 @@ void ProxyServer::run() {
                 case OK_MSG_MORPH: {
                     std::cout << "Se recibio un mensaje OK" << std::endl;
                     mensajeRecibido = message.getMessage();
-                    ParserProtocoloMorph parser(morph, mensajeRecibido);
+                    m.lock();
+                    ParserProtocoloMorph(morph, mensajeRecibido);
+                    m.unlock();
                     break;
                 }
                 case OK_MSG_SELECT_WKS: {
                     std::cout << "Se recibio un mensaje OK de WKS" << std::endl;
                     mensajeRecibido = message.getMessage();
-                    ParserProtocoloWorkspaces parser(workspaces,
+                    m.lock();
+                    ParserProtocoloWorkspaces(workspaces,
                             mensajeRecibido);
+                    m.unlock();
                     break;
                 }
                 default:
@@ -71,13 +72,22 @@ void ProxyServer::run() {
                 if (!_interrupt)
                     throw e;
             }
-            flag = false;
+            setFlag(false);
         }
     }
 }
 
 bool ProxyServer::getFlag() const {
-    return flag;
+    m.lock();
+    bool _flag = flag;
+    m.unlock();
+    return _flag;
+}
+
+void ProxyServer::setFlag(const bool newValue) {
+    m.lock();
+    flag = newValue;
+    m.unlock();
 }
 
 bool ProxyServer::areThereErrors() const {

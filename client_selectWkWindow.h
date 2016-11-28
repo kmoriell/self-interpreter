@@ -4,6 +4,7 @@
 #include <gtkmm-3.0/gtkmm.h>
 #include <gdkmm/color.h>
 #include <iostream>
+#include <mutex>
 #include "client_columnRecordWk.h"
 #include "client_morphWindow.h"
 
@@ -12,6 +13,7 @@ private:
     Morph &morph;
     std::vector<std::string> &workspaces;
     ProxyServer &proxyServer;
+    std::mutex &m;
 
     Glib::RefPtr<Gtk::Builder> refBuilder;
 
@@ -44,7 +46,7 @@ private:
 
 public:
     SelectWkWindow(Morph &morph, std::vector<std::string> &workspaces,
-            ProxyServer &proxyServer);
+            ProxyServer &proxyServer, std::mutex &m);
     Gtk::Window *getWindow();
 
     // Elimino los contructores por copia y moviemiento. Tambien los

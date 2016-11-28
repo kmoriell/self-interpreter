@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <vector>
 #include <string>
+#include <mutex>
 #include "client_proxyServer.h"
 
 #define CLIENT_PARAMS 4
@@ -22,6 +23,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    std::mutex m;
     std::string server = argv[1];
     std::string _port = argv[2];
     uint32_t port = stoi(_port);
@@ -35,7 +37,7 @@ int main(int argc, char **argv) {
     Morph morph;
     std::vector<std::string> workspaces;
     Socket socket(server, port);
-    ProxyServer proxyServer(socket, morph, workspaces);
+    ProxyServer proxyServer(socket, morph, workspaces, m);
 
     //Aca se abrio un hilo nuevo que es del proxy
     proxyServer.start();
@@ -43,7 +45,7 @@ int main(int argc, char **argv) {
     std::cout << "Seteamos el flag." << std::endl;
 #ifdef SOLOGUI
     auto app = Gtk::Application::create();
-    SelectWkWindow window(morph, workspaces, proxyServer);
+    SelectWkWindow window(morph, workspaces, proxyServer, m);
     app->run(*window.getWindow());
 #else
     std::string message = script;
@@ -51,32 +53,6 @@ int main(int argc, char **argv) {
     proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
     sleep(2);
 
-    /*std::string message;
-     message = LOBBY + PUNTO;
-     proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
-     sleep(2);
-     std::string message = script;
-     message = "lobby _AddSlots: (|punto = (|x<-3.|).|)..";
-     proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
-     message = "punto = (|x<-3.|).";
-     proxyServer.sendCmdMessage(ADD_SLOT, message);
-     sleep(2);
-     message = "lobby punto.";
-     proxyServer.sendCmdMessage(EXEC_LOBBY_CMD, message);
-     sleep(2);
-     message = "x";
-     proxyServer.sendCmdMessage(REMOVE_SLOT, message);
-     sleep(2);
-     message = "x";
-     proxyServer.sendCmdMessage(GET_SLOT_OBJ, message);
-     sleep(2);*/
-
-    /*message = "juanjo";
-     proxyServer.sendCmdMessage(SET_OBJ_NAME, message);
-     sleep(2);
-     message = "code..";
-     proxyServer.sendCmdMessage(SET_CODESEGMENT, message);
-     sleep(2);*/
     morph.mostrar();
     char __char;
     std::cin >> __char;

@@ -426,10 +426,10 @@ Object* Object::_RemoveSlots(const std::vector<Object*>& args) {
         auto _it = slots.find(name);
         if (_it != slots.end()) {
             slots.erase(_it);
-        } else
-            throw std::runtime_error("No existe el slot que se quiere borrar.");
+        } else {
+            disableNativeMethod(name);
+        }
     }
-
     return this;
 }
 

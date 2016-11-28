@@ -8,6 +8,7 @@
 ParserProtocoloWorkspaces::ParserProtocoloWorkspaces(
         std::vector<std::string> &workspaces, std::string &cad) :
         workspaces(workspaces), cad(cad) {
+    workspaces.clear();
     std::string wkName;
     workspaces.clear();
     while (pCad < (int) cad.size()) {

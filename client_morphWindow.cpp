@@ -1,7 +1,7 @@
 #include "client_morphWindow.h"
 
-MorphWindow::MorphWindow(Morph &morph, ProxyServer &proxyServer) :
-        morph(morph), proxyServer(proxyServer) {
+MorphWindow::MorphWindow(Morph &morph, ProxyServer &proxyServer, std::mutex &m) :
+        morph(morph), proxyServer(proxyServer), m(m) {
     refBuilder = Gtk::Builder::create();
     try {
         refBuilder->add_from_file("mainWindow.glade");
@@ -62,10 +62,6 @@ void MorphWindow::addWidgets() {
 
     refBuilder->get_widget("m_Open", pMenuItemOpen);
     refBuilder->get_widget("m_CloseWorkspace", pMenuItemCloseWorkspace);
-
-    //refBuilder->get_widget("boxObject", pBoxObject);
-
-    //refBuilder->get_widget("menuButton", pMenuButton);
 
     if (pBtnLobby) {
         pBtnLobby->signal_clicked().connect(
@@ -140,6 +136,7 @@ void MorphWindow::configureTreeView() {
 void MorphWindow::drawMorph() {
     //pTxtObjName->set_use_markup(true);
     //pLabel->set_markup();
+    m.lock();
     pTxtObjName->set_text(morph.getObjName());
     //pLabel->set_text(morph.getObjName());
     m_refTreeModel->clear();
@@ -152,8 +149,6 @@ void MorphWindow::drawMorph() {
             slotName = OP_ARG + morph.getSlotName(i);
         else if (morph.isParentSlot(i))
             slotName = morph.getSlotName(i) + OP_PARENT;
-        else if (morph.isNativeMethodSlot(i))
-            slotName = morph.getSlotName(i) + OP_NATIVE_METHOD;
         else
             slotName = morph.getSlotName(i);
 
@@ -170,6 +165,7 @@ void MorphWindow::drawMorph() {
     auto pTextBuffer = Glib::RefPtr < Gtk::TextBuffer
             > ::cast_dynamic(refBuilder->get_object("textBufferCodeSegment"));
     pTextBuffer->set_text(morph.getCodeSegment());
+    m.unlock();
 }
 
 Gtk::Window* MorphWindow::getWindow() {
@@ -246,12 +242,12 @@ void MorphWindow::on_row_activated(const Gtk::TreeModel::Path& path,
     if (iter) {
         Gtk::TreeModel::Row row = *iter;
 
-        Glib::ustring text = row[m_Columns.m_col_slotName];
+        int rowId = path[0];
 
+        Glib::ustring text = morph.getSlotName(rowId);
         std::string str(text.c_str());
 
-        std::string slotName = iter->get_value(m_Columns.m_col_slotName);
-        if (slotName.find("(*)") != std::string::npos) {
+        if (morph.isNativeMethodSlot(rowId)) {
             return;
         }
 
@@ -351,12 +347,9 @@ void MorphWindow::cellDelete_toggled(const Glib::ustring &path) {
     auto model = this->m_refTreeModel;
     if (model) {
         iter = model->get_iter(path);
+        int rowId = atoi(path.c_str());
 
-        std::string slotName = iter->get_value(m_Columns.m_col_slotName);
-        if (slotName.find("(*)") != std::string::npos) {
-            iter->set_value(m_Columns.m_col_delete, false);
-            return;
-        }
+        std::string slotName = morph.getSlotName(rowId);
 
         Gtk::MessageDialog dialog(*this, "Confirmar", false,
                 Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);

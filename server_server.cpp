@@ -69,10 +69,6 @@ void Server::closeWorkspace(std::string name) {
     m.unlock();
 }
 
-/*bool Server::checkExistence(std::string name) {
-
- }*/
-
 void Server::deleteWorkspace(std::string name) {
     m.lock();
     auto it = workspaces.find(name);
@@ -95,7 +91,9 @@ void Server::deleteWorkspace(std::string name) {
 }
 
 Workspace* Server::getWorkspace(const std::string &idWk) {
+    m.lock();
     auto it = workspaces.find(idWk);
+    m.unlock();
     if (it == workspaces.end()) {
         std::string error = "El workspace " + idWk + " no existe";
         throw std::runtime_error(error);
@@ -108,22 +106,23 @@ std::string Server::receiveCode(const std::string &idWk, uint32_t &idObj,
         std::string &code) {
     std::cout << "ID Objeto consultado: " << idObj << std::endl;
     std::cout << "Objeto consultado: " << std::endl;
-    getWorkspace(idWk)->findObjectById(idObj)->printObj(
+    Workspace* wk = getWorkspace(idWk);
+
+    m.lock();
+    wk->findObjectById(idObj)->printObj(
             std::vector<Object*> { });
+    m.unlock();
 
     std::string msg = "";
     try {
         m.lock();
-        Workspace* wk = getWorkspace(idWk);
         Object *context = wk->findObjectById(idObj);
         uint32_t idRet;
         idRet = wk->receive(context, code);
         Object *objRet = wk->findObjectById(idRet);
         idObj = idRet;
-
-        std::cout << "ID Objeto respuesta: " << idObj << std::endl;
-        msg = ParserProtocoloServidor(objRet).getString();
         m.unlock();
+        msg = ParserProtocoloServidor(objRet).getString();
     } catch (...) {
         m.unlock();
         throw;

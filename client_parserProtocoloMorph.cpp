@@ -7,6 +7,7 @@
 
 ParserProtocoloMorph::ParserProtocoloMorph(Morph &morph, std::string &cad) :
         morph(morph), cad(cad) {
+    morph.clear();
     std::string objName = getCampo();
     morph.setObjName(objName);
     pCad++; //Salimos del caracter separador
@@ -70,10 +71,6 @@ ParserProtocoloMorph::ParserProtocoloMorph(Morph &morph, std::string &cad) :
                 objSlotName, objSlotPreview);
     }
 }
-
-/*ParserProtocoloCliente(std::vector<std::string> &workspaces, std::string &cad) {
-
- }*/
 
 std::string ParserProtocoloMorph::getCampo() {
     std::string campo;

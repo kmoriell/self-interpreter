@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <mutex>
 
 class ProxyServer: public Proxy {
 private:
@@ -18,6 +19,9 @@ private:
 
     /// Lista de nombres de workspaces
     std::vector<std::string> &workspaces;
+
+    /// Mutex pasado por referencia
+    std::mutex &m;
 
     ///Este flag le indica al proxy que debe ejecutar un comando.
     bool flag;
@@ -38,7 +42,7 @@ public:
      * @param morph procesa los datos para luego mostrarlos por pantalla
      */
     ProxyServer(Socket &socket, Morph& morph,
-            std::vector<std::string> &workspaces);
+            std::vector<std::string> &workspaces, std::mutex &m);
 
     /** Envia un mensaje para ejecutar codigo self
      * @param comando a enviar
@@ -68,6 +72,9 @@ public:
      *
      */
     std::string getErrors();
+
+    void setFlag(const bool newValue);
+
 };
 
 #endif /* CLIENT_PROXYSERVER_H_ */

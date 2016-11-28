@@ -70,8 +70,10 @@ private:
 
     Morph &morph;
     ProxyServer &proxyServer;
+    std::mutex &m;
+
 public:
-    MorphWindow(Morph &morph, ProxyServer &proxyServer);
+    MorphWindow(Morph &morph, ProxyServer &proxyServer, std::mutex &m);
     ~MorphWindow();
     Gtk::Window *getWindow();
 

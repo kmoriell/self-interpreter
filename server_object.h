@@ -171,7 +171,7 @@ public:
     Object* removeSlot(std::string name);
 
     /** Agrega como code segment del objeto la cadena que se la pasa
-     * @param code std::string pasado con el codigo para reemplazar en el code segment.
+     * @param code nuevo codigo para reemplazar en el code segment.
      */
     void setCodeSegment(const std::string code);
 
@@ -181,11 +181,11 @@ public:
     std::string getCodeSegment() const;
 
     /** Setea el nombre del objeto
-     * @param name std::string con el nombre del objeto para cambiar.
+     * @param name con el nombre del objeto para cambiar.
      */
     void setName(const std::string name);
 
-    /** Devuelve un std::string con el nombre del objeto.
+    /** Devuelve el nombre del objeto.
      *
      */
     std::string getName() const;

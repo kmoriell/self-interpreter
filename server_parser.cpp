@@ -518,7 +518,7 @@ bool Parser::slotNameExtended(int &tipoSlot, std::string &strName) {
             tipoSlot = 2;
         } else {
             pCad = _pCad;
-            if (name(strName) or operador(strName)) {
+            if (name(strName) or operador(strName) or lowerKeyword(strName)) {
                 tipoSlot = 0;
             }
         }
