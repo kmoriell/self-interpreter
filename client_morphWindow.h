@@ -39,20 +39,33 @@ private:
     Gtk::Entry *pTxtSlot = nullptr;
 
     Gtk::TreeView *pTreeView = nullptr;
-    //Gtk::MenuButton *pMenuButton = nullptr;
     Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
     ColumnRecord m_Columns;
-    //Gtk::Menu m_Menu_Popup;
 
     // Menu
     Gtk::MenuItem *pMenuItemOpen = nullptr;
     Gtk::MenuItem *pMenuItemCloseWorkspace = nullptr;
 
-    void addWidgets();
-    void configureTreeView();
-    void drawMorph();
-    void generatePopup();
+private:
 
+    /** Este metodo agrega los widgets a la ventana
+     *
+     */
+    void addWidgets();
+
+    /** Este metodo configura las columnas los eventos del TreeView.
+     *
+     */
+    void configureTreeView();
+
+    /** Este metodo dibuja los datos recibidos del servidor en el TreeView.
+     *
+     */
+    void drawMorph();
+
+    /** Este metodo sirve para enviar las solicitudes al ProxyServer
+     *
+     */
     void doAction(char action, std::string text);
 
     // Eventos
@@ -77,8 +90,21 @@ private:
     std::mutex &m;
 
 public:
+    /** Constructor de la clase
+     * @param morph referencia al objeto Morph.
+     * @param proxyServer referencia al proxy
+     * @param m referencia al mutex
+     */
     MorphWindow(Morph &morph, ProxyServer &proxyServer, std::mutex &m);
+
+    /** Destructor de la clase
+     *
+     */
     ~MorphWindow();
+
+    /** Devuelve un puntero al objeto Gtk::Window.
+     *
+     */
     Gtk::Window *getWindow();
 
     // Elimino constructores y operadores de asignacion

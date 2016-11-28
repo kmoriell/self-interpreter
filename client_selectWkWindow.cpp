@@ -176,20 +176,9 @@ void SelectWkWindow::treeView_on_row_activated(const Gtk::TreeModel::Path& path,
         while (proxyServer.getFlag()) {
         }
 
+        // Creo la ventana con los morphs y la muestro.
         MorphWindow* _window = new MorphWindow(morph, proxyServer, m);
         _window->getWindow()->show();
-
-        /*std::string str(text.c_str());
-         proxyServer.sendCmdMessage(GET_SLOT_OBJ, str);
-         while (proxyServer.getFlag()) {
-         }
-         if (proxyServer.areThereErrors()) {
-         Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
-         Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
-         dialog.set_secondary_text(proxyServer.getErrors());
-         dialog.run();
-         }
-         drawMorph();*/
     }
 }
 

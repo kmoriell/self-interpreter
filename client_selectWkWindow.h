@@ -42,14 +42,44 @@ private:
     void treeView_on_row_activated(const Gtk::TreeModel::Path& path,
             Gtk::TreeViewColumn* column);
 
+    /** Este metodo agrega los widgets a la ventana
+     *
+     */
     void addWidgets();
+
+    /** Este metodo configura las columnas los eventos del TreeView.
+     *
+     */
     void configureTreeView();
+
+    /** Este metodo dibuja los datos recibidos sobre los workspaces
+     * provenientes del servidor en el TreeView.
+     * Previamente hay que llamar al metodo updateList() para actualizar
+     * los datos en memoria. Este metodo no los actualiza, solo dibuja lo que
+     * esta cargado.
+     *
+     */
     void drawWorkspaces();
+
+    /** Manda la solicitud al servidor para actualizar la lista
+     * de workspaces disponibles que esta guardada en memoria.
+     * Para redibujar la lista, llamar a drawWorkspaces().
+     */
     void updateList();
 
 public:
+    /** Constructor de la clase
+     * @param morph referencia al objeto Morph.
+     * @param workspaces referencia al vector con los nombres de los workspaces
+     * @param proxyServer referencia al proxy
+     * @param m referencia al mutex
+     */
     SelectWkWindow(Morph &morph, std::vector<std::string> &workspaces,
             ProxyServer &proxyServer, std::mutex &m);
+
+    /** Devuelve un puntero al objeto Gtk::Window.
+     *
+     */
     Gtk::Window *getWindow();
 
     // Elimino los contructores por copia y moviemiento. Tambien los

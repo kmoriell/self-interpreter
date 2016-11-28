@@ -14,24 +14,6 @@ MorphWindow::MorphWindow(Morph &morph, ProxyServer &proxyServer, std::mutex &m) 
     addWidgets();
     configureTreeView();
     drawMorph();
-
-    pWindow->set_name("MyWindow");
-    pTreeView->set_name("MyTreeView");
-
-    pTxtObjName->set_name("txtObjName");
-    Glib::RefPtr < Gtk::CssProvider > m_refCssProvider =
-            Gtk::CssProvider::create();
-    m_refCssProvider->load_from_path("custom_textView.css");
-    auto refStyleContext = pWindow->get_style_context();
-    //refStyleContext->add_class("txtCodeSegment");
-
-    /*auto display = Gdk::Display::get_default();
-     auto screen = display->get_default_screen();
-
-     refStyleContext->add_provider_for_screen(
-     screen, m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);*/
-    //refStyleContext = pTreeView->get_style_context();
-    //refStyleContext->add_provider(m_refCssProvider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     pWindow->signal_delete_event().connect(
             sigc::mem_fun(*this, &MorphWindow::window_deleted));
     show_all_children();
@@ -134,11 +116,9 @@ void MorphWindow::configureTreeView() {
 }
 
 void MorphWindow::drawMorph() {
-    //pTxtObjName->set_use_markup(true);
-    //pLabel->set_markup();
     m.lock();
     pTxtObjName->set_text(morph.getObjName());
-    //pLabel->set_text(morph.getObjName());
+
     m_refTreeModel->clear();
     Gtk::TreeModel::Row row;
 
@@ -304,9 +284,8 @@ void MorphWindow::on_Open_selected() {
     case (Gtk::RESPONSE_CANCEL): {
         break;
     }
-    default: {
+    default:
         break;
-    }
     }
 }
 
