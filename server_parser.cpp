@@ -473,6 +473,7 @@ bool Parser::slotList(Object* objContenedor) {
             else if (strOpSlot == OP_SLOT_MUTABLE)
                 esMutable = true;
 
+            //Le insertamos al objeto contenedor el slot capturado.
             objContenedor->addSlot(strName, objSlot, esMutable, esParent,
                     esArgument);
             pLastSlot = pCad;
@@ -488,6 +489,7 @@ bool Parser::slotList(Object* objContenedor) {
                 else if (tipoSlot == 2)
                     esParent = true;
 
+                //Le insertamos al objeto contenedor el slot capturado.
                 objContenedor->addSlot(strName, objSlot, esMutable, esParent,
                         esArgument);
                 pLastSlot = pCad;
