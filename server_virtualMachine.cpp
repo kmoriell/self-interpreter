@@ -17,9 +17,9 @@ Object* VirtualMachine::createString(std::string &strString) {
     obj->setName(STRING_OBJ);
     obj->setCodeSegment(strString + PUNTO);
     obj->enableNativeMethod(PRINT_METHOD);
-    //obj->enableNativeMethod(obj, OP_SUMA);
-    //obj->enableNativeMethod(obj, OP_IGUAL);
-    //obj->enableNativeMethod(obj, OP_DISTINTO);
+    obj->enableNativeMethod(OP_SUMA);
+    obj->enableNativeMethod(OP_IGUAL);
+    obj->enableNativeMethod(OP_DISTINTO);
     lobby->addCreatedObject(obj);
     return obj;
 }
@@ -35,8 +35,8 @@ Object* VirtualMachine::createNumber(float number) {
     obj->enableNativeMethod(OP_RESTA);
     obj->enableNativeMethod(OP_MULTIPLICACION);
     obj->enableNativeMethod(OP_DIVISION);
-    //obj->enableNativeMethod(obj, OP_IGUAL");
-    //obj->enableNativeMethod(obj, OP_DISTINTO);
+    obj->enableNativeMethod(OP_IGUAL);
+    obj->enableNativeMethod(OP_DISTINTO);
     lobby->addCreatedObject(obj);
     return obj;
 }
@@ -47,8 +47,8 @@ Object* VirtualMachine::createNil() {
     obj->setName(NIL_OBJ);
     obj->setCodeSegment(NIL + PUNTO);
     obj->enableNativeMethod(PRINT_METHOD);
-    //obj->enableNativeMethod(obj, OP_IGUAL");
-    //obj->enableNativeMethod(obj, OP_DISTINTO);
+    obj->enableNativeMethod(OP_IGUAL);
+    obj->enableNativeMethod(OP_DISTINTO);
     lobby->addCreatedObject(obj);
     return obj;
 }

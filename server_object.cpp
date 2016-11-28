@@ -90,6 +90,12 @@ void Object::configureNativeMethods() {
             std::make_pair(OP_DIVISION,
                     std::make_tuple(&Object::operator/, false)));
     this->nativeMethods.insert(
+            std::make_pair(OP_IGUAL,
+                    std::make_tuple(&Object::operator==, false)));
+    this->nativeMethods.insert(
+            std::make_pair(OP_DISTINTO,
+                    std::make_tuple(&Object::operator!=, false)));
+    this->nativeMethods.insert(
             std::make_pair(ADD_SLOTS_METHOD,
                     std::make_tuple(&Object::_AddSlots, true)));
     this->nativeMethods.insert(
@@ -196,7 +202,6 @@ bool Object::findObject(std::string name, Object* &returnValue,
 }
 
 bool Object::isDataObject(std::string messageName) {
-
     // Primero verifico que el slot este en la lista de los slots,
     // esto es que este agregado o que se haya sobrecargado un metodo
     // nativo.
@@ -215,6 +220,13 @@ bool Object::isDataObject(std::string messageName) {
         std::string error = "El slot " + messageName + " no fue encontrado.";
         throw std::runtime_error(error);
     }
+}
+
+bool Object::isDataObject() {
+    if (isPrimitive)
+        return true;
+
+    return (codeSegment.size() == 0);
 }
 
 bool Object::isNativeMethod(std::string messageName) {
@@ -561,36 +573,102 @@ Object* Object::print(const std::vector<Object*>& args) {
 //TODO: refactor para no repetir tanto codigo
 Object* Object::operator*(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
+    std::string codeSegment = this->codeSegment.substr(0,
+            codeSegment.size() - 1);
+    std::string argCodeSegment = first->codeSegment.substr(0,
+            first->codeSegment.size() - 1);
 
-    float number = ::atof(this->codeSegment.c_str());
-    float operand = ::atof(first->codeSegment.c_str());
+    float number = std::stof(codeSegment);
+    float operand = std::stof(argCodeSegment);
     codeSegment = std::to_string((int) (number * operand)) + PUNTO;
     return this;
 }
 
 Object* Object::operator+(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
+    std::string codeSegment = this->codeSegment.substr(0,
+            codeSegment.size() - 1);
+    std::string argCodeSegment = first->codeSegment.substr(0,
+            first->codeSegment.size() - 1);
 
-    float number = ::atof(this->codeSegment.c_str());
-    float operand = ::atof(first->codeSegment.c_str());
-    codeSegment = std::to_string((int) (number + operand)) + PUNTO;
+    if (codeSegment.front() == '\'' && codeSegment.back() == '\''
+            && argCodeSegment.front() == '\''
+            && argCodeSegment.back() == '\'') {
+        codeSegment = this->codeSegment.substr(0, codeSegment.size() - 1);
+        codeSegment += argCodeSegment.substr(1);
+    } else {
+        float number = std::stof(codeSegment);
+        float operand = std::stof(argCodeSegment);
+        codeSegment = std::to_string((int) (number + operand)) + PUNTO;
+    }
     return this;
 }
 
 Object* Object::operator-(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
+    std::string codeSegment = this->codeSegment.substr(0,
+            codeSegment.size() - 1);
+    std::string argCodeSegment = first->codeSegment.substr(0,
+            first->codeSegment.size() - 1);
 
-    float number = ::atof(this->codeSegment.c_str());
-    float operand = ::atof(first->codeSegment.c_str());
+    float number = std::stof(codeSegment);
+    float operand = std::stof(argCodeSegment);
     codeSegment = std::to_string((int) (number - operand)) + PUNTO;
     return this;
 }
 
 Object* Object::operator/(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
+    std::string codeSegment = this->codeSegment.substr(0,
+            codeSegment.size() - 1);
+    std::string argCodeSegment = first->codeSegment.substr(0,
+            first->codeSegment.size() - 1);
 
-    float number = ::atof(this->codeSegment.c_str());
-    float operand = ::atof(first->codeSegment.c_str());
+    float number = std::stof(codeSegment);
+    float operand = std::stof(argCodeSegment);
     codeSegment = std::to_string((int) (number / operand)) + PUNTO;
+    return this;
+}
+
+Object* Object::operator==(const std::vector<Object*>& args) {
+    Object *first = (Object*) args[0];
+    std::string codeSegment = this->codeSegment.substr(0,
+            codeSegment.size() - 1);
+    std::string argCodeSegment = first->codeSegment.substr(0,
+            first->codeSegment.size() - 1);
+
+    bool retVal = true;
+
+    if (codeSegment.front() == '\'' && codeSegment.back() == '\''
+            && argCodeSegment.front() == '\''
+            && argCodeSegment.back() == '\'') {
+        retVal = (codeSegment == argCodeSegment);
+    } else {
+        float number = std::stof(codeSegment);
+        float operand = std::stof(argCodeSegment);
+        retVal = (number == operand);
+    }
+
+    slots.clear();
+    disableNativeMethod(OP_SUMA);
+    disableNativeMethod(OP_RESTA);
+    disableNativeMethod(OP_MULTIPLICACION);
+    disableNativeMethod(OP_DIVISION);
+    codeSegment = (retVal ? TRUE_STR : FALSE_STR) + PUNTO;
+    return this;
+}
+
+Object* Object::operator!=(const std::vector<Object*>& args) {
+    Object* obj = this->operator==(args);
+    std::string codeSegment = obj->codeSegment.substr(0,
+            codeSegment.size() - 1);
+
+    if (obj->codeSegment == TRUE_STR)
+        obj->codeSegment = FALSE_STR;
+    else
+        obj->codeSegment = TRUE_STR;
+
+    obj->codeSegment += PUNTO;
+    return obj;
     return this;
 }

@@ -193,11 +193,17 @@ public:
      */
     std::string getName() const;
 
-    /** Determina si es un DataObjecto o un MethodObject.
+    /** Determina si el slot buscado del objetoes un DataObject o un MethodObject.
      * @param messageName nombre del slot.
      * \retval true si es data object, false si no lo es.
      */
     bool isDataObject(std::string messageName);
+
+    /** Determina si es un DataObjecto o un MethodObject.
+     * @param messageName nombre del slot.
+     * \retval true si es data object, false si no lo es.
+     */
+    bool isDataObject();
 
     /** Determina si es un metodo nativo.
      * @param messageName nombre del slot.
@@ -260,6 +266,20 @@ public:
      * el primer operando, es decir, sobre el llamante del metodo.
      */
     Object* operator/(const std::vector<Object*>& args);
+
+    /** Metodo nativo para chequear igualdad
+     * @param args vector de Object* vacio.
+     * \retval Object con el resultado de la operacion. Se opera sobre
+     * el primer operando, es decir, sobre el llamante del metodo.
+     */
+    Object* operator==(const std::vector<Object*>& args);
+
+    /** Metodo nativo para chequear desigualdad
+     * @param args vector de Object* vacio.
+     * \retval Object con el resultado de la operacion. Se opera sobre
+     * el primer operando, es decir, sobre el llamante del metodo.
+     */
+    Object* operator!=(const std::vector<Object*>& args);
 
     /** Habilita el metodo nativo.
      * @param methodName nombre del metodo a habilitar.

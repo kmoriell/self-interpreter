@@ -204,7 +204,7 @@ Object * Parser::receiveMessage(Object* obj, std::string &strName,
             }
 
             std::string code = objMessage->getCodeSegment();
-            if (code.size() == 0)
+            if (objMessage->isDataObject())
                 obj = objMessage;
             else {
                 Parser unParser(vm, objMessage);
