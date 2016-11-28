@@ -189,6 +189,7 @@ Object * Parser::unaryMessage() {
 Object * Parser::receiveMessage(Object* obj, std::string &strName,
         std::vector<Object*> &args) {
     Object* objMessage;
+    //Solo ejecutamos si es el script principal y no uno anidado.
     if (flagExecute == 1) {
         if (!obj->isDataObject(strName)) {
             //El objeto mensaje es un method object
@@ -205,8 +206,10 @@ Object * Parser::receiveMessage(Object* obj, std::string &strName,
 
             std::string code = objMessage->getCodeSegment();
             if (objMessage->isDataObject())
+                // El objMessage obtenido se devuelve si es un data object.
                 obj = objMessage;
             else {
+                // El objMessage obtenido se ejecuta si no es un data object.
                 Parser unParser(vm, objMessage);
                 objMessage->addSlot(SELF, obj, true, true, false);
                 std::vector<Object*> _vector = unParser.parse(code);
@@ -215,6 +218,7 @@ Object * Parser::receiveMessage(Object* obj, std::string &strName,
             }
         } else {
             //El mensaje no será clonado por ser un data object.
+            //En cambio se retornará el data object.
             obj = obj->recvMessage(strName, args, false);
         }
     }
