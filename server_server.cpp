@@ -1,5 +1,5 @@
 #include "server_server.h"
-
+// \file
 Server::~Server() {
     std::stack<Workspace*> stack;
 
@@ -136,23 +136,21 @@ std::string Server::getLobby(const std::string &idWk, uint32_t &idObj) {
 }
 
 std::string Server::getObj(const std::string &idWk, uint32_t &idObj) {
-    std::cout << "ID Objeto consultado: " << idObj << std::endl;
-    std::cout << "Objeto consultado: " << std::endl;
-    getWorkspace(idWk)->findObjectById(idObj)->printObj(
+    Workspace* wk = getWorkspace(idWk);
+    wk->findObjectById(idObj)->printObj(
             std::vector<Object*> { });
 
-    Object* objRet = getWorkspace(idWk)->findObjectById(idObj);
+    Object* objRet = wk->findObjectById(idObj);
     return ParserProtocoloServidor(objRet).getString();
 }
 
 std::string Server::setObjName(const std::string &idWk, uint32_t &idObj,
         const std::string &cad) {
-    std::cout << "ID Objeto consultado: " << idObj << std::endl;
-    std::cout << "Objeto consultado: " << std::endl;
-    getWorkspace(idWk)->findObjectById(idObj)->printObj(
+    Workspace* wk = getWorkspace(idWk);
+    wk->findObjectById(idObj)->printObj(
             std::vector<Object*> { });
 
-    Object* objRet = getWorkspace(idWk)->findObjectById(idObj);
+    Object* objRet = wk->findObjectById(idObj);
     objRet->setName(cad);
     return ParserProtocoloServidor(objRet).getString();
 }
@@ -171,8 +169,7 @@ std::string Server::setCodeSegment(const std::string &idWk, uint32_t &idObj,
 
 std::string Server::getSlotObj(const std::string &idWk, uint32_t &idObj,
         const std::string &cad) {
-    std::cout << "ID Objeto consultado: " << idObj << std::endl;
-    std::cout << "Objeto consultado: " << std::endl;
+
     getWorkspace(idWk)->findObjectById(idObj)->printObj(
             std::vector<Object*> { });
 
