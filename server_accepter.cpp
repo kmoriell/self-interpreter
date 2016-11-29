@@ -3,7 +3,7 @@
 #include <vector>
 
 Accepter::Accepter(uint32_t port, Server &server) :
-        program_threads(), server(server), socket(port) {
+        programThreads(), server(server), socket(port) {
     interrupt_task = false;
     socket.bind_and_listen();
 }
@@ -16,9 +16,9 @@ void Accepter::run() {
     try {
         while (!interrupt_task) {
             Socket *sck = socket.accept();
-            //collect_closed_clients();
+            collectClosedClients();
             ProxyClient *newProxy = new ProxyClient(*sck, server);
-            program_threads.push_back(newProxy);
+            programThreads.push_back(newProxy);
             newProxy->start();
         }
     } catch (const std::runtime_error &e) {
@@ -30,26 +30,26 @@ void Accepter::run() {
 void Accepter::interrupt() {
     this->interrupt_task = true;
     this->socket.shutdown();
-    for (uint32_t i = 0; i < program_threads.size(); i++) {
-        program_threads[i]->interrupt();
-        program_threads[i]->join();
-        delete program_threads[i];
+    for (uint32_t i = 0; i < programThreads.size(); i++) {
+        programThreads[i]->interrupt();
+        programThreads[i]->join();
+        delete programThreads[i];
     }
 }
 
-void Accepter::collect_closed_clients() {
-    std::vector<ProxyClient*> new_program_threads;
+void Accepter::collectClosedClients() {
+    std::vector<ProxyClient*> new_programThreads;
 
-    for (uint32_t i = 0; i < program_threads.size(); i++) {
-        if (program_threads[i]->is_finished()) {
-            program_threads[i]->join();
-            delete program_threads[i];
+    for (uint32_t i = 0; i < programThreads.size(); i++) {
+        if (programThreads[i]->is_finished()) {
+            programThreads[i]->join();
+            delete programThreads[i];
         } else {
-            new_program_threads.push_back(program_threads[i]);
+            new_programThreads.push_back(programThreads[i]);
         }
     }
 
-    new_program_threads.swap(program_threads);
-    new_program_threads.clear();
+    new_programThreads.swap(programThreads);
+    new_programThreads.clear();
 }
 

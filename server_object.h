@@ -18,11 +18,11 @@ public:
      */
     typedef Object* (Object::*delegate)(const std::vector<Object*>&);
 
-    /** Formato que tiene el slot.
-     * puntero a Object con la referencia al objeto*
-     * booleano que indica si es mutable o no
-     * booleano que indica si el objeto apuntado es un parent slot
-     * booleano que indica si esta implementado nativamente
+    /** Formato que tiene el slot. \n
+     * puntero a Object con la referencia al objeto  \n
+     * booleano que indica si es mutable o no  \n
+     * booleano que indica si el objeto apuntado es un parent slot  \n
+     * booleano que indica si esta implementado nativamente  \n
      * booleano que indica si es un argumento (:)
      */
     typedef std::tuple<Object*, bool, bool, bool> slot_t;
