@@ -25,9 +25,9 @@ public:
      */
     size_t getLength() const;
 
-	/** Fija la longitud del mensaje
-	 * @param len nueva longitud
-	 */
+    /** Fija la longitud del mensaje
+     * @param len nueva longitud
+     */
     void setLength(const size_t len);
 
     /** Devuelve el texto del mensaje-

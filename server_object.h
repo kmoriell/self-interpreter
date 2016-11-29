@@ -110,132 +110,21 @@ private:
      */
     void collect_internal();
 
-public:
-
-    /// Constructor que sirve para construir el objeto lobby.
-    Object();
-
-    /// Constructor de los objetos que no son Lobby.
-    Object(Object* lobby);
-
-    /// Destructor
-    ~Object();
-
-    /// Constructor copia
-    Object(const Object& __object);
-
-    /** Constructor por movimiento deshabilitado
-     *
-     */
-    Object(Object&& obj) = delete;
-
-    /** Operador de asignacion deshabilitado
-     *
-     */
-    Object& operator=(const Object& _object) = delete;
-
-    /** Operador de asignacion por moviemiento deshabilitado
-     *
-     */
-    Object& operator=(Object&&) = delete;
-
-    /** Devuelve todos los slots que tiene el objeto en forma de diccionario.
-     *
-     */
-    slot_map getSlots() const;
-
-    /** Devuelve todo los metodos nativos que tiene el objeto en forma de
-     * diccionario.
-     *
-     */
-    std::map<std::string, fpointTuple> getNativeMethods() const;
-
     /** Funcion nativa para agregar un slot.
      * @param args vector con Object* con los objetos
      * a agregar al slot.
      */
     Object* _AddSlots(const std::vector<Object*>& args);
 
-    /** Agrega el slot con los datos pasados como parametros.
-     * @param name nombre del slot.
-     * @param obj puntero a Object* para guardar en el slot.
-     * @param _mutable booleano que indica si es mutable o no.
-     * @param isParentSlot booleano que indica si es parent slot o no.
-     * @param isArgument booleano que indica si es argumento o no.
-     *
-     */
-    Object* addSlot(std::string name, Object* obj, bool _mutable,
-            bool isParentSlot, bool isArgument);
-
     /** Funcion nativa para borrar un slot.
      * @param args vector con Object* con los objetos para borrar.
      */
     Object* _RemoveSlots(const std::vector<Object*>& args);
 
-    /** Borra el slot especificado
-     * @param name indica el nombre del slot a borrar.
-     */
-    Object* removeSlot(std::string name);
-
-    /** Agrega como code segment del objeto la cadena que se la pasa
-     * @param code nuevo codigo para reemplazar en el code segment.
-     */
-    void setCodeSegment(const std::string code);
-
-    /** Devuelve el code segment del objeto.
-     *
-     */
-    std::string getCodeSegment() const;
-
-    /** Setea el nombre del objeto
-     * @param name con el nombre del objeto para cambiar.
-     */
-    void setName(const std::string name);
-
-    /** Devuelve el nombre del objeto.
-     *
-     */
-    std::string getName() const;
-
-    /** Determina si el slot buscado del objeto es un DataObject o un MethodObject.
-     * @param messageName nombre del slot.
-     * \retval true si es data object
-     * \retval false si no lo es.
-     */
-    bool isDataObject(std::string messageName);
-
-    /** Determina si es un DataObject o un MethodObject.
-     * @param messageName nombre del slot.
-     * \retval true si es data object
-     * \retval false si no lo es.
-     */
-    bool isDataObject();
-
-    /** Determina si es un metodo nativo.
-     * @param messageName nombre del slot.
-     * \retval true si es un metodo nativo
-     * \retval false si no lo es.
-     */
-    bool isNativeMethod(std::string messageName);
-
-    /** Metodo principal que sirve para recibir mensajes. Devuelve un Object*
-     * @param messageName nombre del slot que va a recibir el mensaje.
-     * @param args vector con Object* con los argumentos para pasar.
-     * @param clone indica si hay que clonar o no.
-     * \retval Object con el slot solicitado con los argumentos procesados.
-     */
-    Object* recvMessage(std::string messageName, std::vector<Object*> args,
-            bool clone);
-
     /** Metodo nativo para clonar el objeto.
      * @param args vector de Object* vacio.
      */
     Object* clone(const std::vector<Object*>& args);
-
-    /** Metodo nativo para invocar el garbage collector.
-     * @param args vector de Object* vacio.
-     */
-    Object* collect(const std::vector<Object*>& args);
 
     // funciones Nativas
     /** Metodo nativo para imprimir por pantalla.
@@ -288,6 +177,116 @@ public:
      */
     Object* operator!=(const std::vector<Object*>& args);
 
+public:
+    /// Constructor que sirve para construir el objeto lobby.
+    Object();
+
+    /// Constructor de los objetos que no son Lobby.
+    Object(Object* lobby);
+
+    /// Destructor
+    ~Object();
+
+    /// Constructor copia
+    Object(const Object& __object);
+
+    /** Constructor por movimiento deshabilitado
+     *
+     */
+    Object(Object&& obj) = delete;
+
+    /** Operador de asignacion deshabilitado
+     *
+     */
+    Object& operator=(const Object& _object) = delete;
+
+    /** Operador de asignacion por moviemiento deshabilitado
+     *
+     */
+    Object& operator=(Object&&) = delete;
+
+    /** Devuelve todos los slots que tiene el objeto en forma de diccionario.
+     *
+     */
+    slot_map getSlots() const;
+
+    /** Devuelve todo los metodos nativos que tiene el objeto en forma de
+     * diccionario.
+     *
+     */
+    std::map<std::string, fpointTuple> getNativeMethods() const;
+
+    /** Agrega el slot con los datos pasados como parametros.
+     * @param name nombre del slot.
+     * @param obj puntero a Object* para guardar en el slot.
+     * @param _mutable booleano que indica si es mutable o no.
+     * @param isParentSlot booleano que indica si es parent slot o no.
+     * @param isArgument booleano que indica si es argumento o no.
+     *
+     */
+    Object* addSlot(std::string &name, Object* obj, bool _mutable,
+            bool isParentSlot, bool isArgument);
+
+    /** Borra el slot especificado
+     * @param name indica el nombre del slot a borrar.
+     */
+    Object* removeSlot(std::string &name);
+
+    /** Agrega como code segment del objeto la cadena que se la pasa
+     * @param code nuevo codigo para reemplazar en el code segment.
+     */
+    void setCodeSegment(const std::string &code);
+
+    /** Devuelve el code segment del objeto.
+     *
+     */
+    std::string getCodeSegment() const;
+
+    /** Setea el nombre del objeto
+     * @param name con el nombre del objeto para cambiar.
+     */
+    void setName(const std::string &name);
+
+    /** Devuelve el nombre del objeto.
+     *
+     */
+    std::string getName() const;
+
+    /** Determina si el slot buscado del objeto es un DataObject o un MethodObject.
+     * @param messageName nombre del slot.
+     * \retval true si es data object
+     * \retval false si no lo es.
+     */
+    bool isDataObject(std::string &messageName);
+
+    /** Determina si es un DataObject o un MethodObject.
+     * @param messageName nombre del slot.
+     * \retval true si es data object
+     * \retval false si no lo es.
+     */
+    bool isDataObject();
+
+    /** Determina si es un metodo nativo.
+     * @param messageName nombre del slot.
+     * \retval true si es un metodo nativo
+     * \retval false si no lo es.
+     */
+    bool isNativeMethod(std::string &messageName);
+
+    /** Metodo principal que sirve para recibir mensajes. Devuelve un Object*
+     * @param messageName nombre del slot que va a recibir el mensaje.
+     * @param args vector con Object* con los argumentos para pasar.
+     * @param clone indica si hay que clonar o no.
+     * \retval Object con el slot solicitado con los argumentos procesados.
+     */
+    Object* recvMessage(std::string &messageName, std::vector<Object*> args,
+            bool clone);
+
+    /** Metodo nativo para invocar el garbage collector.
+     * @param args vector de Object* vacio.
+     */
+    Object* collect(const std::vector<Object*>& args);
+
     /** Habilita el metodo nativo.
      * @param methodName nombre del metodo a habilitar.
      * \retval Object con el resultado de la operacion. Se opera sobre
@@ -320,7 +319,7 @@ public:
     /** Cambia el atributo de mutabilidad de un slot.
      * @param slotName nombre del slot a modificar
      */
-    void swapSlotMutability(const std::string& slotName);
+    void swapSlotMutability(const std::string &slotName);
 
     /** Cambia el atributo de objeto primitivo.
      * @param newValue nuevo valor.

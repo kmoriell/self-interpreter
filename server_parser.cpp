@@ -211,9 +211,10 @@ Object * Parser::receiveMessage(Object* obj, std::string &strName,
             else {
                 // El objMessage obtenido se ejecuta si no es un data object.
                 Parser unParser(vm, objMessage);
-                objMessage->addSlot(SELF, obj, true, true, false);
+                std::string self = SELF;
+                objMessage->addSlot(self, obj, true, true, false);
                 std::vector<Object*> _vector = unParser.parse(code);
-                objMessage->removeSlot(SELF);
+                objMessage->removeSlot(self);
                 obj = _vector[_vector.size() - 1];
             }
         } else {

@@ -62,6 +62,7 @@ public:
      */
     virtual void run();
 
+private:
     /** Revisa si los clientes que tiene conectados terminaron su ejecucion,
      * luego limpia los recursos utilizados
      *

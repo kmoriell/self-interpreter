@@ -3,9 +3,10 @@
 
 Workspace::Workspace() {
     lobby = new Object();
-    lobby->setName(LOBBY);
+    std::string _lobby = LOBBY;
+    lobby->setName(_lobby);
     //El slot lobby es necesario para cuando se realizan llamadas explicitas a lobby.
-    lobby->addSlot(LOBBY, lobby, false, true, false);
+    lobby->addSlot(_lobby, lobby, false, true, false);
     lobby->enableNativeMethod("collect");
     vm.setLobby(lobby);
 }

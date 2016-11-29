@@ -2,7 +2,7 @@
 #include <string>
 
 Message::Message(size_t length, char command, std::string message) :
-            length(length), instr(command), message(message) {
+        length(length), instr(command), message(message) {
 }
 Message::Message() {
 }

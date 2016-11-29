@@ -117,7 +117,7 @@ std::map<std::string, Object::fpointTuple> Object::getNativeMethods() const {
     return nativeMethods;
 }
 
-Object* Object::addSlot(std::string name, Object* obj, bool _mutable,
+Object* Object::addSlot(std::string &name, Object* obj, bool _mutable,
         bool isParentSlot, bool isArgument) {
     this->slots.insert(
             std::make_pair(name,
@@ -125,7 +125,7 @@ Object* Object::addSlot(std::string name, Object* obj, bool _mutable,
     return this;
 }
 
-Object* Object::removeSlot(std::string name) {
+Object* Object::removeSlot(std::string &name) {
     auto _it = slots.find(name);
     if (_it != slots.end()) {
         slots.erase(_it);
@@ -138,7 +138,7 @@ std::string Object::getCodeSegment() const {
     return this->codeSegment;
 }
 
-void Object::setCodeSegment(const std::string code) {
+void Object::setCodeSegment(const std::string &code) {
     this->codeSegment = code;
 }
 
@@ -146,7 +146,7 @@ std::string Object::getName() const {
     return this->name;
 }
 
-void Object::setName(const std::string name) {
+void Object::setName(const std::string &name) {
     this->name = name;
 }
 
@@ -201,7 +201,7 @@ bool Object::findObject(std::string name, Object* &returnValue,
     return false;
 }
 
-bool Object::isDataObject(std::string messageName) {
+bool Object::isDataObject(std::string &messageName) {
     // Primero verifico que el slot este en la lista de los slots,
     // esto es que este agregado o que se haya sobrecargado un metodo
     // nativo.
@@ -229,7 +229,7 @@ bool Object::isDataObject() {
     return (codeSegment.size() == 0);
 }
 
-bool Object::isNativeMethod(std::string messageName) {
+bool Object::isNativeMethod(std::string &messageName) {
     Object* obj;
     delegate func;
     bool retval = findObject(messageName, obj, func);
@@ -237,7 +237,7 @@ bool Object::isNativeMethod(std::string messageName) {
     return (retval && func);
 }
 
-Object* Object::recvMessage(std::string messageName, std::vector<Object*> args,
+Object* Object::recvMessage(std::string &messageName, std::vector<Object*> args,
         bool clone) {
     Object* message;
     delegate fpointer;
@@ -638,6 +638,9 @@ Object* Object::operator==(const std::vector<Object*>& args) {
     }
 
     slots.clear();
+
+    std::string _op;
+    _op = OP_SUMA;
     disableNativeMethod(OP_SUMA);
     disableNativeMethod(OP_RESTA);
     disableNativeMethod(OP_MULTIPLICACION);
