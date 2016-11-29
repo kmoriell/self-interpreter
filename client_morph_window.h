@@ -19,6 +19,10 @@
  */
 class MorphWindow: public Gtk::Window {
 private:
+    Morph &morph;
+    ProxyServer &proxyServer;
+    std::mutex &m;
+
     Glib::RefPtr<Gtk::Builder> refBuilder;
 
     Gtk::Window *pWindow = nullptr;
@@ -47,7 +51,6 @@ private:
     Gtk::MenuItem *pMenuItemCloseWorkspace = nullptr;
 
 private:
-
     /** Este metodo agrega los widgets a la ventana
      *
      */
@@ -84,11 +87,6 @@ private:
     void on_CloseWorkspace_selected();
     void cellMutable_toggled(const Glib::ustring &path);
     void cellDelete_toggled(const Glib::ustring &path);
-
-    Morph &morph;
-    ProxyServer &proxyServer;
-    std::mutex &m;
-
 public:
     /** Constructor de la clase
      * @param morph referencia al objeto Morph.
