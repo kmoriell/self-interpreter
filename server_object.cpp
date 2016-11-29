@@ -394,10 +394,12 @@ void Object::collect_internal() {
             // busco el objeto (por su direccion de memoria) y
             // lo marco, indicando que se puede acceder desde lobby.
             for (auto it = lobby->createdObjects.begin();
-                    it != lobby->createdObjects.begin(); ++it) {
+                    it != lobby->createdObjects.end(); ++it) {
                 auto _tuple = it->second;
-                if (std::get<0>(_tuple) == slotObj) {
+                Object* pointer = std::get<0>(_tuple);
+                if (pointer == slotObj) {
                     std::get<1>(_tuple) = true;
+                    it->second = _tuple;
                 }
             }
         }
@@ -573,9 +575,15 @@ Object* Object::operator*(const std::vector<Object*>& args) {
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
 
-    float number = std::stof(strCodeSegment);
-    float operand = std::stof(argCodeSegment);
-    codeSegment = std::to_string((int) (number * operand)) + PUNTO;
+    try {
+        float number = std::stof(strCodeSegment);
+        float operand = std::stof(argCodeSegment);
+        codeSegment = std::to_string((int) (number * operand)) + PUNTO;
+    } catch(...) {
+        std::string err = "Operacion no valida porque los objetos no ";
+        err += "son compatibles.";
+        throw std::runtime_error(err);
+    }
     return this;
 }
 
@@ -586,9 +594,15 @@ Object* Object::operator+(const std::vector<Object*>& args) {
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
 
-    float number = std::stof(strCodeSegment);
-    float operand = std::stof(argCodeSegment);
-    codeSegment = std::to_string((int) (number + operand)) + PUNTO;
+    try {
+        float number = std::stof(strCodeSegment);
+        float operand = std::stof(argCodeSegment);
+        codeSegment = std::to_string((int) (number + operand)) + PUNTO;
+    } catch(...) {
+        std::string err = "Operacion no valida porque los objetos no ";
+        err += "son compatibles.";
+        throw std::runtime_error(err);
+    }
     return this;
 }
 
@@ -599,9 +613,15 @@ Object* Object::operator-(const std::vector<Object*>& args) {
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
 
-    float number = std::stof(strCodeSegment);
-    float operand = std::stof(argCodeSegment);
-    codeSegment = std::to_string((int) (number - operand)) + PUNTO;
+    try {
+        float number = std::stof(strCodeSegment);
+        float operand = std::stof(argCodeSegment);
+        codeSegment = std::to_string((int) (number - operand)) + PUNTO;
+    } catch(...) {
+        std::string err = "Operacion no valida porque los objetos no ";
+        err += "son compatibles.";
+        throw std::runtime_error(err);
+    }
     return this;
 }
 
@@ -611,10 +631,15 @@ Object* Object::operator/(const std::vector<Object*>& args) {
             codeSegment.size() - 1);
     std::string argCodeSegment = first->codeSegment.substr(0,
             first->codeSegment.size() - 1);
-
-    float number = std::stof(strCodeSegment);
-    float operand = std::stof(argCodeSegment);
-    codeSegment = std::to_string((int) (number / operand)) + PUNTO;
+    try {
+        float number = std::stof(strCodeSegment);
+        float operand = std::stof(argCodeSegment);
+        codeSegment = std::to_string((int) (number / operand)) + PUNTO;
+    } catch(...) {
+        std::string err = "Operacion no valida porque los objetos no ";
+        err += "son compatibles.";
+        throw std::runtime_error(err);
+    }
     return this;
 }
 

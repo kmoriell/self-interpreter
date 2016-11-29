@@ -168,8 +168,17 @@ void MorphWindow::doAction(char action, std::string text) {
 
 // Eventos
 bool MorphWindow::window_deleted(GdkEventAny* any_event) {
-    std::string empty = "";
-    proxyServer.sendCmdMessage(CLOSE_WK, empty);
+    Gtk::MessageDialog dialog(*this, "¿Abandonar?", false,
+            Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+    dialog.set_secondary_text("¿Desea abandonar el Workspace?");
+    Gtk::ResponseType resp = (Gtk::ResponseType) dialog.run();
+
+    if (resp == Gtk::RESPONSE_NO) {
+        return true;
+    }
+
+    std::string emptyString = "";
+    proxyServer.sendCmdMessage(CLOSE_WK, emptyString);
     while (proxyServer.getFlag()) {
     }
 
@@ -182,6 +191,7 @@ void MorphWindow::btnEnviar_clicked() {
                 > ::cast_dynamic(refBuilder->get_object("txtBufferEntrada"));
         std::string text = pTextBuffer->get_text();
         doAction(EXEC_LOBBY_CMD, text);
+        pTextBuffer->set_text("");
     }
 }
 
@@ -202,11 +212,13 @@ void MorphWindow::btnRefresh_clicked() {
 void MorphWindow::btnApply_clicked() {
     std::string text = pTxtObjName->get_text();
     doAction(SET_OBJ_NAME, text);
+    pTxtObjName->set_text("");
 }
 
 void MorphWindow::btnSetSlot_clicked() {
     std::string text = pTxtSlot->get_text();
     doAction(ADD_SLOT, text);
+    pTxtSlot->set_text("");
 }
 
 void MorphWindow::btnSetCodeSegment_clicked() {
@@ -235,19 +247,6 @@ void MorphWindow::on_row_activated(const Gtk::TreeModel::Path& path,
 }
 
 void MorphWindow::on_CloseWorkspace_selected() {
-    Gtk::MessageDialog dialog(*this, "¿Abandonar?", false,
-            Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
-    dialog.set_secondary_text("¿Desea abandonar el Workspace?");
-    Gtk::ResponseType resp = (Gtk::ResponseType) dialog.run();
-
-    if (resp == Gtk::RESPONSE_NO) {
-        return;
-    }
-
-    std::string emptyString = "";
-    proxyServer.sendCmdMessage(CLOSE_WK, emptyString);
-    while (proxyServer.getFlag()) {
-    }
     this->getWindow()->close();
 }
 

@@ -11,6 +11,11 @@ int Proxy::receive() {
     memset(strLen, 0, sizeof(int));
 
     int s = serverSocket.receive(strLen, sizeof(int));
+    if (s == 0) {
+        delete[] strLen;
+        return s;
+    }
+
     unsigned int len = 0;
     memcpy(&len, strLen, sizeof(int));
     len = ntohl(len);
