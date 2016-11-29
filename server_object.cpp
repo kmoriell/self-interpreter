@@ -450,7 +450,7 @@ Object* Object::clone(const std::vector<Object *> &args) {
 
     auto tuple = std::make_tuple(obj, false);
     lobby->createdObjects.insert(std::make_pair(lobby->idCounter, tuple));
-    id = lobby->idCounter;
+    obj->id = lobby->idCounter;
     lobby->idCounter++;
     return obj;
 }
