@@ -28,7 +28,6 @@ ParserProtocoloMorph::ParserProtocoloMorph(Morph &morph, std::string &cad) :
     std::string objSlotName;
     std::string objSlotPreview;
 
-    //std::cout << "Cadena: " << cad << std::endl;
     while (pCad < (int) cad.size()) {
         slotName = getCampo();
         pCad++; //Salimos del caracter separador

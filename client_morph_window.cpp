@@ -235,7 +235,7 @@ void MorphWindow::on_row_activated(const Gtk::TreeModel::Path& path,
 }
 
 void MorphWindow::on_CloseWorkspace_selected() {
-    Gtk::MessageDialog dialog(*this, "Errores en la ejecución", false,
+    Gtk::MessageDialog dialog(*this, "¿Abandonar?", false,
             Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
     dialog.set_secondary_text("¿Desea abandonar el Workspace?");
     Gtk::ResponseType resp = (Gtk::ResponseType) dialog.run();

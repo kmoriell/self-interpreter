@@ -205,8 +205,8 @@ bool Object::isDataObject(std::string messageName) {
     // Primero verifico que el slot este en la lista de los slots,
     // esto es que este agregado o que se haya sobrecargado un metodo
     // nativo.
-    Object* obj;  // = nullptr;
-    delegate func;  // = nullptr;
+    Object* obj;
+    delegate func;
     bool retval = findObject(messageName, obj, func);
 
     if (retval && obj) {
@@ -516,7 +516,6 @@ Object* Object::printObj(const std::vector<Object*>& args) {
             std::cout << " " << OP_SLOT_INMUTABLE << " ";
         Object* dirObj = (Object*) std::get<0>(slot);
         std::cout << dirObj;
-        //std::cout << "Es parent? " << esParent << std::endl;
         std::cout << PUNTO;
     }
 

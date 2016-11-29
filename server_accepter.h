@@ -15,7 +15,7 @@
  */
 class Accepter: public Thread {
 private:
-    std::vector<ProxyClient*> program_threads;
+    std::vector<ProxyClient*> programThreads;
     Server &server;
     Socket socket;
     bool interrupt_task;
@@ -66,7 +66,7 @@ public:
      * luego limpia los recursos utilizados
      *
      */
-    void collect_closed_clients();
+    void collectClosedClients();
 };
 
 #endif /* SERVER_ACCEPTER_H_ */
