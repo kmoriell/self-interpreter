@@ -567,10 +567,6 @@ Object* Object::print(const std::vector<Object*>& args) {
     return this;
 }
 
-//TODO: el casteo (int) es provisorio hasta que el parser
-//sepa leer floats, por ahora solo lee naturales
-//TODO: al number hay que sacarle el . antes de considerarlo un numero.
-//TODO: refactor para no repetir tanto codigo
 Object* Object::operator*(const std::vector<Object*>& args) {
     Object *first = (Object*) args[0];
     std::string strCodeSegment = this->codeSegment.substr(0,

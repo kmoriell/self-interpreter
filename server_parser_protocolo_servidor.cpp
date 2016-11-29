@@ -5,12 +5,11 @@ ParserProtocoloServidor::ParserProtocoloServidor(Object* obj) {
     this->obj = obj;
 }
 
-//todo falta revisar la encapsulacion y tambien hace falta ver el tema mutex aca ya que se leen objetos
 std::string ParserProtocoloServidor::getString() {
     std::string cad;
-    cad += obj->getName(); //todo agregar nombre real
+    cad += obj->getName();
     cad += CHAR_SEPARADOR;
-    cad += obj->getCodeSegment(); //todo agregar nombre real
+    cad += obj->getCodeSegment();
 
     Object::slot_map slots = obj->getSlots();
     std::map<std::string, Object::fpointTuple> nativeMethods =
@@ -87,19 +86,17 @@ std::string ParserProtocoloServidor::getString() {
         Object* objSlot = (Object*) std::get<0>(slot);
         if (objSlot != nullptr) {
             cad += CHAR_SEPARADOR;
-            cad += objSlot->getName(); //todo agregar nombre real
+            cad += objSlot->getName();
             cad += CHAR_SEPARADOR;
             cad += objSlot->getCodeSegment();
         } else {
             cad += CHAR_SEPARADOR;
-            cad += ""; //todo agregar nombre real
+            cad += "";
             cad += CHAR_SEPARADOR;
             cad += "";
         }
 
         objSlot->getName();
-        //std::cout << dirObj;
     }
-    //std::string cad = "Lobby@3.@X@1@0@0@int@3@Y@1@0@0@int@2@cadena@1@0@0@string@'hola mundo'";
     return cad;
 }

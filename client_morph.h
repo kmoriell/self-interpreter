@@ -12,13 +12,13 @@ class Morph {
 public:
     /** Slot del objeto Morph.
      * Elementos de slot_t
-     * pos	    tipo		variable
-     * 0	    std::string	nombreSlot
-     * 1	    bool		esMetodoNativo
-     * 2	    bool		esMutable
-     * 3	    bool		esArgument
-     * 4	    bool		esParent
-     * 5	    std::string	nombreObjSlot
+     * pos	    tipo		variable \n
+     * 0	    std::string	nombreSlot \n
+     * 1	    bool		esMetodoNativo \n
+     * 2	    bool		esMutable \n
+     * 3	    bool		esArgument \n
+     * 4	    bool		esParent \n
+     * 5	    std::string	nombreObjSlot \n
      * 6	    std::string	previewObjSlot
      * */
     typedef std::tuple<std::string, bool, bool, bool, bool, std::string,

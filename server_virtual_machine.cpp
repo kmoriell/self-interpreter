@@ -27,7 +27,6 @@ Object* VirtualMachine::createNumber(float number) {
     Object *obj = new Object(lobby);
     obj->setPrimitive(true);
     obj->setName(NUMBER_OBJ);
-    //todo Casteamos a int porque el parser aun no soporta floats
     obj->setCodeSegment(std::to_string((int) number) + PUNTO);
     obj->enableNativeMethod(PRINT_METHOD);
     obj->enableNativeMethod(OP_SUMA);
