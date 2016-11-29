@@ -2,6 +2,8 @@
 #define COMMON_TYPES_H_
 
 #include <string>
+#include <netinet/in.h>
+#include <cstring>
 
 class Message {
 private:
@@ -10,59 +12,43 @@ private:
     std::string message;
 
 public:
-    Message(size_t length, char command, std::string message) :
-            length(length), instr(command), message(message) {
-    }
-    Message() {
-    } //todo verificar esto
+    Message(size_t length, char command, std::string message);
+    Message();
 
-    /*
-     * Este metodo devuelve en el parametro pasado el contenido
-     * convertido a char* plano, para ser enviado por red.
-     * Es responsabilidad de quien lo llama liberar la memoria.
+    /** Este metodo devuelve el objeto convertido a std::string.
+     *
      */
-    std::string toString() {
-        std::string command;
-        char *strLength = new char[sizeof(int) + 1];
-        size_t length = htons(this->length);
-        memcpy(strLength, &length, sizeof(int));
+    std::string toString();
 
-        //char *c_strLength = strLength.c_str();
+    /** Devuelve la longitud del mensaje
+     *
+     */
+    size_t getLength() const;
 
-        command += std::string(strLength);
-        command += this->instr;
-        command += message;
-        /* memcpy(command, strLength.c_str(), strLengthSize);
-         command[strLengthSize] = this->instr;
-         memcpy(command + strLengthSize + 1, message.c_str(), message.size());
-         */
-        delete[] strLength;
-        return command;
-    }
+	/** Fija la longitud del mensaje
+	 * @param len nueva longitud
+	 */
+    void setLength(const size_t len);
 
-    size_t getLength() const {
-        return length;
-    }
+    /** Devuelve el texto del mensaje-
+     *
+     */
+    std::string getMessage() const;
 
-    void setLength(const size_t len) {
-        this->length = len;
-    }
+    /** Fija el text del mensaje.
+     * @param str nuevo mensaje
+     */
+    void setMessage(const char* str);
 
-    std::string getMessage() const {
-        return message;
-    }
+    /** Fija el comando del mensaje.
+     * @param cmd nuevo comando.
+     */
+    void setCommand(const char cmd);
 
-    void setMessage(const char* str) {
-        message = std::string(str);
-    }
-
-    void setCommand(const char cmd) {
-        this->instr = cmd;
-    }
-
-    char getCommand() const {
-        return instr;
-    }
+    /** Devuelve el comando del mensaje.
+     *
+     */
+    char getCommand() const;
 };
 
 #endif /* COMMON_TYPES_H_ */
